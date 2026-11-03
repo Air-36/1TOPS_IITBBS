@@ -1,0 +1,108 @@
+# =============================================================================
+# 1TOPS RISC-V SoC .gitignore
+# =============================================================================
+
+# 1. Debugger Folder Documents, Presentations & Diagram Renders
+**/debugger/*.pdf
+**/debugger/*.png
+**/debugger/*.svg
+**/debugger/*.jpg
+**/debugger/*.jpeg
+**/debugger/*.docx
+**/debugger/*.pptx
+**/debugger/~$*
+**/debugger/build_*.py
+**/debugger/*ppt*.py
+**/debugger/*docx*.py
+
+# 2. Xilinx Vivado Generated Files & Directories
+vivado*.log
+vivado*.jou
+vivado*.str
+*.backup.log
+*.backup.jou
+.Xil/
+*.runs/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.dcp
+*.bit
+*.sysdef
+*.wdb
+*.wdf
+xsim.dir/
+xelab.log
+xelab.pb
+xelab*.jou
+xsim*.jou
+xsim*.log
+
+# FPGA Isolated Build Directory (keep empty folder via .gitkeep)
+fpga/build/*
+!fpga/build/.gitkeep
+fpga/vivado_project/
+schematics/rv32_core_schematic/
+*.xpr
+
+# 3. RTLvision Logs
+rtlvision/*.log
+rtlvision/work/
+
+# 4. QuestaSim / ModelSim / Verilator Simulation Artifacts
+work/
+rtl_work/
+obj_dir/
+transcript*
+msim_transcript*
+vsim.wlf
+*.wlf
+modelsim.ini
+*.vcd
+*.vpd
+
+# 5. Compiler & Bare-Metal Software Build Artifacts
+**/build/*
+!**/build/.gitkeep
+*.elf
+*.hex
+*.objdump
+*.dump
+*.o
+*.a
+software/*.bin
+software/*.mem
+
+# 6. Quartus Compilation & Project Outputs
+output_files/
+db/
+incremental_db/
+simulation/
+*.qws
+*.qdf
+*.rpt
+*.sof
+*.pof
+*.done
+*.smsg
+*.summary
+*.jdi
+*.sld
+*.sta.rpt
+*.sta.summary
+*.map.rpt
+*.map.summary
+*.fit.rpt
+*.fit.summary
+*.flow.rpt
+
+# 7. Python Cache, Editors & OS Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.swp
+*.swo
+*~
+*.bak*
+.DS_Store
