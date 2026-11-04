@@ -4,7 +4,7 @@
 
 _start:
     lui   s0, 0x10040         # SPI Base (0x1004_0000)
-    lui   s1, 0x80002         # Data RAM (0x8000_2000)
+    lui   s1, 0x80010         # Data RAM (0x8001_0000)
 
     # 1. Set slow SCK divider (SckDiv = 0xFFF, ~1.3ms per byte)
     li    t0, 0xfff
@@ -32,7 +32,7 @@ _start:
     # 3. Sample SPI_TXDATA while FIFO is saturated:
     #    Bit 31 is TransmitFIFOFull (Expected: 0x80000000)
     lw    t2, 0x48(s0)
-    sw    t2, 0x00(s1)        # 0x80002000 = Sampled SPI_TXDATA (0x80000000)
+    sw    t2, 0x00(s1)        # 0x80010000 = Sampled SPI_TXDATA (0x80000000)
 
     # 4. Wait ~20 ms for FIFO to drain and loop back into RX FIFO
     li    t3, 1000000
@@ -42,7 +42,7 @@ drain_wait:
 
     # 5. Read back first received byte from SPI_RXDATA (0x1004_004C)
     lw    t4, 0x4c(s0)
-    sw    t4, 0x04(s1)        # 0x80002004 = First RX byte (0x00000011)
+    sw    t4, 0x04(s1)        # 0x80010004 = First RX byte (0x00000011)
 
 done:
     wfi

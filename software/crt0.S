@@ -2,8 +2,8 @@
 .global _start
 
 _start:
-    # Initialize stack pointer to end of 8KB dmem (0x80002000 + 8192)
-    li sp, 0x80004000
+    # Initialize stack pointer to end of 32KB dmem (0x80010000 + 32768)
+    li sp, 0x80018000
 
     # Clear BSS
     la a0, __bss_start

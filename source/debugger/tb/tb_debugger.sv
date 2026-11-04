@@ -8,7 +8,7 @@
 //      * Core Halt / Status / Resume Control ('C 0202', 'C', 'C 0102')
 //      * Memory Write & Readback Verification ('W' and 'R after A')
 //      * Instruction Memory (IRAM @ 0x8000_0000)
-//      * Data Memory (DRAM @ 0x8000_2000)
+//      * Data Memory (DRAM @ 0x8001_0000)
 //      * Uncore APB Peripherals (0x1000_0000)
 //      * 1TOPS Accelerator & Multiplier (0x3000_0000)
 //      * Bulk Memory Fill ('F') & Raw Binary Upload ('U')
@@ -298,8 +298,8 @@ module tb_debugger;
     //=========================================================================
 
     wire accel_hsel   = (s_haddr >= 32'h3000_0000 && s_haddr <= 32'h30FF_FFFF);
-    wire iram_hsel    = (s_haddr >= 32'h8000_0000 && s_haddr <= 32'h8000_1FFF);
-    wire dram_hsel    = (s_haddr >= 32'h8000_2000 && s_haddr <= 32'h8000_3FFF);
+    wire iram_hsel    = (s_haddr >= 32'h8000_0000 && s_haddr <= 32'h8000_7FFF);
+    wire dram_hsel    = (s_haddr >= 32'h8001_0000 && s_haddr <= 32'h8001_7FFF);
     wire bootrom_hsel = (s_haddr >= 32'h0001_0000 && s_haddr <= 32'h0001_FFFF);
     wire apb_hsel     = (s_haddr >= 32'h1000_0000 && s_haddr <= 32'h1000_0FFF);
     wire error_hsel   = (s_haddr >= 32'h5000_0000 && s_haddr <= 32'h5FFF_FFFF);
@@ -329,8 +329,8 @@ module tb_debugger;
     );
 
     // 2) Memory Arrays
-    reg [31:0] iram [0:2047];
-    reg [31:0] dram [0:2047];
+    reg [31:0] iram [0:8191];
+    reg [31:0] dram [0:8191];
     reg [31:0] bootrom [0:1023];
 
     // 3) APB Registers
@@ -390,8 +390,8 @@ module tb_debugger;
         endcase
     endfunction
 
-    wire [10:0] iram_word_idx = s_haddr_d[12:2];
-    wire [10:0] dram_word_idx = s_haddr_d[12:2];
+    wire [12:0] iram_word_idx = s_haddr_d[14:2];
+    wire [12:0] dram_word_idx = s_haddr_d[14:2];
     wire [ 3:0] wstrb = get_wstrb(s_haddr_d[1:0], s_hsize_d);
 
     always @(posedge clk) begin
@@ -692,11 +692,11 @@ module tb_debugger;
 
         // 1.3 Data SRAM Sub-Word Writes & Readbacks
         $display("\n>>> [UART] 1.3: DRAM Sub-word Accesses <<<");
-        send_uart_string("A 80002000\n");
+        send_uart_string("A 80010000\n");
         wait_for_prompt();
         send_uart_string("W deadbeef\n");
         wait_for_prompt();
-        send_uart_string("A 80002000\n");
+        send_uart_string("A 80010000\n");
         wait_for_prompt();
         verify_read_word(32'hdeadbeef, "UART DRAM 32-bit Word");
 
@@ -769,14 +769,14 @@ module tb_debugger;
 
         // 2.2 Memory Write & Readback over FT1248
         $display("\n>>> [FT1248] 2.2: Memory Write & Readback Verification <<<");
-        send_ft1248_string("A 80002000\n");
+        send_ft1248_string("A 80010000\n");
         wait_for_prompt();
         send_ft1248_string("W 55aa55aa\n"); // Write distinctive pattern over FT1248
         wait_for_prompt();
 
-        send_ft1248_string("A 80002000\n");
+        send_ft1248_string("A 80010000\n");
         wait_for_prompt();
-        verify_read_word(32'h55aa55aa, "FT1248 DRAM [0x80002000]");
+        verify_read_word(32'h55aa55aa, "FT1248 DRAM [0x80010000]");
 
         // 2.3 1TOPS Accelerator Computation over FT1248
         $display("\n>>> [FT1248] 2.3: Accelerator Multiplier Computation over FT1248 <<<");

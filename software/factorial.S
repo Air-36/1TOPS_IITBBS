@@ -2,10 +2,10 @@
 .globl _start
 
 _start:
-    # Load Data Memory base pointer (0x80002000)
-    lui   s0, 0x80002
+    # Load Data Memory base pointer (0x80010000)
+    lui   s0, 0x80010
     
-    # Read n from 1st Data Memory word (0x80002000)
+    # Read n from 1st Data Memory word (0x80010000)
     lw    s1, 0(s0)
 
     # Initialize result = 1 (s2 = result)
@@ -36,7 +36,7 @@ mul_skip_add:
     bgt   s1, t0, fact_loop
 
 done:
-    # Write result to 2nd Data Memory word (0x80002004)
+    # Write result to 2nd Data Memory word (0x80010004)
     sw    s2, 4(s0)
 
 halt:

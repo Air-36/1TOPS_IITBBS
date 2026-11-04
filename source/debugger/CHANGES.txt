@@ -312,7 +312,7 @@ d) ADP Controller Reversion to Original Standard IO Check Mode:
 e) Bare-Metal RV32I Factorial Demo Program (software/factorial.S):
    - Pure RV32I bare-metal assembly implementation computing n! without relying
      on hardware multiplier (M extension) or C runtime libraries.
-   - Reads input 'n' from Data RAM 0x80002000, writes result to 0x80002004.
+   - Reads input 'n' from Data RAM 0x80010000, writes result to 0x80010004.
    - 76 bytes total (0x4C bytes), compiled via riscv64-unknown-elf-gcc.
    - Fully verified end-to-end via ADP 'F' (fill), 'U' (upload), 'C' (halt/reset/resume),
      and 'R' (result readback).

@@ -33,8 +33,8 @@ Because the on-chip debugger is an independent **AHB-Lite Bus Master**, you have
 | **SPI Controller** | `0x1004_0000` | 4 KB | SiFive FU540-compatible SPI master | [`../source/uncore/spi_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/spi_apb.sv) |
 | **GPIO** | `0x1006_0000` | 256 Bytes | 32-bit GPIO with XOR inversion & edge detection | [`../source/uncore/gpio_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/gpio_apb.sv) |
 | **1TOPS Accelerator** | `0x3000_0000` | 16 MB | Neural Network Multiplier / Matrix Engine | [`../source/main/soc/multiplier_ahb.v`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/main/soc/multiplier_ahb.v) |
-| **Instruction RAM (IRAM)** | `0x8000_0000` | 8 KB | CPU code execution space (Reset Vector) | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
-| **Data RAM (DRAM)** | `0x8000_2000` | 8 KB | Scratchpad variables, stack, I/O mailboxes | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
+| **Instruction RAM (IRAM)** | `0x8000_0000` | 32 KB | CPU code execution space (Reset Vector) | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
+| **Data RAM (DRAM)** | `0x8001_0000` | 32 KB | Scratchpad variables, stack, I/O mailboxes | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
 
 ---
 
@@ -222,7 +222,7 @@ Testing interrupt logic normally requires waiting for external pins. However, wr
 
 By placing the core in an idle `wfi` loop, you can inject an interrupt on-demand from HTerm and verify that:
 1. The CPU branches to `mtvec`.
-2. The trap handler executes and writes a token to DMem (`0x8000_2010`).
+2. The trap handler executes and writes a token to DMem (`0x8001_0010`).
 3. The core cleans up and returns via `mret`.
 
 ---
@@ -237,12 +237,12 @@ Save the following assembly program as `../software/trap_test.S`:
 .globl _start
 
 _start:
-    # 1. Write Boot Signature to Data RAM (0x80002000 = 0xAA)
-    lui   s0, 0x80002
+    # 1. Write Boot Signature to Data RAM (0x80010000 = 0xAA)
+    lui   s0, 0x80010
     li    t0, 0xaa
     sw    t0, 0x000(s0)
 
-    # 2. Clear Mailbox in Data RAM (0x80002010 = 0, 0x80002014 = 0)
+    # 2. Clear Mailbox in Data RAM (0x80010010 = 0, 0x80010014 = 0)
     sw    zero, 0x010(s0)
     sw    zero, 0x014(s0)
 
@@ -257,7 +257,7 @@ _start:
     # 5. Enable Global Interrupts (mstatus.MIE = bit 3)
     csrsi mstatus, 0x08
 
-    # 6. Write Ready Signature to Data RAM (0x80002000 = 0xBB)
+    # 6. Write Ready Signature to Data RAM (0x80010000 = 0xBB)
     #    Confirms interrupts are armed and CPU is entering wait loop!
     li    t0, 0xbb
     sw    t0, 0x000(s0)
@@ -276,15 +276,15 @@ handle_trap:
     # For Machine Software Interrupt, mcause = 0x80000003 (not 3)
     csrr  t2, mcause
 
-    # Record raw mcause in Data RAM at 0x80002014 for diagnostics
-    lui   t0, 0x80002
+    # Record raw mcause in Data RAM at 0x80010014 for diagnostics
+    lui   t0, 0x80010
     sw    t2, 0x014(t0)
 
     # Verify cause is Machine Software Interrupt (0x80000003)
     li    t3, 0x80000003
     bne   t2, t3, trap_exit
 
-    # Increment Mailbox at 0x80002010 (indicates handler executed)
+    # Increment Mailbox at 0x80010010 (indicates handler executed)
     lw    t4, 0x010(t0)
     addi  t4, t4, 1
     sw    t4, 0x010(t0)
@@ -325,12 +325,12 @@ trap_exit:
    C 0101              # Reset CPU
    C 0102
    ```
-   *(Core boots and sets `0x80002000 = 0xBB`, then idles in `wait_loop`).*
+   *(Core boots and sets `0x80010000 = 0xBB`, then idles in `wait_loop`).*
 
 4. **Sanity Check Core Running**:
    ```text
    C 0202              # Halt CPU
-   A 80002000          # Check CPU Boot Signature
+   A 80010000          # Check CPU Boot Signature
    R
    C 0201              # Resume CPU
    ```
@@ -341,23 +341,23 @@ trap_exit:
    A 02000000
    W 00000001
    ```
-   *(Asserts `MSIP` $\rightarrow$ Core immediately enters `handle_trap`, records `mcause` to `0x80002014`, increments mailbox at `0x80002010`, clears `MSIP`, and returns).*
+   *(Asserts `MSIP` $\rightarrow$ Core immediately enters `handle_trap`, records `mcause` to `0x80010014`, increments mailbox at `0x80010010`, clears `MSIP`, and returns).*
 
 6. **Verify Execution**:
    ```text
    C 0202              # Halt CPU
-   A 80002010          # Check DMem mailbox
+   A 80010010          # Check DMem mailbox
    R
    ```
    *Expected Response*: `R 0x00000001`!
    ```text
-   A 80002014          # Check trapped mcause
+   A 80010014          # Check trapped mcause
    R
    ```
    *Expected Response*: `R 0x80000003` (confirms Machine Software Interrupt).
    
 7. **Repeat Test**:
-   Write `W 00000001` to `0x02000000` again, resume core, halt, and read `0x80002010`. The value will increment to `R 0x00000002`.
+   Write `W 00000001` to `0x02000000` again, resume core, halt, and read `0x80010010`. The value will increment to `R 0x00000002`.
 
 ---
 
@@ -502,7 +502,7 @@ Because `P.SPI_LOOPBACK_TEST = 1` is configured in hardware, the SPI transmitter
 ---
 
 #### Part B: True Hardware Saturation & TX FIFO Full Verification (`spi_test.bin`)
-To catch Bit 31 of `SPI_TXDATA` (`TransmitFIFOFull = 1`), writes must occur faster than the $1.31\text{ ms}$ transmission rate. The dedicated micro-program [`spi_test.bin`](file:///home/ganesh/Desktop/shri/1tops_soc/1tops_soc/fpga/spi_test.bin) executes 8 consecutive stores in **320 nanoseconds**, samples `SPI_TXDATA`, and writes the result to Data RAM (`0x8000_2000`).
+To catch Bit 31 of `SPI_TXDATA` (`TransmitFIFOFull = 1`), writes must occur faster than the $1.31\text{ ms}$ transmission rate. The dedicated micro-program `spi_test.bin` executes 8 consecutive stores in **320 nanoseconds**, samples `SPI_TXDATA`, and writes the result to Data RAM (`0x8001_0000`).
 
 1. **Upload `spi_test.bin` (124 bytes = `0x7c`)**:
    ```text
@@ -520,13 +520,13 @@ To catch Bit 31 of `SPI_TXDATA` (`TransmitFIFOFull = 1`), writes must occur fast
 2. **Wait ~1 second**, then halt and inspect results:
    ```text
    C 0202              # Halt CPU
-   A 80002000          # Check Sampled SPI_TXDATA
+   A 80010000          # Check Sampled SPI_TXDATA
    R
    ```
    *Expected Response*: `R 0x80000000` (Bit 31 = 1 proves TX FIFO hit full saturation!).
 
    ```text
-   A 80002004          # Check First Received Loopback Byte
+   A 80010004          # Check First Received Loopback Byte
    R
    ```
    *Expected Response*: `R 0x00000011` (proves data serialized and looped back successfully).
@@ -557,8 +557,8 @@ _start:
     lui   s0, 0x0200c
     # Base pointer to Accelerator (0x3000_0000)
     lui   s1, 0x30000
-    # Base pointer to DMem Results (0x8000_2000)
-    lui   s2, 0x80002
+    # Base pointer to DMem Results (0x8001_0000)
+    lui   s2, 0x80010
 
     # Inputs for accelerator: 12 * 10
     li    a0, 12
@@ -579,8 +579,8 @@ _start:
     sub   t2, t1, t0
 
     # 5. Store Results to Data RAM
-    sw    a2, 0x000(s2)       # 0x80002000 = Product (120 = 0x78)
-    sw    t2, 0x004(s2)       # 0x80002004 = Elapsed Clock Cycles
+    sw    a2, 0x000(s2)       # 0x80010000 = Product (120 = 0x78)
+    sw    t2, 0x004(s2)       # 0x80010004 = Elapsed Clock Cycles
 
 done:
     wfi
@@ -608,12 +608,12 @@ done:
 3. **Read Results**:
    ```text
    C 0202              # Halt CPU
-   A 80002000          # Check Accelerator Product
+   A 80010000          # Check Accelerator Product
    R
    ```
    *Expected Product*: `R 0x00000078` ($120_{10}$).
    ```text
-   A 80002004          # Check Latency (Cycles)
+   A 80010004          # Check Latency (Cycles)
    R
    ```
    *Expected Latency*: Exact elapsed cycle count (typically 6–10 clock cycles including bus handshakes).

@@ -31,7 +31,7 @@ This benchmark suite tests the **pure CPU core** in complete isolation from the 
   - `0x8000_0000 - 0x8000_0FFF`: Reset boot stub (`.text.init` in `INIT` region)
   - `0x8000_1000`: Real-time ASCII character console port (monitored by testbench)
   - `0x8000_1004`: `tohost` benchmark completion mailbox (1 = PASS, 0 = FAIL)
-  - `0x8000_2000 - 0x801F_FFFF`: Main program, constants, and data (`RAM` region)
+  - `0x8001_0000 - 0x801F_FFFF`: Main program, constants, and data (`RAM` region)
   - `0x801F_F000`: Top of stack
 
 ---

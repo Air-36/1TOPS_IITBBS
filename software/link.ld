@@ -3,8 +3,8 @@ ENTRY(_start)
 
 MEMORY
 {
-  imem (rx)  : ORIGIN = 0x80000000, LENGTH = 8K
-  dmem (rwx) : ORIGIN = 0x80002000, LENGTH = 8K
+  imem (rx)  : ORIGIN = 0x80000000, LENGTH = 32K
+  dmem (rwx) : ORIGIN = 0x80010000, LENGTH = 32K
 }
 
 SECTIONS

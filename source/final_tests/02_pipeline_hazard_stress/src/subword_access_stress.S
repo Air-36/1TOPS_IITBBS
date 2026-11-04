@@ -12,8 +12,8 @@
     .globl tohost
 
 rvtest_entry_point:
-    li sp, 0x80007ff0
-    li s0, 0x80002000    // Scratch RAM location
+    li sp, 0x80017ff0
+    li s0, 0x80010000    // Scratch RAM location
 
     // -------------------------------------------------------------------------
     // 1. Initialize 32-bit word with 0x00000000

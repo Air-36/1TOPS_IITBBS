@@ -390,12 +390,12 @@ class SoCDebugTester:
         is_halted = "C 0x01" in status or "C 0x05" in status or "C 0x07" in status or "C 0x03" in status
         self.record_result("Core Halt Assertion", is_halted, f"Status={status}")
 
-        # 1.2 Zero Out Data Memory Area (0x80002000 - 0x80002020)
-        print("[*] 1.2 Zeroing Data RAM at 0x80002000...")
-        self.send_cmd("A 80002000")
+        # 1.2 Zero Out Data Memory Area (0x80010000 - 0x80010020)
+        print("[*] 1.2 Zeroing Data RAM at 0x80010000...")
+        self.send_cmd("A 80010000")
         self.send_cmd("V 00000000")
         self.send_cmd("F 08") # 8 words
-        self.send_cmd("A 80002000")
+        self.send_cmd("A 80010000")
         r0 = self.send_cmd("R")
         self.record_result("DRAM Initialized to Zero", "0x00000000" in r0, f"Readback={r0}")
 
@@ -412,9 +412,9 @@ class SoCDebugTester:
             print(f"    Loaded {len(code_bytes)} bytes from {bin_path}.")
         else:
             # Fallback opcodes for step_test.S:
-            # lui s0, 0x80002; li t0, 0x11111111; sw t0, 0(s0); j loop
+            # lui s0, 0x80010; li t0, 0x11111111; sw t0, 0(s0); j loop
             fallback_words = [
-                0x80002437, # lui s0, 0x80002
+                0x80010437, # lui s0, 0x80010
                 0x111112b7, # lui t0, 0x11111
                 0x11128293, # addi t0, t0, 273 (0x11111111)
                 0x00542023, # sw t0, 0(s0)
@@ -451,10 +451,10 @@ class SoCDebugTester:
             time.sleep(0.01)
             self.send_cmd("C 0104")
 
-        # Verify Marker 1 committed at 0x80002000
-        self.send_cmd("A 80002000")
+        # Verify Marker 1 committed at 0x80010000
+        self.send_cmd("A 80010000")
         r_step1 = self.send_cmd("R")
-        self.record_result("Step 1 Marker (0x11111111 at 0x80002000)",
+        self.record_result("Step 1 Marker (0x11111111 at 0x80010000)",
                            "0x11111111" in r_step1, f"Readback={r_step1}")
 
         # Step next 3 instructions (lui t1, addi t1, sw t1)
@@ -463,9 +463,9 @@ class SoCDebugTester:
             time.sleep(0.01)
             self.send_cmd("C 0104")
 
-        self.send_cmd("A 80002004")
+        self.send_cmd("A 80010004")
         r_step2 = self.send_cmd("R")
-        self.record_result("Step 2 Marker (0x22222222 at 0x80002004)",
+        self.record_result("Step 2 Marker (0x22222222 at 0x80010004)",
                            "0x22222222" in r_step2, f"Readback={r_step2}")
 
         # Step next 3 instructions (lui t2, addi t2, sw t2)
@@ -474,9 +474,9 @@ class SoCDebugTester:
             time.sleep(0.01)
             self.send_cmd("C 0104")
 
-        self.send_cmd("A 80002008")
+        self.send_cmd("A 80010008")
         r_step3 = self.send_cmd("R")
-        self.record_result("Step 3 Marker (0x33333333 at 0x80002008)",
+        self.record_result("Step 3 Marker (0x33333333 at 0x80010008)",
                            "0x33333333" in r_step3, f"Readback={r_step3}")
 
         # 1.6 Verify Clock Cycle Stepping (C 020c -> C 010c)

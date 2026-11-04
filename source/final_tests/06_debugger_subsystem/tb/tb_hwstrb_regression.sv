@@ -119,9 +119,9 @@ module tb_hwstrb_regression;
             end
             // Instruction 0: addi x1, x0, 0x2a -> 0x02a00093
             soc.uncore.ram_i.mem[0] = 32'h02a0_0093;
-            // Instruction 1: lui x2, 0x80002   -> 0x80002137
-            soc.uncore.ram_i.mem[1] = 32'h8000_2137;
-            // Instruction 2: sw x1, 0(x2)      -> 0x00112023 (store 0x2a to 0x8000_2000)
+            // Instruction 1: lui x2, 0x80010   -> 0x80010137
+            soc.uncore.ram_i.mem[1] = 32'h8001_0137;
+            // Instruction 2: sw x1, 0(x2)      -> 0x00112023 (store 0x2a to 0x8001_0000)
             soc.uncore.ram_i.mem[2] = 32'h0011_2023;
             // Instruction 3: loop: beq x0, x0, loop -> 0x00000063
             soc.uncore.ram_i.mem[3] = 32'h0000_0063;
@@ -166,7 +166,7 @@ module tb_hwstrb_regression;
         force soc.dbg_core_reset = 1'b0;
 
         // Wait for core to initiate the store address phase:
-        while (!(soc.core_HTRANS == 2'b10 && soc.core_HWRITE == 1'b1 && soc.core_HADDR == 32'h8000_2000)) begin
+        while (!(soc.core_HTRANS == 2'b10 && soc.core_HWRITE == 1'b1 && soc.core_HADDR == 32'h8001_0000)) begin
             @(posedge clk);
         end
         $display("[T1] Detected core store address phase: Addr=0x%08x", soc.core_HADDR);
@@ -208,8 +208,8 @@ module tb_hwstrb_regression;
         $display("[T2 running] Core halt status = %b (expect 0 = running)", soc.dbg_core_halt_status);
         soc.uncore.ram_d.mem[4] = 32'h0000_0000;
 
-        // Debugger sets address pointer to 0x8000_2010 (DRAM[4]) and writes 0xAABBCCDD
-        send_uart_string("A 80002010\n");
+        // Debugger sets address pointer to 0x8001_0010 (DRAM[4]) and writes 0xAABBCCDD
+        send_uart_string("A 80010010\n");
         wait_for_prompt();
         send_uart_string("W AABBCCDD\n");
         wait_for_prompt();
@@ -233,7 +233,7 @@ module tb_hwstrb_regression;
         $display("[T2 pin] Core halt status = %b (expect 1 = halted)", soc.dbg_core_halt_status);
         soc.uncore.ram_d.mem[5] = 32'h0000_0000;
 
-        send_uart_string("A 80002014\n");
+        send_uart_string("A 80010014\n");
         wait_for_prompt();
         send_uart_string("W 11223344\n");
         wait_for_prompt();
@@ -259,7 +259,7 @@ module tb_hwstrb_regression;
         $display("[T2 C cmd] Core halt status = %b (expect 1 = halted)", soc.dbg_core_halt_status);
         soc.uncore.ram_d.mem[6] = 32'h0000_0000;
 
-        send_uart_string("A 80002018\n");
+        send_uart_string("A 80010018\n");
         wait_for_prompt();
         send_uart_string("W 55667788\n");
         wait_for_prompt();

@@ -13,7 +13,7 @@ The processor core implements a minimal **RV32I** instruction set (no M, A, F, D
 | **`factorial.S`** | Pure RV32I bare-metal assembly calculating $n!$ using shift-and-add. | FPGA memory upload & core execution demo |
 | **`main.c`** | C test program testing hardware multiplier accelerator and UART printing. | Verilator SoC simulation & verification |
 | **`crt0.S`** | C runtime startup assembly (initializes stack pointer `sp` to top of Data RAM). | Runtime wrapper for `main.c` |
-| **`link.ld`** | Linker script defining memory regions: Instruction RAM (`0x8000_0000`) and Data RAM (`0x8000_2000`). | GNU Linker |
+| **`link.ld`** | Linker script defining memory regions: Instruction RAM (`0x8000_0000`, 32 KB) and Data RAM (`0x8001_0000`, 32 KB). | GNU Linker |
 | **`elf2mem.py`** | Converts binary images into `$readmemh` format text files for simulation. | Verilator testbench |
 | **`Makefile`** | Builds all simulation memory files and FPGA binary images. | Build system |
 
@@ -26,14 +26,16 @@ Defined in `link.ld`:
 ```text
 +-----------------------+ 0x8000_0000 (Reset Vector)
 |  Instruction RAM      |
-|  .text (8 KB)         |
-+-----------------------+ 0x8000_2000
+|  .text (32 KB)        |
++-----------------------+ 0x8000_8000
+|  (Unused Aperture)    |
++-----------------------+ 0x8001_0000
 |  Data RAM             |
 |  .data / .sdata / .bss|
 |  Heap                 |
 |                       |
 |  Stack (grows down)   |
-+-----------------------+ 0x8000_4000 (Initial Stack Pointer)
++-----------------------+ 0x8001_8000 (Initial Stack Pointer)
 ```
 
 ---
@@ -64,9 +66,9 @@ make clean
 
 The factorial demo is written in pure RV32I instructions. It does not require any C runtime, standard library, or hardware multiplier:
 
-1. **Input**: Reads $n$ from the 1st word of Data Memory: `0x8000_2000`.
+1. **Input**: Reads $n$ from the 1st word of Data Memory: `0x8001_0000`.
 2. **Algorithm**: Computes $n! = n \times (n-1) \times \dots \times 1$ using an inner shift-and-add unsigned multiplication routine (`mul_step`).
-3. **Output**: Writes the 32-bit result to the 2nd word of Data Memory: `0x8000_2004`.
+3. **Output**: Writes the 32-bit result to the 2nd word of Data Memory: `0x8001_0004`.
 4. **Halt**: Loops indefinitely at `halt:` (`j halt`) to keep processor state frozen.
 
 ### Size
@@ -92,7 +94,7 @@ Once the FPGA bitstream is running on the Basys 3 board, follow these steps to l
    ```
 5. **Set Input ($n = 5$)**:
    ```text
-   A 80002000
+   A 80010000
    W 00000005
    W 00000000
    ```
@@ -111,7 +113,7 @@ Once the FPGA bitstream is running on the Basys 3 board, follow these steps to l
 8. **Halt & Check Result**:
    ```text
    C 0202
-   A 80002004
+   A 80010004
    R
    ```
    **Expected Response**: `R 0x00000078` ($120_{10} = 5!$).

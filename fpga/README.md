@@ -151,7 +151,7 @@ python3 ../source/debugger/sw/dbg_cli.py --protocol uart --device /dev/ttyUSB0 r
 ```bash
 # Read/Write 32-bit memory
 python3 ../source/debugger/sw/dbg_cli.py --protocol uart --device /dev/ttyUSB0 read 0x80000000
-python3 ../source/debugger/sw/dbg_cli.py --protocol uart --device /dev/ttyUSB0 write 0x80002000 0xdeadbeef
+python3 ../source/debugger/sw/dbg_cli.py --protocol uart --device /dev/ttyUSB0 write 0x80010000 0xdeadbeef
 
 # Compute with Accelerator Multiplier
 python3 ../source/debugger/sw/dbg_cli.py --protocol uart --device /dev/ttyUSB0 read_accel
@@ -218,16 +218,16 @@ $$\text{UART Divider} = \text{round}\left(\frac{50{,}000{,}000}{\text{Baud Rate}
 The repository includes a dedicated 64-byte stepping verification binary (`step_test.bin` from `../software/step_test.S`):
 
 1. **Halt CPU**: `C 0202`
-2. **Zero DRAM**: `A 80002000` $\rightarrow$ `V 00000000` $\rightarrow$ `F 08`
+2. **Zero DRAM**: `A 80010000` $\rightarrow$ `V 00000000` $\rightarrow$ `F 08`
 3. **Upload `step_test.bin`**: `A 80000000` $\rightarrow$ `U 40` $\rightarrow$ send `step_test.bin` in HTerm.
 4. **Reset PC to 0x80000000**: `C 0201` $\rightarrow$ `C 0101`
 5. **Step Instructions**:
    - Send `C 0204` then `C 0104` four times.
-   - Read Data RAM: `A 80002000` $\rightarrow$ `R` $\rightarrow$ replies `R 0x11111111`!
+   - Read Data RAM: `A 80010000` $\rightarrow$ `R` $\rightarrow$ replies `R 0x11111111`!
    - Send `C 0204` then `C 0104` three more times.
-   - Read Data RAM: `A 80002004` $\rightarrow$ `R` $\rightarrow$ replies `R 0x22222222`!
+   - Read Data RAM: `A 80010004` $\rightarrow$ `R` $\rightarrow$ replies `R 0x22222222`!
    - Send `C 0204` then `C 0104` three more times.
-   - Read Data RAM: `A 80002008` $\rightarrow$ `R` $\rightarrow$ replies `R 0x33333333`!
+   - Read Data RAM: `A 80010008` $\rightarrow$ `R` $\rightarrow$ replies `R 0x33333333`!
 6. **Resume CPU**: `C 0102`
 
 For detailed information, refer to [STEP_AND_CLOCK_DIV_VERIFICATION_GUIDE.md](file:///home/ganesh/Desktop/shri/1tops_soc/1tops_soc/fpga/STEP_AND_CLOCK_DIV_VERIFICATION_GUIDE.md).

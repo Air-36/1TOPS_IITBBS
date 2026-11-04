@@ -107,7 +107,7 @@ class MockInterface(BaseProtocolInterface):
         self.memory = {
             0x80000000: 0x00000297,
             0x80000004: 0x02028293,
-            0x80002000: 0xdeadbeef,
+            0x80010000: 0xdeadbeef,
             0x30000000: 0x00000008,
             0x30000004: 0x00000009,
             0x30000008: 0x00000048,

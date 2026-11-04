@@ -1,10 +1,10 @@
 
 module uncore #(
-    parameter MEM_SIZE_BYTES    = 16384,
+    parameter MEM_SIZE_BYTES    = 65536,
     parameter IRAM_BASE         = 32'h8000_0000,
-    parameter IRAM_SIZE_BYTES   = MEM_SIZE_BYTES / 2,
-    parameter DRAM_BASE         = IRAM_BASE + (MEM_SIZE_BYTES / 2),
-    parameter DRAM_SIZE_BYTES   = MEM_SIZE_BYTES / 2,
+    parameter IRAM_SIZE_BYTES   = 32768,
+    parameter DRAM_BASE         = 32'h8001_0000,
+    parameter DRAM_SIZE_BYTES   = 32768,
     parameter XLEN              = 32,
     parameter BOOTROM_SUPPORTED = 0,
     parameter SPI_SUPPORTED     = 1,
@@ -148,7 +148,7 @@ module uncore #(
     );
 
     // =========================================================================
-    // 4. AHB On-Chip Data RAM (ram_d: 0x8000_2000)
+    // 4. AHB On-Chip Data RAM (ram_d: 0x8001_0000)
     // =========================================================================
     logic [XLEN-1:0] HRDATA_RAM_D;
     logic            HREADYOUT_RAM_D, HRESP_RAM_D;

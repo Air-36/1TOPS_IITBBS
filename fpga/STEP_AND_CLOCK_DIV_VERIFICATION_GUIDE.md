@@ -257,9 +257,9 @@ Configure HTerm with **115200 Baud, 8 Data Bits, 1 Stop Bit, No Parity, Send on 
    C 0202
    ```
    *(LED 0 turns ON).*
-2. Clear Data RAM locations `0x80002000`–`0x80002010`:
+2. Clear Data RAM locations `0x80010000`–`0x80010010`:
    ```text
-   A 80002000
+   A 80010000
    V 00000000
    F 08
    ```
@@ -284,9 +284,9 @@ Configure HTerm with **115200 Baud, 8 Data Bits, 1 Stop Bit, No Parity, Send on 
    C 0104
    ```
 2. Repeat `C 0204` / `C 0104` four times (advancing past `lui s0`, `li t0`, and `sw t0, 0(s0)`).
-3. Read Data RAM at `0x80002000`:
+3. Read Data RAM at `0x80010000`:
    ```text
-   A 80002000
+   A 80010000
    R
    ```
    **Expected Response:** `R 0x11111111`.
@@ -300,16 +300,16 @@ Configure HTerm with **115200 Baud, 8 Data Bits, 1 Stop Bit, No Parity, Send on 
    C 0204
    C 0104
    ```
-5. Read Data RAM at `0x80002004`:
+5. Read Data RAM at `0x80010004`:
    ```text
-   A 80002004
+   A 80010004
    R
    ```
    **Expected Response:** `R 0x22222222`.
 
-6. Perform 3 more steps and verify `0x80002008`:
+6. Perform 3 more steps and verify `0x80010008`:
    ```text
-   A 80002008
+   A 80010008
    R
    ```
    **Expected Response:** `R 0x33333333`.

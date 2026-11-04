@@ -9,11 +9,11 @@
 
 module riscv_soc_ahb #(
     parameter RESET_PC        = 32'h8000_0000,
-    parameter MEM_SIZE_BYTES  = 16384,
+    parameter MEM_SIZE_BYTES  = 65536,
     parameter IRAM_BASE        = 32'h8000_0000,
-    parameter IRAM_SIZE_BYTES  = MEM_SIZE_BYTES / 2,
-    parameter DRAM_BASE        = IRAM_BASE + (MEM_SIZE_BYTES / 2),
-    parameter DRAM_SIZE_BYTES  = MEM_SIZE_BYTES / 2,
+    parameter IRAM_SIZE_BYTES  = 32768,
+    parameter DRAM_BASE        = 32'h8001_0000,
+    parameter DRAM_SIZE_BYTES  = 32768,
     parameter CLK_FREQ         = 100_000_000,
     parameter BAUD_RATE        = 115200,
     parameter PROMPT_CHAR      = "]",

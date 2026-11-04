@@ -170,8 +170,8 @@ The debugger automatically adjusts AHB transfer size (`HSIZE` = byte, halfword, 
 | `0x3000_1000 - 0x300F_FFFF` | ~1 MB | Accelerator Input Buffer | Feature activations |
 | `0x3010_0000 - 0x307F_FFFF` | ~7 MB | Accelerator Weights Buffer | Model parameters / weights |
 | `0x3080_0000 - 0x30FF_FFFF` | ~8 MB | Accelerator Output Buffer | Inference / results buffer |
-| `0x8000_0000 - 0x8000_1FFF` | 8 KB | Instruction SRAM (`ram_i`) | Program code (reset vector) |
-| `0x8000_2000 - 0x8000_3FFF` | 8 KB | Data SRAM (`ram_d`) | Program data, heap, and stack |
+| `0x8000_0000 - 0x8000_7FFF` | 32 KB | Instruction SRAM (`ram_i`) | Program code (reset vector) |
+| `0x8001_0000 - 0x8001_7FFF` | 32 KB | Data SRAM (`ram_d`) | Program data, heap, and stack |
 
 ---
 
@@ -268,7 +268,7 @@ R 0x0000000a       <-- x1  (e.g., 10)
 R 0x00000014       <-- x2  (e.g., 20)
 R 0x0000001e       <-- x3  (e.g., 30)
 ...
-R 0x80003ff0       <-- x2 (sp)
+R 0x80017ff0       <-- x2 (sp)
 ```
 
 #### Step 3: Inspect Pipeline Registers and Opcodes

@@ -7,8 +7,8 @@ _start:
     lui   s0, 0x0200c
     # Base pointer to Accelerator (0x3000_0000)
     lui   s1, 0x30000
-    # Base pointer to DMem Results (0x8000_2000)
-    lui   s2, 0x80002
+    # Base pointer to DMem Results (0x8001_0000)
+    lui   s2, 0x80010
 
     # Inputs for accelerator: 12 * 10
     li    a0, 12
@@ -29,8 +29,8 @@ _start:
     sub   t2, t1, t0
 
     # 5. Store Results to Data RAM
-    sw    a2, 0x000(s2)       # 0x80002000 = Product (120 = 0x78)
-    sw    t2, 0x004(s2)       # 0x80002004 = Elapsed Clock Cycles
+    sw    a2, 0x000(s2)       # 0x80010000 = Product (120 = 0x78)
+    sw    t2, 0x004(s2)       # 0x80010004 = Elapsed Clock Cycles
 
 done:
     wfi
