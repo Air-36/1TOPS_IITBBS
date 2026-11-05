@@ -1,0 +1,25 @@
+Module Name,Module Type,Port Name,Direction,Width,Index,Comment Source,Comment 
+riscv_soc_ahb,Top_Level,clk,INPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,reset,INPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,MExtInt,INPUT,1,-,module port,Hardware Interrupt Lines
+riscv_soc_ahb,Top_Level,TrapM,OUTPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,mretM,OUTPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,PCW,OUTPUT,32,[31:0],module port,Execution Trace Outputs (Testben...
+riscv_soc_ahb,Top_Level,ResultW,OUTPUT,32,[31:0],-,-
+riscv_soc_ahb,Top_Level,GPIOIN,INPUT,32,[31:0],module port,Peripheral I/O Pins (1TOPS SoC C...
+riscv_soc_ahb,Top_Level,GPIOOUT,OUTPUT,32,[31:0],-,-
+riscv_soc_ahb,Top_Level,GPIOEN,OUTPUT,32,[31:0],-,-
+riscv_soc_ahb,Top_Level,UARTSin,INPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,UARTSout,OUTPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,SPIIn,INPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,SPIOut,OUTPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,SPICS,OUTPUT,4,[3:0],-,-
+riscv_soc_ahb,Top_Level,SPICLK,OUTPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,dbg_sel,INPUT,1,-,module port,0 = Dedicated UART, 1 = Dedicate...
+riscv_soc_ahb,Top_Level,uart_rx,INPUT,1,-,module port,Dedicated Debugger UART RX (idle...
+riscv_soc_ahb,Top_Level,uart_tx,OUTPUT,1,-,module port,Dedicated Debugger UART TX
+riscv_soc_ahb,Top_Level,ft1248_clk,OUTPUT,1,-,module port,SCLK output to FT232H
+riscv_soc_ahb,Top_Level,ft1248_ss_n,OUTPUT,1,-,module port,SS# output to FT232H
+riscv_soc_ahb,Top_Level,ft1248_miso,INPUT,1,-,module port,MISO / RXF# input (idle HIGH)
+riscv_soc_ahb,Top_Level,ft1248_miosio,INOUT,1,-,module port,Bidirectional MIOSIO data bus
+riscv_soc_ahb,Top_Level,core_halted_led,OUTPUT,1,-,module port,LED output indicating core is ha...

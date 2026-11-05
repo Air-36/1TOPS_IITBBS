@@ -3,67 +3,67 @@
 // Adapted from SoC Labs SoCDebug Tech for 1TOPS SoC / 1tops_soc
 //-----------------------------------------------------------------------------
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module socdebug_ahb #(
-    parameter         PROMPT_CHAR      = "]",
-    parameter [15:0]  DEFAULT_UART_DIV = 16'd868,
-    parameter [ 7:0]  DEFAULT_FT_DIV   = 8'd4
-)(  
-    // AHB-lite Master Interface
-    input  wire                     HCLK,
-    input  wire                     HRESETn,
-    output wire              [31:0] HADDR32_o,
-    output wire              [ 2:0] HBURST3_o,
-    output wire                     HMASTLOCK_o,
-    output wire              [ 3:0] HPROT4_o,
-    output wire              [ 2:0] HSIZE3_o,
-    output wire              [ 1:0] HTRANS2_o,
-    output wire              [31:0] HWDATA32_o,
-    output wire                     HWRITE_o,
-    input  wire              [31:0] HRDATA32_i,
-    input  wire                     HREADY_i,
-    input  wire                     HRESP_i,
-    
-    // Comms Byte Stream (AXI-Stream format from/to UART or USRT)
-    // Stream to Host (Debugger TX -> Host RX)
-    output wire                     COMTX_TVALID_o,
-    output wire            [ 7:0]   COMTX_TDATA_o,
-    input  wire                     COMTX_TREADY_i,
-    // Stream from Host (Host TX -> Debugger RX)
-    input  wire                     COMRX_TVALID_i,
-    input  wire             [ 7:0]  COMRX_TDATA_i,
-    output wire                     COMRX_TREADY_o,
-    
-    // STDIO Byte Stream (Optional terminal I/O bypass)
-    output wire                     STDTX_TVALID_o,
-    output wire            [ 7:0]   STDTX_TDATA_o,
-    input  wire                     STDTX_TREADY_i,
-    input  wire                     STDRX_TVALID_i,
-    input  wire             [ 7:0]  STDRX_TDATA_i,
-    output wire                     STDRX_TREADY_o,
-    
-    // Core Debug & Control Signals
-    output wire                     core_halt_o,      // Connected to ExternalStall of RISC-V Core
-    output wire                     core_reset_o,     // Core/System Reset request
-    input  wire                     core_halted_i,    // Core Halted Status feedback
-    output wire                     core_step_o,      // Core Step Request (GPO8[2])
-    output wire                     core_step_mode_o, // Core Step Mode (GPO8[3]: 0=Instr, 1=Cycle)
-    input  wire                     core_step_busy_i, // Core Step in progress (GPI8[1])
-    input  wire                     core_step_done_i, // Core Step completed (GPI8[2])
-    
-    // Raw GPIO interface
-    output wire               [7:0] GPO8_o,
-    input  wire               [7:0] GPI8_i,
+        parameter         PROMPT_CHAR      = "]",
+        parameter [15:0]  DEFAULT_UART_DIV = 16'd868,
+        parameter [ 7:0]  DEFAULT_FT_DIV   = 8'd4
+    )(
+        // AHB-lite Master Interface
+        input  wire                     HCLK,
+        input  wire                     HRESETn,
+        output wire              [31:0] HADDR32_o,
+        output wire              [ 2:0] HBURST3_o,
+        output wire                     HMASTLOCK_o,
+        output wire              [ 3:0] HPROT4_o,
+        output wire              [ 2:0] HSIZE3_o,
+        output wire              [ 1:0] HTRANS2_o,
+        output wire              [31:0] HWDATA32_o,
+        output wire                     HWRITE_o,
+        input  wire              [31:0] HRDATA32_i,
+        input  wire                     HREADY_i,
+        input  wire                     HRESP_i,
 
-    // Dynamic Clock Dividers (controlled via Debugger ADP and Core AHB Slave)
-    input  wire                     ahb_uart_clkdiv_we_i,
-    input  wire              [15:0] ahb_uart_clkdiv_i,
-    input  wire                     ahb_ft_clkdiv_we_i,
-    input  wire              [ 7:0] ahb_ft_clkdiv_i,
-    output wire              [15:0] uart_clkdiv_o,
-    output wire              [ 7:0] ft_clkdiv_o
-);
+        // Comms Byte Stream (AXI-Stream format from/to UART or USRT)
+        // Stream to Host (Debugger TX -> Host RX)
+        output wire                     COMTX_TVALID_o,
+        output wire            [ 7:0]   COMTX_TDATA_o,
+        input  wire                     COMTX_TREADY_i,
+        // Stream from Host (Host TX -> Debugger RX)
+        input  wire                     COMRX_TVALID_i,
+        input  wire             [ 7:0]  COMRX_TDATA_i,
+        output wire                     COMRX_TREADY_o,
+
+        // STDIO Byte Stream (Optional terminal I/O bypass)
+        output wire                     STDTX_TVALID_o,
+        output wire            [ 7:0]   STDTX_TDATA_o,
+        input  wire                     STDTX_TREADY_i,
+        input  wire                     STDRX_TVALID_i,
+        input  wire             [ 7:0]  STDRX_TDATA_i,
+        output wire                     STDRX_TREADY_o,
+
+        // Core Debug & Control Signals
+        output wire                     core_halt_o,      // Connected to ExternalStall of RISC-V Core
+        output wire                     core_reset_o,     // Core/System Reset request
+        input  wire                     core_halted_i,    // Core Halted Status feedback
+        output wire                     core_step_o,      // Core Step Request (GPO8[2])
+        output wire                     core_step_mode_o, // Core Step Mode (GPO8[3]: 0=Instr, 1=Cycle)
+        input  wire                     core_step_busy_i, // Core Step in progress (GPI8[1])
+        input  wire                     core_step_done_i, // Core Step completed (GPI8[2])
+
+        // Raw GPIO interface
+        output wire               [7:0] GPO8_o,
+        input  wire               [7:0] GPI8_i,
+
+        // Dynamic Clock Dividers (controlled via Debugger ADP and Core AHB Slave)
+        input  wire                     ahb_uart_clkdiv_we_i,
+        input  wire              [15:0] ahb_uart_clkdiv_i,
+        input  wire                     ahb_ft_clkdiv_we_i,
+        input  wire              [ 7:0] ahb_ft_clkdiv_i,
+        output wire              [15:0] uart_clkdiv_o,
+        output wire              [ 7:0] ft_clkdiv_o
+    );
 
     wire [7:0] gpo8_int;
     wire [7:0] gpi8_int;
@@ -107,11 +107,11 @@ module socdebug_ahb #(
         .HRDATA32_i     (HRDATA32_i),
         .HREADY_i       (HREADY_i),
         .HRESP_i        (HRESP_i),
-        
+
         // GPIO Interface
         .GPO8_o         (gpo8_int),
         .GPI8_i         (gpi8_int),
-        
+
         // STDIO Interface
         .STDTX_TVALID_o (STDTX_TVALID_o),
         .STDTX_TDATA_o  (STDTX_TDATA_o ),
@@ -119,7 +119,7 @@ module socdebug_ahb #(
         .STDRX_TVALID_i (STDRX_TVALID_i),
         .STDRX_TDATA_i  (STDRX_TDATA_i ),
         .STDRX_TREADY_o (STDRX_TREADY_o),
-        
+
         // COMIO Interface
         .COMRX_TVALID_i (COMRX_TVALID_i),
         .COMRX_TDATA_i  (COMRX_TDATA_i ),

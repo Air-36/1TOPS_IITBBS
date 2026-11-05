@@ -4,32 +4,32 @@
 // Supports dynamic, glitch-free reconfigurable baud rate clock divider
 //-----------------------------------------------------------------------------
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module socdebug_uart #(
-    parameter CLK_FREQ   = 100_000_000, // Basys 3 100 MHz oscillator
-    parameter BAUD_RATE  = 115200
-)(
-    input  wire        clk,
-    input  wire        rst_n,
+        parameter CLK_FREQ   = 100_000_000, // Basys 3 100 MHz oscillator
+        parameter BAUD_RATE  = 115200
+    )(
+        input  wire        clk,
+        input  wire        rst_n,
 
-    // Dynamic Clock Divider (clocks per bit, controlled only via Debugger)
-    input  wire [15:0] clks_per_bit_i,
+        // Dynamic Clock Divider (clocks per bit, controlled only via Debugger)
+        input  wire [15:0] clks_per_bit_i,
 
-    // Serial Pins
-    input  wire        uart_rx,
-    output reg         uart_tx,
+        // Serial Pins
+        input  wire        uart_rx,
+        output reg         uart_tx,
 
-    // Host to Debugger (RX stream)
-    output reg  [7:0]  m_axis_tdata,
-    output reg         m_axis_tvalid,
-    input  wire        m_axis_tready,
+        // Host to Debugger (RX stream)
+        output reg  [7:0]  m_axis_tdata,
+        output reg         m_axis_tvalid,
+        input  wire        m_axis_tready,
 
-    // Debugger to Host (TX stream)
-    input  wire [7:0]  s_axis_tdata,
-    input  wire        s_axis_tvalid,
-    output wire        s_axis_tready
-);
+        // Debugger to Host (TX stream)
+        input  wire [7:0]  s_axis_tdata,
+        input  wire        s_axis_tvalid,
+        output wire        s_axis_tready
+    );
 
     localparam DEFAULT_CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
 

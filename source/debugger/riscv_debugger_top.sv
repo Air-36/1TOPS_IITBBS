@@ -8,67 +8,67 @@
 //   - Hardware Core Halt / Resume / Reset pipeline hooks
 //-----------------------------------------------------------------------------
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module riscv_debugger_top #(
-    parameter CLK_FREQ    = 100_000_000, // Basys 3 100 MHz oscillator
-    parameter BAUD_RATE   = 115200,
-    parameter PROMPT_CHAR = "]",
-    parameter FT_WIDTH    = 1,
-    parameter FT_CLKDIV   = 8'd4          // 100 MHz / (2 * (4 + 1)) = 10 MHz FT1248 clock
-)(
-    input  wire                 clk,
-    input  wire                 rst_n,
+        parameter CLK_FREQ    = 100_000_000, // Basys 3 100 MHz oscillator
+        parameter BAUD_RATE   = 115200,
+        parameter PROMPT_CHAR = "]",
+        parameter FT_WIDTH    = 1,
+        parameter FT_CLKDIV   = 8'd4          // 100 MHz / (2 * (4 + 1)) = 10 MHz FT1248 clock
+    )(
+        input  wire                 clk,
+        input  wire                 rst_n,
 
-    // Communication Protocol Selection Pin (Physical hardware pad)
-    // 0 = Dedicated Debug UART
-    // 1 = Dedicated FT1248 High-Speed Interface
-    input  wire                 dbg_sel,
+        // Communication Protocol Selection Pin (Physical hardware pad)
+        // 0 = Dedicated Debug UART
+        // 1 = Dedicated FT1248 High-Speed Interface
+        input  wire                 dbg_sel,
 
-    // UART Physical Interface
-    input  wire                 uart_rx,
-    output wire                 uart_tx,
+        // UART Physical Interface
+        input  wire                 uart_rx,
+        output wire                 uart_tx,
 
-    // FT1248 Physical Interface
-    output wire                 ft1248_clk,     // SCLK output to FTDI
-    output wire                 ft1248_ss_n,    // SS_N output to FTDI
-    input  wire                 ft1248_miso,    // MISO input from FTDI (RXF# status)
-    inout  wire [FT_WIDTH-1:0]  ft1248_miosio,  // Bi-directional data (TXE# status when idle)
+        // FT1248 Physical Interface
+        output wire                 ft1248_clk,     // SCLK output to FTDI
+        output wire                 ft1248_ss_n,    // SS_N output to FTDI
+        input  wire                 ft1248_miso,    // MISO input from FTDI (RXF# status)
+        inout  wire [FT_WIDTH-1:0]  ft1248_miosio,  // Bi-directional data (TXE# status when idle)
 
-    // Core Control & Status Signals
-    output wire                 core_halt_o,      // Connect to ExternalStall of RISC-V Core
-    output wire                 core_reset_o,     // System / Core Reset request
-    input  wire                 core_halted_i,    // Core Halted status feedback from Hazard unit
-    output wire                 core_step_o,      // Core Step Request (GPO8[2])
-    output wire                 core_step_mode_o, // Core Step Mode (GPO8[3]: 0=Instr, 1=Cycle)
-    input  wire                 core_step_busy_i, // Core Step in progress (GPI8[1])
-    input  wire                 core_step_done_i, // Core Step completed (GPI8[2])
+        // Core Control & Status Signals
+        output wire                 core_halt_o,      // Connect to ExternalStall of RISC-V Core
+        output wire                 core_reset_o,     // System / Core Reset request
+        input  wire                 core_halted_i,    // Core Halted status feedback from Hazard unit
+        output wire                 core_step_o,      // Core Step Request (GPO8[2])
+        output wire                 core_step_mode_o, // Core Step Mode (GPO8[3]: 0=Instr, 1=Cycle)
+        input  wire                 core_step_busy_i, // Core Step in progress (GPI8[1])
+        input  wire                 core_step_done_i, // Core Step completed (GPI8[2])
 
-    // AHB-Lite Master Interface (Connect to AHB Mux/Arbiter)
-    output wire [31:0]          DEBUG_HADDR,
-    output wire [ 2:0]          DEBUG_HBURST,
-    output wire                 DEBUG_HMASTLOCK,
-    output wire [ 3:0]          DEBUG_HPROT,
-    output wire [ 2:0]          DEBUG_HSIZE,
-    output wire [ 1:0]          DEBUG_HTRANS,
-    output wire [31:0]          DEBUG_HWDATA,
-    output wire                 DEBUG_HWRITE,
-    input  wire [31:0]          DEBUG_HRDATA,
-    input  wire                 DEBUG_HREADY,
-    input  wire                 DEBUG_HRESP,
+        // AHB-Lite Master Interface (Connect to AHB Mux/Arbiter)
+        output wire [31:0]          DEBUG_HADDR,
+        output wire [ 2:0]          DEBUG_HBURST,
+        output wire                 DEBUG_HMASTLOCK,
+        output wire [ 3:0]          DEBUG_HPROT,
+        output wire [ 2:0]          DEBUG_HSIZE,
+        output wire [ 1:0]          DEBUG_HTRANS,
+        output wire [31:0]          DEBUG_HWDATA,
+        output wire                 DEBUG_HWRITE,
+        input  wire [31:0]          DEBUG_HRDATA,
+        input  wire                 DEBUG_HREADY,
+        input  wire                 DEBUG_HRESP,
 
-    // Raw GPIO (optional monitor)
-    output wire [7:0]           GPO8,
-    input  wire [7:0]           GPI8,
+        // Raw GPIO (optional monitor)
+        output wire [7:0]           GPO8,
+        input  wire [7:0]           GPI8,
 
-    // AHB Slave MMIO Clock Divider Controls
-    input  wire                 ahb_uart_clkdiv_we_i,
-    input  wire [15:0]          ahb_uart_clkdiv_i,
-    input  wire                 ahb_ft_clkdiv_we_i,
-    input  wire [ 7:0]          ahb_ft_clkdiv_i,
-    output wire [15:0]          uart_clkdiv_o,
-    output wire [ 7:0]          ft_clkdiv_o
-);
+        // AHB Slave MMIO Clock Divider Controls
+        input  wire                 ahb_uart_clkdiv_we_i,
+        input  wire [15:0]          ahb_uart_clkdiv_i,
+        input  wire                 ahb_ft_clkdiv_we_i,
+        input  wire [ 7:0]          ahb_ft_clkdiv_i,
+        output wire [15:0]          uart_clkdiv_o,
+        output wire [ 7:0]          ft_clkdiv_o
+    );
 
     //-------------------------------------------------------------------------
     // Internal Reconfigurable Clock Dividers (Controlled only via Debugger)

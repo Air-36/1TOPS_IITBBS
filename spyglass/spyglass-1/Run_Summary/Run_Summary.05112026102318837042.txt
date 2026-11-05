@@ -1,0 +1,15 @@
+Date Created     : 05-11-2026 10:23:18
+SpyGlass Version : SpyGlass_vW-2024.09-SP2-8
+Project Name     : spyglass-1
+Goal Name        : lint/lint_rtl
+Scenario Name    : default_scenario
+Top              : riscv_soc_ahb
+
+Message Summary
+Severity   Non-Waived  Waived
+FATAL           0         0
+ERROR          14         0
+WARNING       266         0
+INFO            9         0
+
+-dashboard_data sync_crossings 

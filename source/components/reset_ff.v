@@ -1,18 +1,18 @@
 module reset_ff #(parameter WIDTH = 32, RESET_VAL = 0) (
-    input       clk, rst, clr,
-    input       [WIDTH-1:0] d,
-    output reg  [WIDTH-1:0] q
-);
+        input       clk, rst, clr,
+        input       [WIDTH-1:0] d,
+        output reg  [WIDTH-1:0] q
+    );
 
-// synthesis translate_off
-initial begin
-    q = RESET_VAL;
-end
-// synthesis translate_on
+// // synthesis translate_off
+// initial begin
+//     q = RESET_VAL;
+// end
+// // synthesis translate_on
 
-always @(posedge clk) begin
-    if (rst) q <= RESET_VAL;
-    else if (!clr) q <= d;
-end
+    always @(posedge clk) begin
+        if (rst) q <= RESET_VAL;
+        else if (!clr) q <= d;
+    end
 
 endmodule

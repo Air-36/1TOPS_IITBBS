@@ -24,30 +24,30 @@
 //      Drives step_busy_o (GPI8[1]) and step_done_o (GPI8[2]) for host polling.
 //-----------------------------------------------------------------------------
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module core_step_controller #(
-    parameter int WATCHDOG_LIMIT = 65536 // Max cycles before auto-timeout on instruction step
-)(
-    input  wire        clk,
-    input  wire        rst_n,
+        parameter int WATCHDOG_LIMIT = 65536 // Max cycles before auto-timeout on instruction step
+    )(
+        input  wire        clk,
+        input  wire        rst_n,
 
-    // Debugger Control Inputs (from GPO8)
-    input  wire        halt_req_i,       // GPO8[1]: 1 = Core Halt requested, 0 = Core Free Run
-    input  wire        step_req_i,       // GPO8[2]: 0->1 transition triggers a step
-    input  wire        step_mode_i,      // GPO8[3]: 0 = Instruction Step, 1 = Clock Cycle Step
-    input  wire        auto_halt_req_i,         // 1 = Auto-halt on trap/fault
+        // Debugger Control Inputs (from GPO8)
+        input  wire        halt_req_i,       // GPO8[1]: 1 = Core Halt requested, 0 = Core Free Run
+        input  wire        step_req_i,       // GPO8[2]: 0->1 transition triggers a step
+        input  wire        step_mode_i,      // GPO8[3]: 0 = Instruction Step, 1 = Clock Cycle Step
+        input  wire        auto_halt_req_i,         // 1 = Auto-halt on trap/fault
 
-    // Core Status / Feedback Inputs
-    input  wire        instr_retired_i,  // 1-cycle strobe from CPU core when instruction retires
-    input  wire        core_stall_ext_i, // Additional external stall (e.g. from top-level pin)
+        // Core Status / Feedback Inputs
+        input  wire        instr_retired_i,  // 1-cycle strobe from CPU core when instruction retires
+        input  wire        core_stall_ext_i, // Additional external stall (e.g. from top-level pin)
 
-    // Pipeline Control & Status Outputs
-    output reg         core_stall_o,     // Drives ExternalStall of 1TOPS SoC core hazard unit
-    output reg         step_busy_o,      // High while a step is executing (fed to GPI8[1])
-    output reg         step_done_o,      // 1-cycle strobe upon step completion (fed to GPI8[2])
-    output reg [31:0]  step_count_o      // Diagnostic counter of total steps executed
-);
+        // Pipeline Control & Status Outputs
+        output reg         core_stall_o,     // Drives ExternalStall of 1TOPS SoC core hazard unit
+        output reg         step_busy_o,      // High while a step is executing (fed to GPI8[1])
+        output reg         step_done_o,      // 1-cycle strobe upon step completion (fed to GPI8[2])
+        output reg [31:0]  step_count_o      // Diagnostic counter of total steps executed
+    );
 
     // State Encoding
     typedef enum logic [1:0] {

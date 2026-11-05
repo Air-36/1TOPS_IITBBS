@@ -1,0 +1,1155 @@
+*** Start analyzing build configuration ***
+INFO: Auto-config - Scanning: /home/23EC01009/1TOPS_IITBBS
+INFO: Auto-config - VLOG: /home/23EC01009/1TOPS_IITBBS
+INFO: Auto-config - Wrote:
+    .dvt/default.build.auto.1
+*** List of included argument files ***
+    Build configuration file:  /home/23EC01009/1TOPS_IITBBS/.dvt/default.build
+    -f /home/23EC01009/1TOPS_IITBBS/.dvt/default.build.auto.1
+*** List of invocations ***
+Invocation #1 +dvt_init+dvt in /home/23EC01009/1TOPS_IITBBS/.dvt/default.build.auto.1 at line 9
+*** Error: BUILD_CONFIG: [AUTO] Unresolved includes
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/.dvt/default.build.auto.1:11 [invocation 1]
+*** Done analyzing build configuration [147 ms] ***
+
+*** Start SystemVerilog build ***
+*** Invocation #1***
+Loading (1) /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv [18 ms, 76 lines, SystemVerilog_2012] ...
+Loading (2) /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv [7 ms, 82 lines, SystemVerilog_2012] ...
+Loading (3) /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv [18 ms, 277 lines, SystemVerilog_2012] ...
+Loading (4) /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv [7 ms, 136 lines, SystemVerilog_2012] ...
+Loading (5) /home/23EC01009/1TOPS_IITBBS/source/main/soc/multiplier_ahb.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/soc/multiplier_ahb.v [5 ms, 93 lines, Verilog_2001] ...
+Loading (6) /home/23EC01009/1TOPS_IITBBS/source/main/soc/riscv_soc_ahb.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/soc/riscv_soc_ahb.v [25 ms, 557 lines, Verilog_2001] ...
+Loading (7) /home/23EC01009/1TOPS_IITBBS/source/uncore/uart_apb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/uart_apb.sv [7 ms, 182 lines, SystemVerilog_2012] ...
+Loading (8) /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v [35 ms, 822 lines, Verilog_2001] ...
+Loading (9) /home/23EC01009/1TOPS_IITBBS/source/main/ahb_ram.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/ahb_ram.v [5 ms, 158 lines, Verilog_2001] ...
+Loading (10) /home/23EC01009/1TOPS_IITBBS/source/uncore/ram_ahb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/ram_ahb.sv [4 ms, 184 lines, SystemVerilog_2012] ...
+Loading (11) /home/23EC01009/1TOPS_IITBBS/source/components/adder.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/adder.v [1 ms, 9 lines, Verilog_2001] ...
+Loading (12) /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v [5 ms, 148 lines, Verilog_2001] ...
+Loading (13) /home/23EC01009/1TOPS_IITBBS/source/components/alu.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/alu.v [1 ms, 34 lines, Verilog_2001] ...
+Loading (14) /home/23EC01009/1TOPS_IITBBS/source/components/alu_decoder.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/alu_decoder.v [1 ms, 34 lines, Verilog_2001] ...
+Loading (15) /home/23EC01009/1TOPS_IITBBS/source/components/branching_unit.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/branching_unit.v [0 ms, 22 lines, Verilog_2001] ...
+Loading (16) /home/23EC01009/1TOPS_IITBBS/source/components/controller.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/controller.v [2 ms, 82 lines, Verilog_2001] ...
+Loading (17) /home/23EC01009/1TOPS_IITBBS/source/components/csr_file.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/csr_file.v [5 ms, 197 lines, Verilog_2001] ...
+Loading (18) /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v [13 ms, 469 lines, Verilog_2001] ...
+Loading (19) /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v [1 ms, 96 lines, Verilog_2001] ...
+Loading (20) /home/23EC01009/1TOPS_IITBBS/source/components/hazard.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/hazard.v [1 ms, 81 lines, Verilog_2001] ...
+Loading (21) /home/23EC01009/1TOPS_IITBBS/source/components/imm_extend.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/imm_extend.v [1 ms, 22 lines, Verilog_2001] ...
+Loading (22) /home/23EC01009/1TOPS_IITBBS/source/components/main_decoder.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/main_decoder.v [2 ms, 51 lines, Verilog_2001] ...
+Loading (23) /home/23EC01009/1TOPS_IITBBS/source/components/mux2.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/mux2.v [1 ms, 10 lines, Verilog_2001] ...
+Loading (24) /home/23EC01009/1TOPS_IITBBS/source/components/mux3.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/mux3.v [0 ms, 11 lines, Verilog_2001] ...
+Loading (25) /home/23EC01009/1TOPS_IITBBS/source/components/mux4.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/mux4.v [1 ms, 10 lines, Verilog_2001] ...
+Loading (26) /home/23EC01009/1TOPS_IITBBS/source/components/mux5.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/mux5.v [0 ms, 19 lines, Verilog_2001] ...
+Loading (27) /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_de.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_de.v [1 ms, 106 lines, Verilog_2001] ...
+Loading (28) /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_em.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_em.v [1 ms, 91 lines, Verilog_2001] ...
+Loading (29) /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_fd.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_fd.v [0 ms, 39 lines, Verilog_2001] ...
+Loading (30) /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_mw.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/pl_reg_mw.v [1 ms, 53 lines, Verilog_2001] ...
+Loading (31) /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v [1 ms, 46 lines, Verilog_2001] ...
+Loading (32) /home/23EC01009/1TOPS_IITBBS/source/components/reg_file.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/reg_file.v [1 ms, 34 lines, Verilog_2001] ...
+Loading (33) /home/23EC01009/1TOPS_IITBBS/source/components/reset_ff.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/reset_ff.v [0 ms, 19 lines, Verilog_2001] ...
+Loading (34) /home/23EC01009/1TOPS_IITBBS/source/components/subword_unit.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/subword_unit.v [2 ms, 76 lines, Verilog_2001] ...
+Loading (35) /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v [2 ms, 91 lines, Verilog_2001] ...
+Loading (36) /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv [2 ms, 127 lines, SystemVerilog_2012] ...
+Loading (37) /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v [4 ms, 285 lines, Verilog_2001] ...
+Loading (38) /home/23EC01009/1TOPS_IITBBS/source/debugger/core_step_controller.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/core_step_controller.sv [1 ms, 189 lines, SystemVerilog_2012] ...
+Loading (39) /home/23EC01009/1TOPS_IITBBS/source/debugger/riscv_debugger_top.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/riscv_debugger_top.sv [5 ms, 254 lines, SystemVerilog_2012] ...
+Loading (40) /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ahb.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ahb.v [1 ms, 141 lines, Verilog_2001] ...
+Loading (41) /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v [6 ms, 380 lines, Verilog_2001] ...
+Loading (42) /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_uart.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_uart.v [4 ms, 220 lines, Verilog_2001] ...
+Loading (43) /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/SYNCHRONIZER_EDGES.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/SYNCHRONIZER_EDGES.v [0 ms, 44 lines, Verilog_2001] ...
+Loading (44) /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v [2 ms, 185 lines, Verilog_2001] ...
+Loading (45) /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv [15 ms, 1154 lines, SystemVerilog_2012] ...
+Loading (46) /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_alu_ops.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_alu_ops.sv [3 ms, 103 lines, SystemVerilog_2012] ...
+Loading (47) /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_branching_unit.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_branching_unit.sv [2 ms, 80 lines, SystemVerilog_2012] ...
+Loading (48) /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_imm_extend.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_imm_extend.sv [1 ms, 76 lines, SystemVerilog_2012] ...
+Loading (49) /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_subword_unit.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/01_core_modules/tb/tb_subword_unit.sv [1 ms, 98 lines, SystemVerilog_2012] ...
+Loading (50) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv [2 ms, 56 lines, SystemVerilog_2012] ...
+Loading (51) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv [1 ms, 45 lines, SystemVerilog_2012] ...
+Loading (52) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv [2 ms, 84 lines, SystemVerilog_2012] ...
+Loading (53) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ramxdetector.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ramxdetector.sv [1 ms, 49 lines, SystemVerilog_2012] ...
+Loading (54) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv [2 ms, 93 lines, SystemVerilog_2012] ...
+Loading (55) /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv [3 ms, 215 lines, SystemVerilog_2012] ...
+Loading (56) /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv [1 ms, 56 lines, SystemVerilog_2012] ...
+Loading (57) /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv [1 ms, 45 lines, SystemVerilog_2012] ...
+Loading (58) /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv [4 ms, 239 lines, SystemVerilog_2012] ...
+Loading (59) /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv [4 ms, 300 lines, SystemVerilog_2012] ...
+Loading (60) /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv [2 ms, 195 lines, SystemVerilog_2012] ...
+Loading (61) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv [1 ms, 56 lines, SystemVerilog_2012] ...
+Loading (62) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/apb_protocol_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/apb_protocol_checker.sv [0 ms, 45 lines, SystemVerilog_2012] ...
+Loading (63) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv [2 ms, 84 lines, SystemVerilog_2012] ...
+Loading (64) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ramxdetector.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ramxdetector.sv [0 ms, 49 lines, SystemVerilog_2012] ...
+Loading (65) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/watchdog.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/watchdog.sv [2 ms, 93 lines, SystemVerilog_2012] ...
+Loading (66) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/SYNCHRONIZER_EDGES.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/SYNCHRONIZER_EDGES.v [0 ms, 44 lines, Verilog_2001] ...
+Loading (67) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v [2 ms, 185 lines, Verilog_2001] ...
+Loading (68) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv [12 ms, 1065 lines, SystemVerilog_2012] ...
+Loading (69) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv [4 ms, 426 lines, SystemVerilog_2012] ...
+Loading (70) /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv [3 ms, 297 lines, SystemVerilog_2012] ...
+Loading (71) /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v [2 ms, 147 lines, Verilog_2001] ...
+Loading (72) /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem.v [1 ms, 27 lines, Verilog_2001] ...
+Loading (73) /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_ip.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_ip.v [1 ms, 25 lines, Verilog_2001] ...
+Loading (74) /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_op.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_op.v [2 ms, 33 lines, Verilog_2001] ...
+Loading (75) /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/instr_mem.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/instr_mem.v [1 ms, 19 lines, Verilog_2001] ...
+Loading (76) /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v [1 ms, 62 lines, Verilog_2001] ...
+Loading (77) /home/23EC01009/1TOPS_IITBBS/source/main/riscv_cpu.v ...
+Done /home/23EC01009/1TOPS_IITBBS/source/main/riscv_cpu.v [3 ms, 169 lines, Verilog_2001] ...
+Loading (78) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv [2 ms, 189 lines, SystemVerilog_2012] ...
+Loading (79) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv [4 ms, 185 lines, SystemVerilog_2012] ...
+Loading (80) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv [1 ms, 183 lines, SystemVerilog_2012] ...
+Loading (81) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv [3 ms, 183 lines, SystemVerilog_2012] ...
+Loading (82) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv [3 ms, 183 lines, SystemVerilog_2012] ...
+Loading (83) /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv [2 ms, 153 lines, SystemVerilog_2012] ...
+Loading (84) /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv [1 ms, 84 lines, SystemVerilog_2012] ...
+Loading (85) /home/23EC01009/1TOPS_IITBBS/source/uncore/clint_apb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/clint_apb.sv [2 ms, 98 lines, SystemVerilog_2012] ...
+Loading (86) /home/23EC01009/1TOPS_IITBBS/source/uncore/gpio_apb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/gpio_apb.sv [2 ms, 122 lines, SystemVerilog_2012] ...
+Loading (87) /home/23EC01009/1TOPS_IITBBS/source/uncore/plic_apb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/plic_apb.sv [1 ms, 131 lines, SystemVerilog_2012] ...
+Loading (88) /home/23EC01009/1TOPS_IITBBS/source/uncore/rom_ahb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/rom_ahb.sv [1 ms, 51 lines, SystemVerilog_2012] ...
+Loading (89) /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv [4 ms, 332 lines, SystemVerilog_2012] ...
+Loading (90) /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv [3 ms, 278 lines, SystemVerilog_2012] ...
+Loading (91) /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_fifo.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_fifo.sv [1 ms, 49 lines, SystemVerilog_2012] ...
+Loading (92) /home/23EC01009/1TOPS_IITBBS/source/uncore/uartPC16550D.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/uartPC16550D.sv [7 ms, 535 lines, SystemVerilog_2012] ...
+Loading (93) /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv ...
+Done /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv [4 ms, 440 lines, SystemVerilog_2012] ...
+Loading (94) /home/23EC01009/1TOPS_IITBBS/source/debugger/accelerator_debug_def.vh ...
+Done /home/23EC01009/1TOPS_IITBBS/source/debugger/accelerator_debug_def.vh [0 ms, 50 lines, Verilog_2001] ...
+*** Done invocation #1 [332 ms] ***
+*** Done parsing [LT 129 ms, PT 332 ms] ***
+*** Total number of lines [15 202] ***
+*** Error: SYSTEM_VERILOG_2012: Cannot open `include file "config.vh"
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:8 [compile index 1][invocation 1]
+*** Error: SYSTEM_VERILOG_2012: Cannot open `include file "parameter-defs.vh"
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:12 [compile index 1][invocation 1]
+*** Error: SYSTEM_VERILOG_2012: Cannot open `include file "config.vh"
+    at line 6 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:6 [compile index 1][invocation 1]
+*** Error: SYSTEM_VERILOG_2012: Cannot open `include file "parameter-defs.vh"
+    at line 7 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:7 [compile index 1][invocation 1]
+Performing post full build actions ...
+Performing post full build step 1 (SRI) [2 ms] ...
+Performing post full build step 2 (RI) [13 ms] ...
+Performing post full build step 3 (RCP) [5 ms] ...
+*** Files summary [94 total, 94 unique, 0 optimized] ***
+*** Done SystemVerilog build [451 ms] ***
+
+*** Start mixed mode extension build ***
+Performing mixed post full build step (VLOG - RI) [6 ms] ...
+*** Warning: UNSPECIFIED_TOP: Please specify a -top module/entity/configuration in the project build file
+*** Top design candidates: work.tops_soc_wrapper, work.tb, work.tops_soc_fpga_top, work.tb_debugger, work.tb_alu_ops, work.tb_branching_unit, work.tb_imm_extend, work.tb_subword_unit, work.tb_signal_level, work.tb_ahb_apb_bridge_crv, work.tb_ahb_mux_crv, ...
+Performing mixed post full build step (MIXED - ELAB) [557 ms] ...
+Performing mixed post full build step (MIXED - UNEL) [52 ms] ...
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:28 [compile index 1]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 29 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:29 [compile index 1]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 30 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:30 [compile index 1]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 67 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:67 [compile index 1]
+*** Warning: UNDECLARED_MODULE: Module 'tops_soc' is not declared
+    at line 66 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:66 [compile index 1]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:12 [compile index 2]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:13 [compile index 2]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 14 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:14 [compile index 2]
+*** Error: UNDECLARED_IDENTIFIER: Identifier 'P' is not declared
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:40 [compile index 2]
+*** Warning: UNDECLARED_MODULE: Module 'tops_soc' is not declared
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:40 [compile index 2]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'u_ahb_mux' of module 'ahb_mux' is missing port connection to output 'grant_data'
+    at line 248 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:248 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[0]' in sequential logic (use non-blocking assignment)
+    at line 509 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:509 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[1]' in sequential logic (use non-blocking assignment)
+    at line 510 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:510 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[2]' in sequential logic (use non-blocking assignment)
+    at line 511 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:511 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[3]' in sequential logic (use non-blocking assignment)
+    at line 512 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:512 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[4]' in sequential logic (use non-blocking assignment)
+    at line 513 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:513 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[5]' in sequential logic (use non-blocking assignment)
+    at line 514 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:514 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[6]' in sequential logic (use non-blocking assignment)
+    at line 515 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:515 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[7]' in sequential logic (use non-blocking assignment)
+    at line 516 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:516 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'last_completed_line' in sequential logic (use non-blocking assignment)
+    at line 519 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:519 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_line' in sequential logic (use non-blocking assignment)
+    at line 521 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:521 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_line' in sequential logic (use non-blocking assignment)
+    at line 524 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:524 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'last_completed_ft_line' in sequential logic (use non-blocking assignment)
+    at line 561 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:561 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'ft_rx_line' in sequential logic (use non-blocking assignment)
+    at line 563 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:563 [compile index 45]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'ft_rx_line' in sequential logic (use non-blocking assignment)
+    at line 566 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:566 [compile index 45]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'ahb_mux' is missing port connection to output 'grant_data'
+    at line 53 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:53 [compile index 59]
+*** Warning: WIDTH_MISMATCH_TRUNCATION: Assignment to 'write' of '1-bit' type from '$urandom_range()' of '32-bit' type
+    at line 114 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:114 [compile index 59]
+*** Error: NON_EXISTING_PORT: Non existing port 'clk' of module 'riscv_cpu'
+    at line 32 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:32 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'reset' of module 'riscv_cpu'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:33 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'Instr' of module 'riscv_cpu'
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:35 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'MemWriteM' of module 'riscv_cpu'
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:36 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'Mem_WrAddr' of module 'riscv_cpu'
+    at line 37 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:37 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'Mem_WrData' of module 'riscv_cpu'
+    at line 38 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:38 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'ReadData' of module 'riscv_cpu'
+    at line 39 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:39 [compile index 76]
+*** Error: NON_EXISTING_PORT: Non existing port 'funct3' of module 'riscv_cpu'
+    at line 41 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:41 [compile index 76]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'rvcpu' of module 'riscv_cpu' is missing port connection to input 'HCLK, HRESETn, HRDATA, HREADY, ...'
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:31 [compile index 76]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'rvcpu' of module 'riscv_cpu' is missing port connection to output 'HADDR, HWDATA, HWSTRB, HWRITE, ...'
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:31 [compile index 76]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to input 'dbg_rf_raddr'
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:31 [compile index 78]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to output 'dbg_rf_rdata, dbg_PCD, dbg_PCE, dbg_PCM, ...'
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:31 [compile index 78]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'halted' in sequential logic (use non-blocking assignment)
+    at line 158 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:158 [compile index 78]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'f_sig' in sequential logic (use non-blocking assignment)
+    at line 171 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:171 [compile index 78]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to input 'dbg_rf_raddr'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:33 [compile index 79]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to output 'dbg_rf_rdata, dbg_PCD, dbg_PCE, dbg_PCM, ...'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:33 [compile index 79]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to input 'dbg_rf_raddr'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:33 [compile index 80]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to output 'dbg_rf_rdata, dbg_PCD, dbg_PCE, dbg_PCM, ...'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:33 [compile index 80]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to input 'dbg_rf_raddr'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:33 [compile index 81]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to output 'dbg_rf_rdata, dbg_PCD, dbg_PCE, dbg_PCM, ...'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:33 [compile index 81]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to input 'dbg_rf_raddr'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:33 [compile index 82]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'dut' of module 'riscv_cpu' is missing port connection to output 'dbg_rf_rdata, dbg_PCD, dbg_PCE, dbg_PCM, ...'
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:33 [compile index 82]
+*** Error: NON_EXISTING_PORT: Non existing port 'clk' of module 'riscv_cpu'
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:35 [compile index 83]
+*** Error: NON_EXISTING_PORT: Non existing port 'rst_n' of module 'riscv_cpu'
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:36 [compile index 83]
+*** Error: NON_EXISTING_PORT: Non existing port 'CurrentPC' of module 'riscv_cpu'
+    at line 50 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:50 [compile index 83]
+*** Error: NON_EXISTING_PARAMETER: Non existing parameter 'RAM_SIZE' of type 'ahb_ram'
+    at line 56 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:56 [compile index 83]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'u_core' of module 'riscv_cpu' is missing port connection to input 'HCLK, HRESETn, MTimerInt, MSwInt, ...'
+    at line 32 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:32 [compile index 83]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'u_core' of module 'riscv_cpu' is missing port connection to output 'HWSTRB, PC, PCW, ALUResultW, ...'
+    at line 32 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:32 [compile index 83]
+*** Warning: MISSING_PORT_CONNECTION: Instance 'u_ram' of module 'ahb_ram' is missing port connection to input 'HWSTRB'
+    at line 54 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:54 [compile index 83]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'txd_sr' of '9-bit' type from '8'b00000000' of '8-bit' type
+    at line 165 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:165 [compile index 67]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'txd_sr' of '9-bit' type from '8'b00000000' of '8-bit' type
+    at line 167 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:167 [compile index 67]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'txd_sr' of '9-bit' type from 'rxd_tdata8_i' of '8-bit' type
+    at line 169 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:169 [compile index 67]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'txd_sr' of '9-bit' type from '{1'b0, txd_sr[7 : 1]}' of '8-bit' type
+    at line 171 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:171 [compile index 67]
+*** Warning: WIDTH_MISMATCH_TRUNCATION: Assignment to 'rand_rw' of '1-bit' type from '$urandom_range()' of '32-bit' type
+    at line 218 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:218 [compile index 58]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'alu_out' of '32-bit' type from '1'bx' of '1-bit' type
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/components/alu.v:24 [compile index 13]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'half_bit' of '16-bit' type from 'clks_per_bit[15 : 1]' of '15-bit' type
+    at line 44 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_uart.v:44 [compile index 42]
+*** Warning: WIDTH_MISMATCH_PADDING: Assignment to 'HRDATA' of '32-bit' type from '{16'b0, TrapM, mretM, External...' of '29-bit' type
+    at line 247 in /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v:247 [compile index 37]
+*** Warning: WIDTH_MISMATCH_TRUNCATION: Assignment to 'PRDATA' of '32-bit' type from '{Dout, Dout}' of '64-bit' type
+    at line 120 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:120 [compile index 89]
+*** Warning: WIDTH_MISMATCH_TRUNCATION: Assignment to 'PRDATA' of '32-bit' type from '{8{dout}}' of '64-bit' type
+    at line 137 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uart_apb.sv:137 [compile index 7]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'cycles' in sequential logic (use non-blocking assignment)
+    at line 115 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:115 [compile index 71]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'halted' in sequential logic (use non-blocking assignment)
+    at line 120 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:120 [compile index 71]
+*** Warning: UNELABORATED_MODULE: Module 'work.tb' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:8 [compile index 4]
+*** Warning: UNELABORATED_MODULE: Module 'work.mux4' is not elaborated
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/components/mux4.v:1 [compile index 25]
+*** Warning: UNELABORATED_MODULE: Module 'work.SYNCHRONIZER_EDGES' is not elaborated
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/SYNCHRONIZER_EDGES.v:11 [compile index 43]
+*** Warning: UNELABORATED_MODULE: Module 'work.SYNCHRONIZER_EDGES' is not elaborated
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/SYNCHRONIZER_EDGES.v:11 [compile index 66]
+*** Warning: UNELABORATED_MODULE: Module 'work.f232h_ft1248_stream' is not elaborated
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v:16 [compile index 44]
+*** Warning: UNELABORATED_MODULE: Module 'work.tb_debugger' is not elaborated
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:25 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[0]' in sequential logic (use non-blocking assignment)
+    at line 493 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:493 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[1]' in sequential logic (use non-blocking assignment)
+    at line 494 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:494 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[2]' in sequential logic (use non-blocking assignment)
+    at line 495 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:495 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[3]' in sequential logic (use non-blocking assignment)
+    at line 496 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:496 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[4]' in sequential logic (use non-blocking assignment)
+    at line 497 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:497 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[5]' in sequential logic (use non-blocking assignment)
+    at line 498 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:498 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[6]' in sequential logic (use non-blocking assignment)
+    at line 499 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:499 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_char[7]' in sequential logic (use non-blocking assignment)
+    at line 500 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:500 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'last_completed_line' in sequential logic (use non-blocking assignment)
+    at line 503 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:503 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_line' in sequential logic (use non-blocking assignment)
+    at line 505 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:505 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'rx_line' in sequential logic (use non-blocking assignment)
+    at line 508 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:508 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'last_completed_ft_line' in sequential logic (use non-blocking assignment)
+    at line 545 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:545 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'ft_rx_line' in sequential logic (use non-blocking assignment)
+    at line 547 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:547 [compile index 68]
+*** Warning: ASSIGNMENT_BLOCKING: Blocking assignment of 'ft_rx_line' in sequential logic (use non-blocking assignment)
+    at line 550 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:550 [compile index 68]
+*** Warning: UNELABORATED_MODULE: Module 'work.ahb_protocol_checker' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv:8 [compile index 50]
+*** Warning: UNELABORATED_MODULE: Module 'work.ahb_protocol_checker' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv:8 [compile index 56]
+*** Warning: UNELABORATED_MODULE: Module 'work.apb_protocol_checker' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv:8 [compile index 51]
+*** Warning: UNELABORATED_MODULE: Module 'work.apb_protocol_checker' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv:8 [compile index 57]
+*** Warning: UNELABORATED_MODULE: Module 'work.core_invariants_checker' is not elaborated
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:8 [compile index 52]
+*** Warning: UNELABORATED_MODULE: Module 'work.ramxdetector' is not elaborated
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ramxdetector.sv:27 [compile index 53]
+*** Warning: UNELABORATED_MODULE: Module 'work.watchdog' is not elaborated
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv:11 [compile index 54]
+*** Warning: UNELABORATED_MODULE: Module 'work.rom_ahb' is not elaborated
+    at line 4 in /home/23EC01009/1TOPS_IITBBS/source/uncore/rom_ahb.sv:4 [compile index 88]
+*** Warning: UNELABORATED_MODULE: Module 'work.uartPC16550D' is not elaborated
+    at line 3 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uartPC16550D.sv:3 [compile index 92]
+*** Error: NON_EXISTING_PACKAGE: Non existing package 'cvw'
+    at line 10 in /home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv:10 [compile index 1]
+*** Error: NON_EXISTING_PACKAGE: Non existing package 'cvw'
+    at line 5 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv:5 [compile index 2]
+Performing mixed post full build step (VLOG - RD) [4 ms] ...
+Performing mixed post full build step (VLOG - US) [101 ms] ...
+*** Warning: DUPLICATE_MODULE: Duplicate module 'tb', already declared
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:8 [compile index 4]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'SYNCHRONIZER_EDGES', already declared
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/SYNCHRONIZER_EDGES.v
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/SYNCHRONIZER_EDGES.v:11 [compile index 66]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'f232h_ft1248_stream', already declared
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:16 [compile index 67]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'tb_debugger', already declared
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:25 [compile index 68]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'ahb_protocol_checker', already declared
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv:8 [compile index 56]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'ahb_protocol_checker', already declared
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv:8 [compile index 61]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'apb_protocol_checker', already declared
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv:8 [compile index 57]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'apb_protocol_checker', already declared
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/apb_protocol_checker.sv:8 [compile index 62]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'core_invariants_checker', already declared
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv
+    at line 8 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:8 [compile index 63]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'ramxdetector', already declared
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ramxdetector.sv
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ramxdetector.sv:27 [compile index 64]
+*** Warning: DUPLICATE_MODULE: Duplicate module 'watchdog', already declared
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/watchdog.sv:11 [compile index 65]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ResultW' is never read (connected to sub-instance output port)
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:36 [compile index 4]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOOUT' is never read (connected to sub-instance output port)
+    at line 37 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:37 [compile index 4]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOEN' is never read (connected to sub-instance output port)
+    at line 37 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:37 [compile index 4]
+*** Warning: SIGNAL_NEVER_READ: Signal 'UARTSout' is never read (connected to sub-instance output port)
+    at line 38 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:38 [compile index 4]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 82 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/sim/tb.sv:82 [compile index 4]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'dbg_sel' to 'led_dbg_sel'
+    at line 96 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:96 [compile index 3]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk_soc' is not an input port
+    at line 110 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:110 [compile index 3]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk_soc' is not an input port
+    at line 134 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:134 [compile index 3]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk_soc' is not an input port
+    at line 209 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:209 [compile index 3]
+*** Warning: SIGNAL_NOT_RESET: Signal 'pulse_timer' is not reset
+    at line 211 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:211 [compile index 3]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'char_match' is not an input port
+    at line 215 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:215 [compile index 3]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOOUT' is never read (connected to sub-instance output port)
+    at line 233 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:233 [compile index 3]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOEN' is never read (connected to sub-instance output port)
+    at line 234 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:234 [compile index 3]
+*** Warning: SIGNAL_NEVER_READ: Signal 'SPIOut' is never read (connected to sub-instance output port)
+    at line 236 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:236 [compile index 3]
+*** Warning: SIGNAL_NEVER_READ: Signal 'SPICS' is never read (connected to sub-instance output port)
+    at line 237 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:237 [compile index 3]
+*** Warning: SIGNAL_NEVER_READ: Signal 'SPICLK' is never read (connected to sub-instance output port)
+    at line 238 in /home/23EC01009/1TOPS_IITBBS/fpga/top/tops_soc_fpga_top.sv:238 [compile index 3]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HSIZE' is never used
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/main/soc/multiplier_ahb.v:22 [compile index 5]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HBURST' is never used
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/main/soc/multiplier_ahb.v:23 [compile index 5]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HPROT' is never used
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/main/soc/multiplier_ahb.v:24 [compile index 5]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'HCLK' is not an input port
+    at line 310 in /home/23EC01009/1TOPS_IITBBS/source/main/soc/riscv_soc_ahb.v:310 [compile index 6]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'HRESETn' is not an input port
+    at line 311 in /home/23EC01009/1TOPS_IITBBS/source/main/soc/riscv_soc_ahb.v:311 [compile index 6]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PSTRB' is never used
+    at line 14 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uart_apb.sv:14 [compile index 7]
+*** Warning: SIGNAL_NEVER_READ: Signal 'COM_RXE_i' is never read
+    at line 64 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:64 [compile index 8]
+*** Warning: SIGNAL_NEVER_READ: Signal 'COM_TXF_i' is never read
+    at line 65 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:65 [compile index 8]
+*** Warning: SIGNAL_NEVER_READ: Signal 'STD_TXF_i' is never read
+    at line 71 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:71 [compile index 8]
+*** Warning: SIGNAL_NEVER_READ: Signal 'STD_RXE_i' is never read
+    at line 72 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:72 [compile index 8]
+*** Warning: SIGNAL_NEVER_READ: Signal 'com_tx_ack' is never read
+    at line 368 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:368 [compile index 8]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'COMRX_TREADY_o' is not recommended
+    at line 418 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:418 [compile index 8]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'COMTX_TVALID_o' is not recommended
+    at line 419 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:419 [compile index 8]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'STDRX_TREADY_o' is not recommended
+    at line 420 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:420 [compile index 8]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'STDTX_TVALID_o' is not recommended
+    at line 421 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_adp_control.v:421 [compile index 8]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HSIZE' is never used
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/main/ahb_ram.v:18 [compile index 9]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'HREADYOUT' is not recommended
+    at line 118 in /home/23EC01009/1TOPS_IITBBS/source/main/ahb_ram.v:118 [compile index 9]
+*** Warning: SIGNAL_NEVER_READ: Signal 'write_reg' is never read
+    at line 119 in /home/23EC01009/1TOPS_IITBBS/source/main/ahb_ram.v:119 [compile index 9]
+*** Warning: SIGNAL_NEVER_READ: Signal 'write_reg' is never read
+    at line 70 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ram_ahb.sv:70 [compile index 10]
+*** Warning: SIGNAL_NEVER_READ: Signal 'wr_addr_reg' is never read
+    at line 71 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ram_ahb.sv:71 [compile index 10]
+*** Warning: MULTIPLE_CLOCKS_BLOCK: Procedural block driven by multiple clocks (HRESETn, HCLK)
+    at line 169 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ram_ahb.sv:169 [compile index 10]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'HTRANS' is not recommended
+    at line 64 in /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v:64 [compile index 12]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'Addr' to 'HADDR'
+    at line 107 in /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v:107 [compile index 12]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'Size' to 'HSIZE'
+    at line 108 in /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v:108 [compile index 12]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'HWRITE' is not recommended
+    at line 134 in /home/23EC01009/1TOPS_IITBBS/source/components/ahbinterface.v:134 [compile index 12]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PrivilegedD' is never read (connected to sub-instance output port)
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/components/controller.v:34 [compile index 16]
+*** Warning: SIGNAL_NEVER_READ: Signal 'CSRInstrD' is never read (connected to sub-instance output port)
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/components/controller.v:34 [compile index 16]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'mip' is not recommended
+    at line 91 in /home/23EC01009/1TOPS_IITBBS/source/components/csr_file.v:91 [compile index 17]
+*** Warning: SIGNAL_NEVER_READ: Signal 'wfiM' is never read (connected to sub-instance output port)
+    at line 103 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:103 [compile index 18]
+*** Warning: SIGNAL_NEVER_READ: Signal 'InterruptM' is never read (connected to sub-instance output port)
+    at line 108 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:108 [compile index 18]
+*** Warning: SIGNAL_NEVER_READ: Signal 'IntPendingM' is never read (connected to sub-instance output port)
+    at line 108 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:108 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'TrapM' is not recommended
+    at line 119 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:119 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InstrD' is not recommended
+    at line 184 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:184 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InstrD' is not recommended
+    at line 185 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:185 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InstrD' is not recommended
+    at line 186 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:186 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InstrD' is not recommended
+    at line 187 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:187 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'TrapM' is not recommended
+    at line 261 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:261 [compile index 18]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ValidW' is never read (connected to sub-instance output port)
+    at line 399 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:399 [compile index 18]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'TrapM' is not recommended
+    at line 428 in /home/23EC01009/1TOPS_IITBBS/source/components/datapath.v:428 [compile index 18]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRDATA' is never used
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v:36 [compile index 19]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRESP' is never used
+    at line 38 in /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v:38 [compile index 19]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'LSUHWDATA' to 'HWDATA'
+    at line 79 in /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v:79 [compile index 19]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'LSUHWSTRB' to 'HWSTRB'
+    at line 80 in /home/23EC01009/1TOPS_IITBBS/source/components/ebu.v:80 [compile index 19]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'PrivilegedD' is not recommended
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:34 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'PrivilegedD' is not recommended
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:35 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'PrivilegedD' is not recommended
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:36 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'PrivilegedD' is not recommended
+    at line 37 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:37 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'PrivilegedD' is not recommended
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:40 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'mretD' is not recommended
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:40 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'wfiD' is not recommended
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:40 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ecallD' is not recommended
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:40 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ebreakD' is not recommended
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/components/priv_decoder.v:40 [compile index 31]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'IntPendingM' is not recommended
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v:36 [compile index 35]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InterruptM' is not recommended
+    at line 42 in /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v:42 [compile index 35]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InterruptM' is not recommended
+    at line 49 in /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v:49 [compile index 35]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InterruptM' is not recommended
+    at line 78 in /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v:78 [compile index 35]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'InterruptM' is not recommended
+    at line 85 in /home/23EC01009/1TOPS_IITBBS/source/components/trap_unit.v:85 [compile index 35]
+*** Warning: SIGNAL_NEVER_USED: Signal 'core_halt' is never used
+    at line 17 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:17 [compile index 36]
+*** Warning: SIGNAL_NEVER_READ: Signal 'm0_req' is never read
+    at line 70 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:70 [compile index 36]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'grant_data' is not recommended
+    at line 113 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:113 [compile index 36]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'S_HRDATA' to 'M0_HRDATA'
+    at line 116 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:116 [compile index 36]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'S_HRDATA' to 'M1_HRDATA'
+    at line 117 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:117 [compile index 36]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'grant_data' is not recommended
+    at line 118 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:118 [compile index 36]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'grant_data' is not recommended
+    at line 119 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:119 [compile index 36]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'grant_data' is not recommended
+    at line 123 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:123 [compile index 36]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'grant_data' is not recommended
+    at line 124 in /home/23EC01009/1TOPS_IITBBS/source/debugger/ahb_mux.sv:124 [compile index 36]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'DATA_WIDTH' is never used
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v:21 [compile index 37]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HSIZE' is never used
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v:31 [compile index 37]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HBURST' is never used
+    at line 32 in /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v:32 [compile index 37]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HPROT' is never used
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/debugger/core_debug_ahb.v:33 [compile index 37]
+*** Warning: SIGNAL_NEVER_USED: Signal 'rxd_tlast' is never used
+    at line 39 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:39 [compile index 41]
+*** Warning: SIGNAL_NEVER_READ: Signal 'bwid1' is never read
+    at line 80 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:80 [compile index 41]
+*** Warning: SIGNAL_NEVER_USED: Signal 'rxrdy' is never used
+    at line 199 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:199 [compile index 41]
+*** Warning: SIGNAL_NEVER_READ: Signal 'fcmd' is never read
+    at line 208 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:208 [compile index 41]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ft_ssn_o' is not recommended
+    at line 222 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:222 [compile index 41]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ft_ssn_o' is not recommended
+    at line 225 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:225 [compile index 41]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ft_ssn_o' is not recommended
+    at line 241 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:241 [compile index 41]
+*** Warning: OUTPUT_PORT_READ: Reading from output port 'ft_ssn_o' is not recommended
+    at line 242 in /home/23EC01009/1TOPS_IITBBS/source/debugger/socdebug_ft1248_control.v:242 [compile index 41]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'C_rxd8_TDATA_WIDTH' is never used
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v:25 [compile index 44]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'C_txd8_TDATA_WIDTH' is never used
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v:28 [compile index 44]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ft_cmd_valid' is never read
+    at line 109 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/f232h_ft1248_stream.v:109 [compile index 44]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'C_rxd8_TDATA_WIDTH' is never used
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:25 [compile index 67]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'C_txd8_TDATA_WIDTH' is never used
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:28 [compile index 67]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ft_cmd_valid' is never read
+    at line 109 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v:109 [compile index 67]
+*** Warning: SIGNAL_NEVER_READ: Signal 'core_reset_o' is never read (connected to sub-instance output port)
+    at line 88 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:88 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hrdata' is never read (connected to sub-instance output port)
+    at line 121 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:121 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hready' is never read (connected to sub-instance output port)
+    at line 122 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:122 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hresp' is never read (connected to sub-instance output port)
+    at line 123 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:123 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 's_hmastlock' is never read (connected to sub-instance output port)
+    at line 133 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:133 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 175 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:175 [compile index 45]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 176 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:176 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 349 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:349 [compile index 45]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 350 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:350 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 397 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:397 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'captured_haddr' is never read
+    at line 443 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:443 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ahb_read_done' is never read
+    at line 445 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:445 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 447 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:447 [compile index 45]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 448 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:448 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'uart_tx' is not an input port
+    at line 505 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:505 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'last_completed_ft_line' is never read
+    at line 555 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:555 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 557 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:557 [compile index 45]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 571 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:571 [compile index 45]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'com_rx_done' is not an input port
+    at line 572 in /home/23EC01009/1TOPS_IITBBS/source/debugger/tb/tb_debugger.sv:572 [compile index 45]
+*** Warning: SIGNAL_NEVER_READ: Signal 'core_reset_o' is never read (connected to sub-instance output port)
+    at line 88 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:88 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hrdata' is never read (connected to sub-instance output port)
+    at line 113 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:113 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hready' is never read (connected to sub-instance output port)
+    at line 114 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:114 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'cpu_hresp' is never read (connected to sub-instance output port)
+    at line 115 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:115 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 's_hmastlock' is never read (connected to sub-instance output port)
+    at line 125 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:125 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 167 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:167 [compile index 68]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 168 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:168 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 333 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:333 [compile index 68]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 334 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:334 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 381 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:381 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'captured_haddr' is never read
+    at line 427 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:427 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ahb_read_done' is never read
+    at line 429 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:429 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 431 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:431 [compile index 68]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 432 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:432 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'uart_tx' is not an input port
+    at line 489 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:489 [compile index 68]
+*** Warning: SIGNAL_NEVER_READ: Signal 'last_completed_ft_line' is never read
+    at line 539 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:539 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 541 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:541 [compile index 68]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 555 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv:555 [compile index 68]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HWSTRB' is never used
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv:13 [compile index 50]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRDATA' is never used
+    at line 17 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv:17 [compile index 50]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRESP' is never used
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv:19 [compile index 50]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HWSTRB' is never used
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv:13 [compile index 56]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRDATA' is never used
+    at line 17 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv:17 [compile index 56]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRESP' is never used
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv:19 [compile index 56]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HWSTRB' is never used
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv:13 [compile index 61]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRDATA' is never used
+    at line 17 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv:17 [compile index 61]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HRESP' is never used
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv:19 [compile index 61]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PCW' is never used
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:12 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'RegWriteW' is never used
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:13 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'RdW' is never used
+    at line 14 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:14 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'ResultW' is never used
+    at line 15 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:15 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FlushD' is never used
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:18 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FlushE' is never used
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv:19 [compile index 52]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PCW' is never used
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:12 [compile index 63]
+*** Warning: SIGNAL_NEVER_USED: Signal 'RegWriteW' is never used
+    at line 13 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:13 [compile index 63]
+*** Warning: SIGNAL_NEVER_USED: Signal 'RdW' is never used
+    at line 14 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:14 [compile index 63]
+*** Warning: SIGNAL_NEVER_USED: Signal 'ResultW' is never used
+    at line 15 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:15 [compile index 63]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FlushD' is never used
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:18 [compile index 63]
+*** Warning: SIGNAL_NEVER_USED: Signal 'FlushE' is never used
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv:19 [compile index 63]
+*** Warning: IMPLICIT_DECLARATION: Implicit declaration of 'SameTrapPCTimeOut' using `default_nettype set to wire
+    at line 69 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv:69 [compile index 54]
+*** Warning: IMPLICIT_DECLARATION: Implicit declaration of 'SameTrapPCTimeOut' using `default_nettype set to wire
+    at line 69 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/assertions/watchdog.sv:69 [compile index 65]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:21 [compile index 55]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ResultW' is never read (connected to sub-instance output port)
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:35 [compile index 55]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOOUT' is never read (connected to sub-instance output port)
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:36 [compile index 55]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOEN' is never read (connected to sub-instance output port)
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:36 [compile index 55]
+*** Warning: SIGNAL_NEVER_READ: Signal 'UARTSout' is never read (connected to sub-instance output port)
+    at line 37 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:37 [compile index 55]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 167 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv:167 [compile index 55]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HRESP' is never read (connected to sub-instance output port)
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:24 [compile index 58]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCLK' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:27 [compile index 58]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PRESETn' is never read (connected to sub-instance output port)
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:28 [compile index 58]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PWRITE' is never read (connected to sub-instance output port)
+    at line 30 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:30 [compile index 58]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PSTRB' is never read (connected to sub-instance output port)
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv:34 [compile index 58]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M0_HRDATA' is never read (connected to sub-instance output port)
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:21 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M0_HREADY' is never read (connected to sub-instance output port)
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:22 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M0_HRESP' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:23 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M1_HRDATA' is never read (connected to sub-instance output port)
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:31 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M1_HREADY' is never read (connected to sub-instance output port)
+    at line 32 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:32 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'M1_HRESP' is never read (connected to sub-instance output port)
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:33 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'S_HSIZE' is never read (connected to sub-instance output port)
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:40 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'S_HBURST' is never read (connected to sub-instance output port)
+    at line 41 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:41 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'S_HPROT' is never read (connected to sub-instance output port)
+    at line 42 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:42 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'S_HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 43 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:43 [compile index 59]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'HCLK' is not an input port
+    at line 129 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:129 [compile index 59]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'HRESETn' is not an input port
+    at line 130 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:130 [compile index 59]
+*** Warning: SIGNAL_NOT_RESET: Signal 'slave_mem' is not reset
+    at line 137 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv:137 [compile index 59]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HREADYOUT' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv:23 [compile index 60]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HRESP' is never read (connected to sub-instance output port)
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv:24 [compile index 60]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:28 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ResultW' is never read (connected to sub-instance output port)
+    at line 28 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:28 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOOUT' is never read (connected to sub-instance output port)
+    at line 29 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:29 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOEN' is never read (connected to sub-instance output port)
+    at line 29 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:29 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'UARTSout' is never read (connected to sub-instance output port)
+    at line 30 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:30 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'core_halted_led' is never read (connected to sub-instance output port)
+    at line 31 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:31 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'uart_tx' is never read (connected to sub-instance output port)
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:36 [compile index 69]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 97 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:97 [compile index 69]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'reset' is not an input port
+    at line 98 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv:98 [compile index 69]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:33 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ResultW' is never read (connected to sub-instance output port)
+    at line 33 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:33 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOOUT' is never read (connected to sub-instance output port)
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:34 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'GPIOEN' is never read (connected to sub-instance output port)
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:34 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'UARTSout' is never read (connected to sub-instance output port)
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:35 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'core_halted_led' is never read (connected to sub-instance output port)
+    at line 36 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:36 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'uart_tx' is never read (connected to sub-instance output port)
+    at line 40 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv:40 [compile index 70]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 14 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:14 [compile index 71]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 15 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:15 [compile index 71]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:16 [compile index 71]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ResultW' is never read (connected to sub-instance output port)
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:16 [compile index 71]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 113 in /home/23EC01009/1TOPS_IITBBS/source/final_tests/07_soc_system_benchmarks/tb_c_bench.v:113 [compile index 71]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'ADDR_WIDTH' is never used
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_ip.v:1 [compile index 73]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'MEM_SIZE' is never used
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_ip.v:1 [compile index 73]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'ADDR_WIDTH' is never used
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_op.v:1 [compile index 74]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'MEM_SIZE' is never used
+    at line 1 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/data_mem_op.v:1 [compile index 74]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'instr_ram' is never written
+    at line 7 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/instr_mem.v:7 [compile index 75]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Instr' is never read (connected to sub-instance output port)
+    at line 15 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:15 [compile index 76]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'DataAdr_rv32' is never written
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:16 [compile index 76]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'WriteData_rv32' is never written
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:16 [compile index 76]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'funct3' is never written
+    at line 17 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:17 [compile index 76]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'MemWrite_rv32' is never written
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:18 [compile index 76]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/main/pipelined/riscv_pipelined.v:19 [compile index 76]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:18 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 19 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:19 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 20 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:20 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PC' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:23 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ALUResultW' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:23 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'WriteDataW' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:23 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Result' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:23 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'InstrRetired' is never read (connected to sub-instance output port)
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:24 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:24 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 24 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:24 [compile index 78]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'hex_file' is never written
+    at line 91 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:91 [compile index 78]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 151 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv:151 [compile index 78]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 20 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:20 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:21 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:22 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:25 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ALUResultW' is never read (connected to sub-instance output port)
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:25 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'WriteDataW' is never read (connected to sub-instance output port)
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:25 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Result' is never read (connected to sub-instance output port)
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:25 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:26 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:26 [compile index 79]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'MEM_WORDS' is never used
+    at line 30 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:30 [compile index 79]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'hex_file' is never written
+    at line 90 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:90 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'latched_strb' is never read
+    at line 100 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:100 [compile index 79]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 102 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:102 [compile index 79]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 103 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:103 [compile index 79]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 115 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:115 [compile index 79]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 116 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:116 [compile index 79]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 128 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:128 [compile index 79]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'HWDATA' is not an input port
+    at line 131 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:131 [compile index 79]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 146 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv:146 [compile index 79]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:21 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:22 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:23 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:26 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ALUResultW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:26 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'WriteDataW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:26 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Result' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:26 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:27 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:27 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'latched_strb' is never read
+    at line 92 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:92 [compile index 80]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 94 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:94 [compile index 80]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 95 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:95 [compile index 80]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 111 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:111 [compile index 80]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 112 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:112 [compile index 80]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 124 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:124 [compile index 80]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 133 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:133 [compile index 80]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'latched_addr' is not an input port
+    at line 136 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:136 [compile index 80]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 157 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv:157 [compile index 80]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:21 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:22 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:23 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:26 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ALUResultW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:26 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'WriteDataW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:26 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Result' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:26 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:27 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:27 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'latched_strb' is never read
+    at line 92 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:92 [compile index 81]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 94 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:94 [compile index 81]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 95 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:95 [compile index 81]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 111 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:111 [compile index 81]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 112 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:112 [compile index 81]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 124 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:124 [compile index 81]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 133 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:133 [compile index 81]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'latched_addr' is not an input port
+    at line 136 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:136 [compile index 81]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 157 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv:157 [compile index 81]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 21 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:21 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 22 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:22 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:23 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'PCW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:26 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ALUResultW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:26 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'WriteDataW' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:26 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'Result' is never read (connected to sub-instance output port)
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:26 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TrapM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:27 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'mretM' is never read (connected to sub-instance output port)
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:27 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'latched_strb' is never read
+    at line 92 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:92 [compile index 82]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 94 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:94 [compile index 82]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 95 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:95 [compile index 82]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 111 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:111 [compile index 82]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 112 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:112 [compile index 82]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 124 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:124 [compile index 82]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 133 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:133 [compile index 82]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'latched_addr' is not an input port
+    at line 136 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:136 [compile index 82]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 157 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/05_embench_iot/tb_core_embench.sv:157 [compile index 82]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HBURST' is never read (connected to sub-instance output port)
+    at line 10 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:10 [compile index 83]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HMASTLOCK' is never read (connected to sub-instance output port)
+    at line 11 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:11 [compile index 83]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HPROT' is never read (connected to sub-instance output port)
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:12 [compile index 83]
+*** Warning: SIGNAL_NEVER_READ: Signal 'dbg_core_reset' is never read
+    at line 23 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:23 [compile index 83]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'PC' is never written
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:25 [compile index 83]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'hex_file' is never written
+    at line 73 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:73 [compile index 83]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 85 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:85 [compile index 83]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 86 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:86 [compile index 83]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 100 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:100 [compile index 83]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'rst_n' is not an input port
+    at line 101 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:101 [compile index 83]
+*** Warning: INTERNAL_GENERATED_CLOCK: Clock signal 'clk' is not an input port
+    at line 113 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:113 [compile index 83]
+*** Warning: INTERNAL_GENERATED_RESET: Reset signal 'latched_addr' is not an input port
+    at line 116 in /home/23EC01009/1TOPS_IITBBS/source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv:116 [compile index 83]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'HCLK' to 'PCLK'
+    at line 34 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv:34 [compile index 84]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'HRESETn' to 'PRESETn'
+    at line 35 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv:35 [compile index 84]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'HWDATA' to 'PWDATA'
+    at line 64 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv:64 [compile index 84]
+*** Warning: FEEDTHROUGH_DETECTED: Feedthrough from 'HWSTRB' to 'PSTRB'
+    at line 65 in /home/23EC01009/1TOPS_IITBBS/source/uncore/ahbapbbridge.sv:65 [compile index 84]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'XLEN' is never used
+    at line 5 in /home/23EC01009/1TOPS_IITBBS/source/uncore/clint_apb.sv:5 [compile index 85]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'XLEN' is never used
+    at line 5 in /home/23EC01009/1TOPS_IITBBS/source/uncore/gpio_apb.sv:5 [compile index 86]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PSTRB' is never used
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/uncore/gpio_apb.sv:12 [compile index 86]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'XLEN' is never used
+    at line 5 in /home/23EC01009/1TOPS_IITBBS/source/uncore/plic_apb.sv:5 [compile index 87]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PSTRB' is never used
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/uncore/plic_apb.sv:12 [compile index 87]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'mem' is never written
+    at line 30 in /home/23EC01009/1TOPS_IITBBS/source/uncore/rom_ahb.sv:30 [compile index 88]
+*** Warning: SIGNAL_NEVER_USED: Signal 'PSTRB' is never used
+    at line 12 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:12 [compile index 89]
+*** Warning: SIGNAL_NEVER_READ: Signal 'TransmitWriteMark' is never read (connected to sub-instance output port)
+    at line 75 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:75 [compile index 89]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ReceiveReadMark' is never read (connected to sub-instance output port)
+    at line 75 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:75 [compile index 89]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ReceiveFIFOFull' is never read (connected to sub-instance output port)
+    at line 86 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:86 [compile index 89]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'TransmitWriteWatermarkLevel' is never written (connected to sub-instance input port)
+    at line 89 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:89 [compile index 89]
+*** Warning: SIGNAL_NEVER_WRITTEN: Signal 'ReceiveReadWatermarkLevel' is never written (connected to sub-instance input port)
+    at line 89 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:89 [compile index 89]
+*** Warning: SIGNAL_NOT_RESET: Signal 'Dout' is not reset
+    at line 163 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_apb.sv:163 [compile index 89]
+*** Warning: SIGNAL_NEVER_READ: Signal 'ContinueTransmit' is never read
+    at line 59 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv:59 [compile index 90]
+*** Warning: SIGNAL_NEVER_USED: Signal 'NextEndDelay' is never used
+    at line 62 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv:62 [compile index 90]
+*** Warning: SIGNAL_NEVER_USED: Signal 'CurrentEndDelay' is never used
+    at line 63 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv:63 [compile index 90]
+*** Warning: SIGNAL_NEVER_READ: Signal 'HasINTERCS' is never read
+    at line 74 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_controller.sv:74 [compile index 90]
+*** Warning: SIGNAL_NEVER_READ: Signal 'numVals' is never read
+    at line 16 in /home/23EC01009/1TOPS_IITBBS/source/uncore/spi_fifo.sv:16 [compile index 91]
+*** Warning: SIGNAL_NOT_RESET: Signal 'rxfifo' is not reset
+    at line 282 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uartPC16550D.sv:282 [compile index 92]
+*** Warning: SIGNAL_NOT_RESET: Signal 'txfifo' is not reset
+    at line 404 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uartPC16550D.sv:404 [compile index 92]
+*** Warning: PARAMETER_NEVER_USED: Parameter 'MEM_SIZE_BYTES' is never used
+    at line 3 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:3 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'TIMECLK' is never used
+    at line 18 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:18 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HSIZE' is never used
+    at line 25 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:25 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HBURST' is never used
+    at line 26 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:26 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HPROT' is never used
+    at line 27 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:27 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'HMASTLOCK' is never used
+    at line 29 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:29 [compile index 93]
+*** Warning: SIGNAL_NEVER_USED: Signal 'SDCIn' is never used
+    at line 64 in /home/23EC01009/1TOPS_IITBBS/source/uncore/uncore.sv:64 [compile index 93]
+*** Done mixed mode extension build [740 ms] ***
+*** Total build time [1s.383ms] ***

@@ -6,7 +6,7 @@ module rom_ahb #(
   parameter PA_BITS     = 32,
   parameter RANGE       = 65535,
   parameter PRELOAD     = 0,
-  parameter string MEMFILE = ""
+  parameter        MEMFILE = ""
 )(
   input  logic                 HCLK,
   input  logic                 HRESETn,

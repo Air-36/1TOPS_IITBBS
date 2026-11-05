@@ -15,75 +15,75 @@
 // Design: 100% synchronous, glitch/hazard free, scan-chain friendly (single clock, single reset).
 // =============================================================================
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module core_debug_ahb #(
-    parameter DATA_WIDTH = 32
-)(
-    // AHB-Lite Bus Interface
-    input  wire                   HCLK,
-    input  wire                   HRESETn,
-    input  wire                   core_reset_i,
-    input  wire                   HSEL,
-    input  wire [31:0]            HADDR,
-    input  wire [31:0]            HWDATA,
-    input  wire                   HWRITE,
-    input  wire [ 2:0]            HSIZE,
-    input  wire [ 2:0]            HBURST,
-    input  wire [ 3:0]            HPROT,
-    input  wire [ 1:0]            HTRANS,
-    input  wire                   HREADY,
-    output wire                   HREADYOUT,
-    output wire                   HRESP,
-    output reg  [31:0]            HRDATA,
+        parameter DATA_WIDTH = 32
+    )(
+        // AHB-Lite Bus Interface
+        input  wire                   HCLK,
+        input  wire                   HRESETn,
+        input  wire                   core_reset_i,
+        input  wire                   HSEL,
+        input  wire [31:0]            HADDR,
+        input  wire [31:0]            HWDATA,
+        input  wire                   HWRITE,
+        input  wire [ 2:0]            HSIZE,
+        input  wire [ 2:0]            HBURST,
+        input  wire [ 3:0]            HPROT,
+        input  wire [ 1:0]            HTRANS,
+        input  wire                   HREADY,
+        output wire                   HREADYOUT,
+        output wire                   HRESP,
+        output reg  [31:0]            HRDATA,
 
-    // Core Register File Access Port
-    output wire [ 4:0]            dbg_rf_raddr,
-    input  wire [31:0]            dbg_rf_rdata,
+        // Core Register File Access Port
+        output wire [ 4:0]            dbg_rf_raddr,
+        input  wire [31:0]            dbg_rf_rdata,
 
-    // Core Pipeline Stage Signals
-    input  wire [31:0]            PCF,
-    input  wire [31:0]            PCD,
-    input  wire [31:0]            PCE,
-    input  wire [31:0]            PCM,
-    input  wire [31:0]            PCW,
-    input  wire [31:0]            InstrD,
-    input  wire [31:0]            InstrM,
-    input  wire [ 4:0]            StallFlags, // {StallW, StallM, StallE, StallD, StallF}
-    input  wire [ 2:0]            FlushFlags, // {FlushM, FlushE, FlushD}
-    input  wire                   ExternalStall,
-    input  wire                   InstrRetired,
-    input  wire                   TrapM,
-    input  wire                   mretM,
-    input  wire [31:0]            TrapCauseM,
-    input  wire [31:0]            TrapValM,
+        // Core Pipeline Stage Signals
+        input  wire [31:0]            PCF,
+        input  wire [31:0]            PCD,
+        input  wire [31:0]            PCE,
+        input  wire [31:0]            PCM,
+        input  wire [31:0]            PCW,
+        input  wire [31:0]            InstrD,
+        input  wire [31:0]            InstrM,
+        input  wire [ 4:0]            StallFlags, // {StallW, StallM, StallE, StallD, StallF}
+        input  wire [ 2:0]            FlushFlags, // {FlushM, FlushE, FlushD}
+        input  wire                   ExternalStall,
+        input  wire                   InstrRetired,
+        input  wire                   TrapM,
+        input  wire                   mretM,
+        input  wire [31:0]            TrapCauseM,
+        input  wire [31:0]            TrapValM,
 
-    // Core Privileged CSR Signals
-    input  wire [31:0]            mstatus,
-    input  wire [31:0]            mcause,
-    input  wire [31:0]            mtval,
-    input  wire [31:0]            mepc,
-    input  wire [31:0]            mtvec,
-    input  wire [31:0]            mie,
-    input  wire [31:0]            mip,
-    input  wire [31:0]            mscratch,
-    input  wire [63:0]            cycle_cnt,
-    input  wire [63:0]            instret_cnt,
+        // Core Privileged CSR Signals
+        input  wire [31:0]            mstatus,
+        input  wire [31:0]            mcause,
+        input  wire [31:0]            mtval,
+        input  wire [31:0]            mepc,
+        input  wire [31:0]            mtvec,
+        input  wire [31:0]            mie,
+        input  wire [31:0]            mip,
+        input  wire [31:0]            mscratch,
+        input  wire [63:0]            cycle_cnt,
+        input  wire [63:0]            instret_cnt,
 
-    // Control & Status to SoC / Debugger
-    output wire                   auto_halt_trap_o,
-    output wire                   trap_latched_o,
-    output wire [ 3:0]            fault_flags_o,
+        // Control & Status to SoC / Debugger
+        output wire                   auto_halt_trap_o,
+        output wire                   trap_latched_o,
+        output wire [ 3:0]            fault_flags_o,
 
-    // Debugger Interface Clock Divider & Status MMIO (0x0E0, 0x0E4, 0x0E8)
-    input  wire [15:0]            uart_clkdiv_i,
-    output reg                    uart_clkdiv_we_o,
-    output reg  [15:0]            uart_clkdiv_val_o,
-    input  wire [ 7:0]            ft_clkdiv_i,
-    output reg                    ft_clkdiv_we_o,
-    output reg  [ 7:0]            ft_clkdiv_val_o,
-    input  wire                   dbg_sel_i
-);
+        // Debugger Interface Clock Divider & Status MMIO (0x0E0, 0x0E4, 0x0E8)
+        input  wire [15:0]            uart_clkdiv_i,
+        output reg                    uart_clkdiv_we_o,
+        output reg  [15:0]            uart_clkdiv_val_o,
+        input  wire [ 7:0]            ft_clkdiv_i,
+        output reg                    ft_clkdiv_we_o,
+        output reg  [ 7:0]            ft_clkdiv_val_o,
+        input  wire                   dbg_sel_i
+    );
 
     // =========================================================================
     // 1. AHB-Lite Bus Control & Address Pipelining

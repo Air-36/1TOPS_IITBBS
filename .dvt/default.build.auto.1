@@ -1,0 +1,118 @@
+################################################################################
+#                    DO NOT MANUALLY EDIT THIS FILE!                           #
+################################################################################
+# This file contains the automatically generated build configuration (2026/11/05 14:20:09)
+# requested at line 3 in /home/23EC01009/1TOPS_IITBBS/.dvt/default.build
+
+
+################ Verilog Auto-config Directives ################
++dvt_init
+
+### AUTOCONFIG ERROR: Unresolved includes
+# The following includes could not be resolved:
+#`include "config.vh" in tops_soc_wrapper.sv (/home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv)
+#`include "parameter-defs.vh" in tops_soc_wrapper.sv (/home/23EC01009/1TOPS_IITBBS/schematics/tops_soc_wrapper.sv)
+#`include "config.vh" in tb.sv (/home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv)
+#`include "parameter-defs.vh" in tb.sv (/home/23EC01009/1TOPS_IITBBS/source/testbench/tb.sv)
+
+# Available `ifdef / `ifndef controls:
+# +define+ADPBASIC
+# +define+ALTERA_RESERVED_QIS
+# +define+SYNTHESIS
+# +define+VERILATOR
+
+schematics/tops_soc_wrapper.sv
+source/testbench/tb.sv
+fpga/top/tops_soc_fpga_top.sv
+source/final_tests/05_peripherals/sim/tb.sv
+source/main/soc/multiplier_ahb.v
+source/main/soc/riscv_soc_ahb.v
+source/uncore/uart_apb.sv
+source/debugger/socdebug_adp_control.v
+source/main/ahb_ram.v
+source/uncore/ram_ahb.sv
+source/components/adder.v
+source/components/ahbinterface.v
+source/components/alu.v
+source/components/alu_decoder.v
+source/components/branching_unit.v
+source/components/controller.v
+source/components/csr_file.v
+source/components/datapath.v
+source/components/ebu.v
+source/components/hazard.v
+source/components/imm_extend.v
+source/components/main_decoder.v
+source/components/mux2.v
+source/components/mux3.v
+source/components/mux4.v
+source/components/mux5.v
+source/components/pl_reg_de.v
+source/components/pl_reg_em.v
+source/components/pl_reg_fd.v
+source/components/pl_reg_mw.v
+source/components/priv_decoder.v
+source/components/reg_file.v
+source/components/reset_ff.v
+source/components/subword_unit.v
+source/components/trap_unit.v
+source/debugger/ahb_mux.sv
+source/debugger/core_debug_ahb.v
+source/debugger/core_step_controller.sv
+source/debugger/riscv_debugger_top.sv
+source/debugger/socdebug_ahb.v
+source/debugger/socdebug_ft1248_control.v
+source/debugger/socdebug_uart.v
+source/debugger/tb/SYNCHRONIZER_EDGES.v
+source/debugger/tb/f232h_ft1248_stream.v
+source/debugger/tb/tb_debugger.sv
+source/final_tests/01_core_modules/tb/tb_alu_ops.sv
+source/final_tests/01_core_modules/tb/tb_branching_unit.sv
+source/final_tests/01_core_modules/tb/tb_imm_extend.sv
+source/final_tests/01_core_modules/tb/tb_subword_unit.sv
+source/final_tests/02_pipeline_hazard_stress/assertions/ahb_protocol_checker.sv
+source/final_tests/02_pipeline_hazard_stress/assertions/apb_protocol_checker.sv
+source/final_tests/02_pipeline_hazard_stress/assertions/core_invariants_checker.sv
+source/final_tests/02_pipeline_hazard_stress/assertions/ramxdetector.sv
+source/final_tests/02_pipeline_hazard_stress/assertions/watchdog.sv
+source/final_tests/02_pipeline_hazard_stress/testbench/tb_pipeline_stress.sv
+source/final_tests/04_bus_fabric/assertions/ahb_protocol_checker.sv
+source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv
+source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv
+source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv
+source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv
+source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv
+source/final_tests/06_debugger_subsystem/assertions/apb_protocol_checker.sv
+source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv
+source/final_tests/06_debugger_subsystem/assertions/ramxdetector.sv
+source/final_tests/06_debugger_subsystem/assertions/watchdog.sv
+source/final_tests/06_debugger_subsystem/tb/SYNCHRONIZER_EDGES.v
+source/final_tests/06_debugger_subsystem/tb/f232h_ft1248_stream.v
+source/final_tests/06_debugger_subsystem/tb/tb_debugger.sv
+source/final_tests/06_debugger_subsystem/tb/tb_debugger_features.sv
+source/final_tests/06_debugger_subsystem/tb/tb_hwstrb_regression.sv
+source/final_tests/07_soc_system_benchmarks/tb_c_bench.v
+source/main/pipelined/data_mem.v
+source/main/pipelined/data_mem_ip.v
+source/main/pipelined/data_mem_op.v
+source/main/pipelined/instr_mem.v
+source/main/pipelined/riscv_pipelined.v
+source/main/riscv_cpu.v
+source/standard_core_tests/01_riscv_arch_test/tb_core_arch.sv
+source/standard_core_tests/02_berkeley_riscv_tests/tb_core_berkeley.sv
+source/standard_core_tests/03_eembc_coremark/tb_core_coremark.sv
+source/standard_core_tests/04_dhrystone/tb_core_dhrystone.sv
+source/standard_core_tests/05_embench_iot/tb_core_embench.sv
+source/standard_core_tests/06_google_riscv_dv_torture/tb_core_torture.sv
+source/uncore/ahbapbbridge.sv
+source/uncore/clint_apb.sv
+source/uncore/gpio_apb.sv
+source/uncore/plic_apb.sv
+source/uncore/rom_ahb.sv
+source/uncore/spi_apb.sv
+source/uncore/spi_controller.sv
+source/uncore/spi_fifo.sv
+source/uncore/uartPC16550D.sv
+source/uncore/uncore.sv
+source/debugger/accelerator_debug_def.vh
+

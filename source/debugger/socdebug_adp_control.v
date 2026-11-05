@@ -188,7 +188,7 @@ function [34:0] FNBuild_size3_param32_hexdigit;
 input [34:0] param32;
 input [7:0] char8;
 case (char8[7:0])
-"\t":FNBuild_size3_param32_hexdigit = {35{1'b0}}; // tab starts new (zeroed) param32
+8'h09:FNBuild_size3_param32_hexdigit = {35{1'b0}}; // tab starts new (zeroed) param32. Putting "\n" directly was giving some error
 " ": FNBuild_size3_param32_hexdigit = {35{1'b0}}; // space starts new (zeroed) param32
 "x": FNBuild_size3_param32_hexdigit = {35{1'b0}}; // hex prefix starts new (zeroed) param32
 "X": FNBuild_size3_param32_hexdigit = {35{1'b0}}; // hex prefix starts new (zeroed) param32

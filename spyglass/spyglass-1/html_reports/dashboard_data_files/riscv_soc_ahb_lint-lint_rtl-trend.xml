@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<severity_lines xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///Dashboard/GoalQualityGraph.xsd">
+<!-- This file schema is internal to SpyGlass DashBoard and subject to change in future without notice --> 
+	  <severity name="Fatal" color="11350115" line_type="solid">
+		<data_point date_time="11/05/2026 (10:09)" value="0" />
+		<data_point date_time="11/05/2026 (10:11)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:30)" value="0" />
+		<data_point date_time="11/05/2026 (10:38)" value="0" />
+		<data_point date_time="11/05/2026 (10:40)" value="0" />
+		<data_point date_time="11/05/2026 (10:43)" value="0" />
+		<data_point date_time="11/05/2026 (10:45)" value="0" />
+		<data_point date_time="11/05/2026 (14:12)" value="0" />
+		<data_point date_time="11/05/2026 (14:15)" value="0" />
+		<data_point date_time="11/05/2026 (14:16)" value="0" />
+		<data_point date_time="11/05/2026 (14:17)" value="0" />
+	  </severity> 
+	  <severity name="Error" color="16711680" line_type="solid">
+		<data_point date_time="11/05/2026 (10:09)" value="14" />
+		<data_point date_time="11/05/2026 (10:11)" value="14" />
+		<data_point date_time="11/05/2026 (10:23)" value="14" />
+		<data_point date_time="11/05/2026 (10:23)" value="14" />
+		<data_point date_time="11/05/2026 (10:30)" value="14" />
+		<data_point date_time="11/05/2026 (10:38)" value="14" />
+		<data_point date_time="11/05/2026 (10:40)" value="14" />
+		<data_point date_time="11/05/2026 (10:43)" value="6" />
+		<data_point date_time="11/05/2026 (10:45)" value="2" />
+		<data_point date_time="11/05/2026 (14:12)" value="2" />
+		<data_point date_time="11/05/2026 (14:15)" value="2" />
+		<data_point date_time="11/05/2026 (14:16)" value="2" />
+		<data_point date_time="11/05/2026 (14:17)" value="2" />
+	  </severity> 
+	  <severity name="Warning" color="15696483" line_type="solid">
+		<data_point date_time="11/05/2026 (10:09)" value="271" />
+		<data_point date_time="11/05/2026 (10:11)" value="266" />
+		<data_point date_time="11/05/2026 (10:23)" value="266" />
+		<data_point date_time="11/05/2026 (10:23)" value="266" />
+		<data_point date_time="11/05/2026 (10:30)" value="266" />
+		<data_point date_time="11/05/2026 (10:38)" value="266" />
+		<data_point date_time="11/05/2026 (10:40)" value="266" />
+		<data_point date_time="11/05/2026 (10:43)" value="266" />
+		<data_point date_time="11/05/2026 (10:45)" value="266" />
+		<data_point date_time="11/05/2026 (14:12)" value="264" />
+		<data_point date_time="11/05/2026 (14:15)" value="261" />
+		<data_point date_time="11/05/2026 (14:16)" value="261" />
+		<data_point date_time="11/05/2026 (14:17)" value="260" />
+	  </severity> 
+	  <severity name="Waived-Error" color="0" line_type="dotted">
+		<data_point date_time="11/05/2026 (10:09)" value="0" />
+		<data_point date_time="11/05/2026 (10:11)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:30)" value="0" />
+		<data_point date_time="11/05/2026 (10:38)" value="0" />
+		<data_point date_time="11/05/2026 (10:40)" value="0" />
+		<data_point date_time="11/05/2026 (10:43)" value="0" />
+		<data_point date_time="11/05/2026 (10:45)" value="0" />
+		<data_point date_time="11/05/2026 (14:12)" value="0" />
+		<data_point date_time="11/05/2026 (14:15)" value="0" />
+		<data_point date_time="11/05/2026 (14:16)" value="0" />
+		<data_point date_time="11/05/2026 (14:17)" value="0" />
+	  </severity> 
+	  <severity name="Waived-Warning" color="0" line_type="dotted">
+		<data_point date_time="11/05/2026 (10:09)" value="0" />
+		<data_point date_time="11/05/2026 (10:11)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:23)" value="0" />
+		<data_point date_time="11/05/2026 (10:30)" value="0" />
+		<data_point date_time="11/05/2026 (10:38)" value="0" />
+		<data_point date_time="11/05/2026 (10:40)" value="0" />
+		<data_point date_time="11/05/2026 (10:43)" value="0" />
+		<data_point date_time="11/05/2026 (10:45)" value="0" />
+		<data_point date_time="11/05/2026 (14:12)" value="0" />
+		<data_point date_time="11/05/2026 (14:15)" value="0" />
+		<data_point date_time="11/05/2026 (14:16)" value="0" />
+		<data_point date_time="11/05/2026 (14:17)" value="0" />
+	  </severity> 
+	<title>Module:riscv_soc_ahb     Goal: lint/lint_rtl </title>
+	<xaxis_label>Date</xaxis_label>
+	<yaxis_label>Violation Count</yaxis_label>
+	</severity_lines>
