@@ -134,7 +134,7 @@ module csr_file #(parameter WIDTH = 32) (
     end
 
     // =========================================================================
-    // 3. Sequential CSR Update, Traps, and Counters
+    // 3. Sequential CSR Update and Traps
     // =========================================================================
     always @(posedge clk) begin
         if (reset) begin
@@ -147,17 +147,7 @@ module csr_file #(parameter WIDTH = 32) (
             mtval         <= 32'h0000_0000;
             mcounteren    <= 32'h0000_0000;
             mcountinhibit <= 32'h0000_0000;
-            cycle_cnt     <= 64'd0;
-            instret_cnt   <= 64'd0;
         end else begin
-            // 64-bit Cycle Counter (inhibited when mcountinhibit[0] is set)
-            if (!mcountinhibit[0])
-                cycle_cnt <= cycle_cnt + 64'd1;
-
-            // 64-bit Instructions Retired Counter (inhibited when mcountinhibit[2] is set)
-            if (!mcountinhibit[2] && ValidM && !TrapM)
-                instret_cnt <= instret_cnt + 64'd1;
-
             // Trap Entry: hardware trap update takes precedence
             if (TrapM) begin
                 mepc          <= {PCM[31:2], 2'b00};        // Save faulting / interrupted PC
@@ -174,22 +164,50 @@ module csr_file #(parameter WIDTH = 32) (
             end else if (CSRWriteM) begin
                 // Software CSR Writes
                 case (CSRAdrM)
-                    12'h300: mstatus  <= (mstatus & ~32'h0000_1888) | (CSRWriteValM & 32'h0000_1888);
-                    12'h304: mie      <= CSRWriteValM & 32'h0000_0888; // MEIE, MTIE, MSIE
-                    12'h305: mtvec    <= {CSRWriteValM[31:2], CSRWriteValM[1:0]}; // Base + Mode
-                    12'h306: mcounteren <= CSRWriteValM;
+                    12'h300: mstatus       <= (mstatus & ~32'h0000_1888) | (CSRWriteValM & 32'h0000_1888);
+                    12'h304: mie           <= CSRWriteValM & 32'h0000_0888; // MEIE, MTIE, MSIE
+                    12'h305: mtvec         <= {CSRWriteValM[31:2], CSRWriteValM[1:0]}; // Base + Mode
+                    12'h306: mcounteren    <= CSRWriteValM;
                     12'h320: mcountinhibit <= CSRWriteValM;
-                    12'h340: mscratch <= CSRWriteValM;
-                    12'h341: mepc     <= {CSRWriteValM[31:2], 2'b00};  // Word-aligned
-                    12'h342: mcause   <= CSRWriteValM;
-                    12'h343: mtval    <= CSRWriteValM;
-                    12'hC00, 12'hB00: cycle_cnt[31:0]    <= CSRWriteValM;
-                    12'hC80, 12'hB80: cycle_cnt[63:32]   <= CSRWriteValM;
-                    12'hC02, 12'hB02: instret_cnt[31:0]  <= CSRWriteValM;
-                    12'hC82, 12'hB82: instret_cnt[63:32] <= CSRWriteValM;
+                    12'h340: mscratch      <= CSRWriteValM;
+                    12'h341: mepc          <= {CSRWriteValM[31:2], 2'b00};  // Word-aligned
+                    12'h342: mcause        <= CSRWriteValM;
+                    12'h343: mtval         <= CSRWriteValM;
                     default: ; // Read-only registers ignore writes
                 endcase
             end
+        end
+    end
+
+    // =========================================================================
+    // 4. Performance Counters (mcycle and minstret)
+    // =========================================================================
+    wire csr_write_cycle_l   = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC00 || CSRAdrM == 12'hB00);
+    wire csr_write_cycle_h   = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC80 || CSRAdrM == 12'hB80);
+    wire csr_write_instret_l = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC02 || CSRAdrM == 12'hB02);
+    wire csr_write_instret_h = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC82 || CSRAdrM == 12'hB82);
+
+    always @(posedge clk) begin
+        if (reset) begin
+            cycle_cnt <= 64'd0;
+        end else if (csr_write_cycle_l) begin
+            cycle_cnt[31:0] <= CSRWriteValM;
+        end else if (csr_write_cycle_h) begin
+            cycle_cnt[63:32] <= CSRWriteValM;
+        end else if (!mcountinhibit[0]) begin
+            cycle_cnt <= cycle_cnt + 64'd1;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            instret_cnt <= 64'd0;
+        end else if (csr_write_instret_l) begin
+            instret_cnt[31:0] <= CSRWriteValM;
+        end else if (csr_write_instret_h) begin
+            instret_cnt[63:32] <= CSRWriteValM;
+        end else if (!mcountinhibit[2] && ValidM && !TrapM) begin
+            instret_cnt <= instret_cnt + 64'd1;
         end
     end
 

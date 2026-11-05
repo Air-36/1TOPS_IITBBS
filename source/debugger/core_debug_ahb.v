@@ -144,33 +144,32 @@ module core_debug_ahb #(
             uart_clkdiv_we_o   <= 1'b0;
             ft_clkdiv_we_o     <= 1'b0;
 
-            // Clear sticky trap latches on CPU core soft-reset (C 0201 / C 0101)
-            if (core_reset_i) begin
-                trap_latched       <= 1'b0;
-                trap_cause_latched <= 32'd0;
-                trap_val_latched   <= 32'd0;
-                trap_pc_latched    <= 32'd0;
-            end else if (TrapM && !trap_latched) begin
-                // Sticky trap capture on first occurrence of TrapM
-                trap_latched       <= 1'b1;
-                trap_cause_latched <= TrapCauseM;
-                trap_val_latched   <= TrapValM;
-                trap_pc_latched    <= PCM;
-            end
-
             // Software configuration write to DBG_CTRL (0x0D0)
             if (write_en_d && (addr_d == 12'h0D0)) begin
                 halt_on_trap_en   <= HWDATA[0];
                 halt_on_ebreak_en <= HWDATA[1];
-                if (HWDATA[2]) begin
-                    trap_latched <= 1'b0; // Write 1 to clear
-                end
             end else if (write_en_d && (addr_d == 12'h0E0)) begin
                 uart_clkdiv_we_o  <= 1'b1;
                 uart_clkdiv_val_o <= HWDATA[15:0];
             end else if (write_en_d && (addr_d == 12'h0E4)) begin
                 ft_clkdiv_we_o    <= 1'b1;
                 ft_clkdiv_val_o   <= HWDATA[7:0];
+            end
+
+            // Clear sticky trap latches on CPU core soft-reset (C 0201 / C 0101) or software W1C
+            if (core_reset_i) begin
+                trap_latched       <= 1'b0;
+                trap_cause_latched <= 32'd0;
+                trap_val_latched   <= 32'd0;
+                trap_pc_latched    <= 32'd0;
+            end else if (write_en_d && (addr_d == 12'h0D0) && HWDATA[2]) begin
+                trap_latched       <= 1'b0; // Software write-1-to-clear
+            end else if (TrapM && !trap_latched) begin
+                // Sticky trap capture on first occurrence of TrapM
+                trap_latched       <= 1'b1;
+                trap_cause_latched <= TrapCauseM;
+                trap_val_latched   <= TrapValM;
+                trap_pc_latched    <= PCM;
             end
         end
     end

@@ -63,10 +63,11 @@ inner_loop:
     jal x1, jump_target1
     j 99f
 jump_target1:
-    addi x1, x1, 12     /* Target return address */
+    la x1, jump_target2
     jalr x0, x1, 0
     j 99f
     nop
+jump_target2:
     addi x11, x0, 77
     CHECK_VAL(x11, 77, 3)
 

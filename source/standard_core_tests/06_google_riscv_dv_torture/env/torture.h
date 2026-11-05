@@ -43,10 +43,8 @@ _start: \
 
 #define CHECK_VAL(reg, expected, test_id) \
     li t0, expected; \
-    bne reg, t0, 99f; \
-    .section .text; \
-    j 98f; \
-99: TORTURE_FAIL(test_id); \
+    beq reg, t0, 98f; \
+    TORTURE_FAIL(test_id); \
 98:
 
 #define TRAP_HANDLER \

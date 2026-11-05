@@ -251,7 +251,6 @@ module tb_debugger;
     ) u_ahb_mux (
         .HCLK         (clk),
         .HRESETn      (rst_n),
-        .core_halt    (core_halt_o),
 
         // M0: CPU Core
         .M0_HADDR     (cpu_haddr),

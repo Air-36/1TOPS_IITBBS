@@ -153,8 +153,7 @@ module riscv_debugger_top #(
         // ADP Interface - Data from ADP going to FTDI
         .rxd_tvalid  (ft_adp_tx_valid),
         .rxd_tdata   (ft_adp_tx_data),
-        .rxd_tready  (ft_adp_tx_ready),
-        .rxd_tlast   (1'b0)
+        .rxd_tready  (ft_adp_tx_ready)
     );
 
     //-------------------------------------------------------------------------

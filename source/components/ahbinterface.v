@@ -41,14 +41,14 @@ module ahbinterface #(
     reg state, next_state;
 
     // Registers to delay write data and strobe by 1 clock cycle (Address -> Data phase)
-    // Unconditional registered write data and strobe
+    // Gated by Write signal so byte strobes are only asserted on write cycles
     always @(posedge HCLK or negedge HRESETn) begin
         if (!HRESETn) begin
             HWDATA <= 32'd0;
             HWSTRB <= 4'd0;
         end else begin
             HWDATA <= WriteData;
-            HWSTRB <= ByteMask;
+            HWSTRB <= (Write) ? ByteMask : 4'd0;
         end
     end
 

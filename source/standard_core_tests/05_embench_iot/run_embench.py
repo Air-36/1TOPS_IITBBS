@@ -14,13 +14,38 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 
-# Toolchain definitions
-RISCV_BIN = os.environ.get("RISCV_BIN", "/cad/mentor/xpack-riscv-none-elf-gcc/bin")
-GCC = os.path.join(RISCV_BIN, "riscv64-unknown-elf-gcc") if os.path.exists(os.path.join(RISCV_BIN, "riscv64-unknown-elf-gcc")) else (shutil.which("riscv64-unknown-elf-gcc") or "riscv64-unknown-elf-gcc")
-OBJCOPY = os.path.join(RISCV_BIN, "riscv64-unknown-elf-objcopy") if os.path.exists(os.path.join(RISCV_BIN, "riscv64-unknown-elf-objcopy")) else (shutil.which("riscv64-unknown-elf-objcopy") or "riscv64-unknown-elf-objcopy")
-VSIM = "/home/ganesh/altera_lite/25.1std/questa_fse/bin/vsim"
-VLOG = "/home/ganesh/altera_lite/25.1std/questa_fse/bin/vlog"
-VLIB = "/home/ganesh/altera_lite/25.1std/questa_fse/bin/vlib"
+def find_tool(tool_names, search_dirs=None):
+    if search_dirs:
+        for d in search_dirs:
+            if not d or not os.path.exists(d):
+                continue
+            for name in tool_names:
+                full_path = os.path.join(d, name)
+                if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
+                    return full_path
+    for name in tool_names:
+        p = shutil.which(name)
+        if p:
+            return p
+    return tool_names[0]
+
+RISCV_SEARCH_DIRS = [
+    os.environ.get("RISCV_BIN", ""),
+    "/home/23EC01043/tools/xpack-riscv-none-elf-gcc-15.2.0-1/bin",
+    "/cad/mentor/xpack-riscv-none-elf-gcc/bin",
+    "/home/23EC01009/cvw/1tops_soc/1tops_iitbbs/riscv_gcc/bin",
+]
+QUESTA_SEARCH_DIRS = [
+    os.environ.get("QUESTA_HOME", ""),
+    "/cad/mentor/questa_sim-2023.4_5/questasim/bin",
+    "/cad/mentor/questa_sim-2023.4_5/bin"
+]
+
+GCC = find_tool(["riscv-none-elf-gcc", "riscv32-unknown-elf-gcc", "riscv64-unknown-elf-gcc"], RISCV_SEARCH_DIRS)
+OBJCOPY = find_tool(["riscv-none-elf-objcopy", "riscv32-unknown-elf-objcopy", "riscv64-unknown-elf-objcopy"], RISCV_SEARCH_DIRS)
+VSIM = find_tool(["vsim"], QUESTA_SEARCH_DIRS)
+VLOG = find_tool(["vlog"], QUESTA_SEARCH_DIRS)
+VLIB = find_tool(["vlib"], QUESTA_SEARCH_DIRS)
 
 KERNELS = {
     "crc32": [os.path.join(SCRIPT_DIR, "src", "crc32", "crc_32.c")],

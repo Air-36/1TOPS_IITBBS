@@ -23,8 +23,8 @@ TORTURE_INIT
      * ========================================================================= */
     /* Halfword unsigned */
     lhu x7, 4(sp)
-    slli x8, x7, 4      /* Load-Use on x7 */
-    CHECK_VAL(x8, 0x0005a50, 2)
+    slli x8, x7, 4      /* Load-Use on x7: 0xa5a5 << 4 = 0x000a5a50 */
+    CHECK_VAL(x8, 0x000a5a50, 2)
 
     /* Byte signed (testing sign-extension forwarding) */
     lb x9, 8(sp)
@@ -50,8 +50,8 @@ TORTURE_INIT
      * ========================================================================= */
     lw x16, 0(sp)
     lw x17, 4(sp)
-    add x18, x16, x17   /* rs1 from LW x17 (dist 1), rs2 from LW x16 (dist 2) */
-    CHECK_VAL(x18, 0x1235001d, 6)
+    add x18, x16, x17   /* rs1 from LW x17 (dist 1), rs2 from LW x16 (dist 2): 0x12345678 + 0x0000a5a5 = 0x1234fc1d */
+    CHECK_VAL(x18, 0x1234fc1d, 6)
 
     TORTURE_PASS
 TRAP_HANDLER

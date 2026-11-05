@@ -107,8 +107,8 @@ TORTURE_INIT
      * ========================================================================= */
     /* Halfword unsigned */
     lhu x7, 4(sp)
-    slli x8, x7, 4      /* Load-Use on x7 */
-    CHECK_VAL(x8, 0x0005a50, 2)
+    slli x8, x7, 4      /* Load-Use on x7: 0xa5a5 << 4 = 0x000a5a50 */
+    CHECK_VAL(x8, 0x000a5a50, 2)
 
     /* Byte signed (testing sign-extension forwarding) */
     lb x9, 8(sp)
@@ -134,8 +134,8 @@ TORTURE_INIT
      * ========================================================================= */
     lw x16, 0(sp)
     lw x17, 4(sp)
-    add x18, x16, x17   /* rs1 from LW x17 (dist 1), rs2 from LW x16 (dist 2) */
-    CHECK_VAL(x18, 0x1235001d, 6)
+    add x18, x16, x17   /* rs1 from LW x17 (dist 1), rs2 from LW x16 (dist 2): 0x12345678 + 0x0000a5a5 = 0x1234fc1d */
+    CHECK_VAL(x18, 0x1234fc1d, 6)
 
     TORTURE_PASS
 TRAP_HANDLER
@@ -210,10 +210,11 @@ inner_loop:
     jal x1, jump_target1
     j 99f
 jump_target1:
-    addi x1, x1, 12     /* Target return address */
+    la x1, jump_target2
     jalr x0, x1, 0
     j 99f
     nop
+jump_target2:
     addi x11, x0, 77
     CHECK_VAL(x11, 77, 3)
 
@@ -349,13 +350,18 @@ TORTURE_INIT
 
             reg_vals[rd] = res
             
-            # Signature accumulation: sig = (sig ^ res) + (sig << 1) + 0x3b
-            sig = ((sig ^ res) + ((sig << 1) & mask32) + 0x3b) & mask32
+            # Signature accumulation: matching assembly sequence:
+            # xor x20, x20, rd
+            # slli t0, x20, 1
+            # add x20, x20, t0
+            # addi x20, x20, 0x3b
+            sig_new = (sig ^ res) & mask32
+            sig = (sig_new + ((sig_new << 1) & mask32) + 0x3b) & mask32
 
             f.write(f"    {op} {rd}, {rs1}, {rs2}\n")
             f.write(f"    xor x20, x20, {rd}\n")
-            f.write(f"    slli t0, x20, 1\n")
-            f.write(f"    add x20, x20, t0\n")
+            f.write(f"    slli x31, x20, 1\n")
+            f.write(f"    add x20, x20, x31\n")
             f.write(f"    addi x20, x20, 0x3b\n")
 
         f.write(f"\n    /* Golden signature check */\n")

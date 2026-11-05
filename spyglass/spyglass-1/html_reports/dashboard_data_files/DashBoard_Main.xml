@@ -9,10 +9,10 @@
 <summary_Fail name="Summary" run_status="Not completed" success_criteria="Failed objectives = 0" pass_status=""/>
  </design_data>
  <quality_data>
-<goal name="lint/lint_rtl" link="data_files/riscv_soc_ahb_lint-lint_rtl_summary.xml" run_status="Completed" end_time="11-05-2026 14:17:52" run_time="00:00:05 (5 secs)" fatal="0" error="2" warning="260" waived-error="0" waived-warning="0" success_criteria=" Fatal =0, Error =0" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb_lint-lint_rtl-trend.xml" run_link="dashboard_data_files/riscv_soc_ahb_spyglass-1_lint-lint_rtl.sh" />
-<summary_Main name="Summary" run_status="Completed" fatal="0" error="2" warning="260" waived-error="0" waived-warning="0" success_criteria="Failed goals = 1" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb-quality-summary.xml" />
+<goal name="lint/lint_rtl" link="data_files/riscv_soc_ahb_lint-lint_rtl_summary.xml" run_status="Completed" end_time="11-06-2026 02:48:58" run_time="00:00:05 (5 secs)" fatal="0" error="2" warning="90" waived-error="0" waived-warning="0" success_criteria=" Fatal =0, Error =0" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb_lint-lint_rtl-trend.xml" run_link="dashboard_data_files/riscv_soc_ahb_spyglass-1_lint-lint_rtl.sh" />
+<summary_Main name="Summary" run_status="Completed" fatal="0" error="2" warning="90" waived-error="0" waived-warning="0" success_criteria="Failed goals = 1" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb-quality-summary.xml" />
 <summary_Pass name="Summary" run_status="" success_criteria="Passed goals = 0" pass_status="" graph="dashboard_data_files/riscv_soc_ahb-quality-summary.xml" />
-<summary_Fail name="Summary" run_status="Not Completed" fatal="0" error="2" warning="260" waived-error="0" waived-warning="0" success_criteria="Failed goals = 1" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb-quality-summary.xml" />
+<summary_Fail name="Summary" run_status="Not Completed" fatal="0" error="2" warning="90" waived-error="0" waived-warning="0" success_criteria="Failed goals = 1" pass_status="Fail" graph="dashboard_data_files/riscv_soc_ahb-quality-summary.xml" />
  </quality_data>
  </module>
 <collapse_all>false</collapse_all>

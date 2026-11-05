@@ -56,7 +56,6 @@ module tb_ahb_mux_crv;
     ) dut (
         .HCLK(HCLK),
         .HRESETn(HRESETn),
-        .core_halt(core_halt),
 
         // M0
         .M0_HADDR(M0_HADDR),

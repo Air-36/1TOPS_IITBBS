@@ -36,7 +36,6 @@ module socdebug_ft1248_control #(
   // Ports of Axi Slave Bus Interface RXD - To 
   output wire       rxd_tready,
   input  wire [7:0] rxd_tdata,
-  input  wire       rxd_tlast,
   input  wire       rxd_tvalid
 );
 
@@ -65,6 +64,7 @@ module socdebug_ft1248_control #(
   localparam FT_RD_CLKLO     = 5'b11000;
 
   reg [4:0] ft_state;
+  reg [4:0] ft_next_state;
   // 9- bit shift register to support 8-bit data + 1 sequence control flag
   // write data uses bits[7:0], with bit[8] set to flag length for serialized transfers
   // read  data uses bits[8:1], with bit[0] set to flag continuation for serialized transfers
@@ -224,12 +224,86 @@ module socdebug_ft1248_control #(
   end
   wire ssn_start = ft_ssn_o & ssn_del;
 
-  // FTDI1248 state machine
+  // FTDI1248 state machine - separated sequential state register and combinational next-state decoder
 
+  // Sequential state register
+  always @(posedge clk or negedge resetn)
+  begin
+    if (!resetn)
+      ft_state <= FT_0_IDLE;
+    else
+      ft_state <= ft_next_state;
+  end
+
+  // Combinational next-state logic
+  always @(*) begin
+    ft_next_state = ft_state;
+    if (ft_clken) begin
+      case (ft_state)
+        FT_0_IDLE: begin // RX req priority
+          if (ssn_start && ft_rxreq)
+            ft_next_state = FT_ZCMD_CLKLO;
+          else if (ssn_start && ft_txreq)
+            ft_next_state = FT_ZCMD_CLKLO;
+          else
+            ft_next_state = (!ft_txf || !ft_rxe || (FT1248_CLKON != 0)) ? FT_1_IDLE : FT_0_IDLE;
+        end
+        FT_1_IDLE:
+          ft_next_state = FT_0_IDLE;
+        FT_ZCMD_CLKLO:
+          ft_next_state = FT_CMD_CLKHI;
+        FT_CMD_CLKHI:
+          ft_next_state = FT_CMD_CLKLO;
+        FT_CMD_CLKLO: // 2, 4 or 7 shifts
+          if (bwid8)
+            ft_next_state = FT_ZBT_CLKHI;
+          else if (bwid4)
+            ft_next_state = (|ft_reg[8:5]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
+          else if (bwid2)
+            ft_next_state = (|ft_reg[8:3]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
+          else
+            ft_next_state = (|ft_reg[8:3]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
+        FT_ZBT_CLKHI:
+          ft_next_state = FT_ZBT_CLKLO;
+        FT_ZBT_CLKLO:
+          if (ft_wcyc)
+            ft_next_state = FT_WD_CLKHI;
+          else
+            ft_next_state = FT_RD_CLKHI;
+        FT_WD_CLKHI:
+          if (ft_miso_i && ft_reg[8])
+            ft_next_state = FT_ZWD_CLKLO;
+          else if (bwid8)
+            ft_next_state = (ft_reg[8]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
+          else if (bwid4)
+            ft_next_state = (|ft_reg[8:5]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
+          else if (bwid2)
+            ft_next_state = (|ft_reg[8:3]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
+          else
+            ft_next_state = (|ft_reg[8:2]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
+        FT_WD_CLKLO:
+          ft_next_state = FT_WD_CLKHI;
+        FT_ZWD_CLKLO:
+          ft_next_state = FT_0_IDLE;
+        FT_RD_CLKHI: // capture iodata pins end of CLKHI phase
+          ft_next_state = FT_RD_CLKLO;
+        FT_RD_CLKLO:
+          if (ft_nak)
+            ft_next_state = FT_0_IDLE;
+          else if (ft_reg[0])
+            ft_next_state = FT_RD_CLKHI;
+          else
+            ft_next_state = FT_0_IDLE;
+        default:
+          ft_next_state = FT_0_IDLE;
+      endcase
+    end
+  end
+
+  // Sequential datapath outputs and control registers
   always @(posedge clk or negedge resetn)
   begin
     if (!resetn) begin
-      ft_state <= FT_0_IDLE;
       ft_reg   <= {9{1'b0}};
       txdata   <= {9{1'b0}};
       rxdone   <= 1'b0;
@@ -247,131 +321,85 @@ module socdebug_ft1248_control #(
         FT_0_IDLE: begin // RX req priority
           if (ssn_start && ft_rxreq) begin
             ft_reg <= rcmdpatt;
-            ft_state <= FT_ZCMD_CLKLO;
             end
           else if (ssn_start && ft_txreq) begin
             ft_reg <= wcmdpatt;
-            ft_state <= FT_ZCMD_CLKLO;
             ft_wcyc <= 1'b1;
             end
-          else begin
-            ft_state <= (!ft_txf || !ft_rxe || (FT1248_CLKON != 0)) ? FT_1_IDLE : FT_0_IDLE;
-            end
           end
-        FT_1_IDLE:
-          ft_state <= FT_0_IDLE;
-        FT_ZCMD_CLKLO:
-          ft_state <= FT_CMD_CLKHI;
-        FT_CMD_CLKHI:
-          ft_state <= FT_CMD_CLKLO;
+        FT_1_IDLE: ;
+        FT_ZCMD_CLKLO: ;
+        FT_CMD_CLKHI: ;
         FT_CMD_CLKLO: // 2, 4 or 7 shifts
           if (bwid8) begin
-            ft_state <= FT_ZBT_CLKHI;
             end 
           else if (bwid4) begin
             ft_reg <= {4'b0000,ft_reg[8:4]};
-            ft_state <= (|ft_reg[8:5]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
             end 
           else if (bwid2) begin
             ft_reg <= {  2'b00,ft_reg[8:2]};
-            ft_state <= (|ft_reg[8:3]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
             end 
           else begin
             ft_reg <= {   1'b0,ft_reg[8:1]};
-            ft_state <= (|ft_reg[8:3]) ? FT_CMD_CLKHI : FT_ZBT_CLKHI;
             end 
-        FT_ZBT_CLKHI:
-          ft_state <= FT_ZBT_CLKLO;
+        FT_ZBT_CLKHI: ;
         FT_ZBT_CLKLO:
           if    (ft_wcyc) begin
             ft_reg <= {1'b1,rxd_tdata};
-            ft_state <= FT_WD_CLKHI;
             end
           else begin
             ft_reg <=  9'b011111111;
-            ft_state <= FT_RD_CLKHI;
             end
         FT_WD_CLKHI:
           if (ft_miso_i && ft_reg[8]) begin
             ft_nak <= 1'b1;
-            ft_state <= FT_ZWD_CLKLO;
             end // NAK terminate on first cycle
-          else if (bwid8) begin
-            ft_state <=  (ft_reg[8])   ? FT_WD_CLKLO : FT_ZWD_CLKLO; // special case repeat on write data
-            end
-          else if (bwid4) begin
-            ft_state <= (|ft_reg[8:5]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
-            end
-          else if (bwid2) begin
-             ft_state <= (|ft_reg[8:3]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
-             end
-          else begin
-            ft_state <= (|ft_reg[8:2]) ? FT_WD_CLKLO : FT_ZWD_CLKLO;
-            end
         FT_WD_CLKLO:
           if      (bwid8) begin
             ft_reg <= {   1'b0,ft_reg[7:0]};
-            ft_state <= FT_WD_CLKHI;
             end // clear top flag
           else if (bwid4) begin
             ft_reg <= {4'b0000,ft_reg[8:4]};
-            ft_state <= FT_WD_CLKHI;
             end // shift 4 bits right
           else if (bwid2) begin
             ft_reg <= {  2'b00,ft_reg[8:2]};
-            ft_state <= FT_WD_CLKHI;
             end // shift 2 bits right
           else begin
             ft_reg <= {   1'b0,ft_reg[8:1]};
-            ft_state <= FT_WD_CLKHI;
             end // shift 1 bit right
         FT_ZWD_CLKLO:
-          if (ft_nak) begin
-            ft_nak<= 1'b0;
-            ft_state <= FT_0_IDLE;
+          begin
+            ft_nak  <= 1'b0;
             ft_wcyc <= 1'b0;
-            end // terminate without TX handshake
-          else begin
-            ft_state <= FT_0_IDLE;
-            ft_wcyc <= 1'b0;
-            end
+          end
         FT_RD_CLKHI: // capture iodata pins end of CLKHI phase
           if (ft_miso_i && (&ft_reg[7:0])) begin
             ft_nak <= 1'b1;
-            ft_state <= FT_RD_CLKLO;
             end // NAK terminate on first cycle
           else if (bwid8) begin
             ft_reg <= (ft_reg[0]) ? {ft_rdmasked[7:0],1'b1} : {ft_reg[8:1],1'b0};
-            ft_state <= FT_RD_CLKLO;
             end // 8-bit read twice
           else if (bwid4) begin
             ft_reg <= {ft_rdmasked[3:0],ft_reg[8:4]};
-            ft_state <= FT_RD_CLKLO;
             end 
           else if (bwid2) begin
             ft_reg <= {ft_rdmasked[1:0],ft_reg[8:2]};
-            ft_state <= FT_RD_CLKLO;
             end 
           else begin
             ft_reg <= {ft_rdmasked[  0],ft_reg[8:1]};
-            ft_state <= FT_RD_CLKLO;
             end 
         FT_RD_CLKLO:
           if (ft_nak) begin
             ft_nak<= 1'b0;
-            ft_state <= FT_0_IDLE;
             txdata <= 9'b000000000;
             end // terminate without TX handshake
           else if (ft_reg[0]) begin
-            ft_state <= FT_RD_CLKHI;
             ft_reg[0] <= !(bwid8);
             end // loop until all 8 bits shifted in (or 8-bit read repeated)
           else begin
-            ft_state <= FT_0_IDLE;
             txdata <= {1'b1,ft_reg[8:1]};
             end
-        default:
-          ft_state <= FT_0_IDLE;
+        default: ;
         endcase
         end
       end

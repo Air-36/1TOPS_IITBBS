@@ -13,9 +13,6 @@ module ahb_mux #(
         input  wire                  HCLK,
         input  wire                  HRESETn,
 
-        // Priority hint: 1 = Core is halted, Debugger gets top priority
-        input  wire                  core_halt,
-
         //-------------------------------------------------------------------------
         // Master 0: RISC-V CPU Core
         //-------------------------------------------------------------------------

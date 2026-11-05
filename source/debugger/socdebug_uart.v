@@ -55,7 +55,7 @@ module socdebug_uart #(
     wire rx_in = rx_sync[1];
 
     //-------------------------------------------------------------------------
-    // RX State Machine
+    // RX State Machine (STARC05-2.11.3.1 compliant 2-always block FSM)
     //-------------------------------------------------------------------------
     localparam RX_IDLE  = 2'd0;
     localparam RX_START = 2'd1;
@@ -63,41 +63,75 @@ module socdebug_uart #(
     localparam RX_STOP  = 2'd3;
 
     reg [1:0]  rx_state;
+    reg [1:0]  rx_next_state;
     reg [15:0] rx_clk_cnt;
     reg [2:0]  rx_bit_idx;
     reg [7:0]  rx_shift_reg;
 
+    // 1. Sequential state register
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            rx_state      <= RX_IDLE;
+            rx_state <= RX_IDLE;
+        end else begin
+            rx_state <= rx_next_state;
+        end
+    end
+
+    // 2. Combinational next-state logic
+    always @(*) begin
+        rx_next_state = rx_state;
+        case (rx_state)
+            RX_IDLE: begin
+                if (!rx_in) begin // Start bit detected (falling edge)
+                    rx_next_state = RX_START;
+                end
+            end
+
+            RX_START: begin
+                if (rx_clk_cnt == half_bit) begin
+                    if (!rx_in) begin // Valid start bit
+                        rx_next_state = RX_DATA;
+                    end else begin
+                        rx_next_state = RX_IDLE; // False glitch
+                    end
+                end
+            end
+
+            RX_DATA: begin
+                if (rx_clk_cnt >= bit_limit) begin
+                    if (rx_bit_idx == 3'd7) begin
+                        rx_next_state = RX_STOP;
+                    end
+                end
+            end
+
+            RX_STOP: begin
+                if (rx_clk_cnt >= bit_limit) begin
+                    rx_next_state = RX_IDLE;
+                end
+            end
+
+            default: rx_next_state = RX_IDLE;
+        endcase
+    end
+
+    // 3. Sequential datapath registers
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
             rx_clk_cnt    <= 16'd0;
             rx_bit_idx    <= 3'd0;
             rx_shift_reg  <= 8'h00;
             m_axis_tdata  <= 8'h00;
-            m_axis_tvalid <= 1'b0;
         end else begin
-            // Handshake clears valid when accepted
-            if (m_axis_tvalid && m_axis_tready) begin
-                m_axis_tvalid <= 1'b0;
-            end
-
             case (rx_state)
                 RX_IDLE: begin
                     rx_clk_cnt <= 16'd0;
                     rx_bit_idx <= 3'd0;
-                    if (!rx_in) begin // Start bit detected (falling edge)
-                        rx_state <= RX_START;
-                    end
                 end
 
                 RX_START: begin
                     if (rx_clk_cnt == half_bit) begin
-                        if (!rx_in) begin // Valid start bit
-                            rx_clk_cnt <= 16'd0;
-                            rx_state   <= RX_DATA;
-                        end else begin
-                            rx_state   <= RX_IDLE; // False glitch
-                        end
+                        rx_clk_cnt <= 16'd0;
                     end else begin
                         rx_clk_cnt <= rx_clk_cnt + 1'b1;
                     end
@@ -113,7 +147,6 @@ module socdebug_uart #(
                             rx_bit_idx <= rx_bit_idx + 1'b1;
                         end else begin
                             rx_bit_idx <= 3'd0;
-                            rx_state   <= RX_STOP;
                         end
                     end
                 end
@@ -122,20 +155,32 @@ module socdebug_uart #(
                     if (rx_clk_cnt < bit_limit) begin
                         rx_clk_cnt <= rx_clk_cnt + 1'b1;
                     end else begin
-                        rx_clk_cnt    <= 16'd0;
-                        rx_state      <= RX_IDLE;
-                        m_axis_tdata  <= rx_shift_reg;
-                        m_axis_tvalid <= 1'b1; // Output byte available
+                        rx_clk_cnt   <= 16'd0;
+                        m_axis_tdata <= rx_shift_reg;
                     end
                 end
 
-                default: rx_state <= RX_IDLE;
+                default: begin
+                    rx_clk_cnt <= 16'd0;
+                    rx_bit_idx <= 3'd0;
+                end
             endcase
         end
     end
 
+    // AXI-Stream TVALID handshake control (mutually exclusive transitions, no duplicate assignments)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            m_axis_tvalid <= 1'b0;
+        end else if (rx_state == RX_STOP && rx_clk_cnt >= bit_limit) begin
+            m_axis_tvalid <= 1'b1; // New received byte available
+        end else if (m_axis_tvalid && m_axis_tready) begin
+            m_axis_tvalid <= 1'b0; // Handshake completed
+        end
+    end
+
     //-------------------------------------------------------------------------
-    // TX State Machine
+    // TX State Machine (STARC05-2.11.3.1 compliant 2-always block FSM)
     //-------------------------------------------------------------------------
     localparam TX_IDLE  = 2'd0;
     localparam TX_START = 2'd1;
@@ -143,20 +188,64 @@ module socdebug_uart #(
     localparam TX_STOP  = 2'd3;
 
     reg [1:0]  tx_state;
+    reg [1:0]  tx_next_state;
     reg [15:0] tx_clk_cnt;
     reg [2:0]  tx_bit_idx;
     reg [7:0]  tx_data_reg;
 
     assign s_axis_tready = (tx_state == TX_IDLE);
 
+    // 1. Sequential state register
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            tx_state        <= TX_IDLE;
-            tx_clk_cnt      <= 16'd0;
-            tx_bit_idx      <= 3'd0;
-            tx_data_reg     <= 8'h00;
-            uart_tx         <= 1'b1; // Idle high
-            clks_per_bit_reg<= DEFAULT_CLKS_PER_BIT[15:0];
+            tx_state <= TX_IDLE;
+        end else begin
+            tx_state <= tx_next_state;
+        end
+    end
+
+    // 2. Combinational next-state logic
+    always @(*) begin
+        tx_next_state = tx_state;
+        case (tx_state)
+            TX_IDLE: begin
+                if (s_axis_tvalid) begin
+                    tx_next_state = TX_START;
+                end
+            end
+
+            TX_START: begin
+                if (tx_clk_cnt >= bit_limit) begin
+                    tx_next_state = TX_DATA;
+                end
+            end
+
+            TX_DATA: begin
+                if (tx_clk_cnt >= bit_limit) begin
+                    if (tx_bit_idx == 3'd7) begin
+                        tx_next_state = TX_STOP;
+                    end
+                end
+            end
+
+            TX_STOP: begin
+                if (tx_clk_cnt >= bit_limit) begin
+                    tx_next_state = TX_IDLE;
+                end
+            end
+
+            default: tx_next_state = TX_IDLE;
+        endcase
+    end
+
+    // 3. Sequential datapath registers
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            tx_clk_cnt       <= 16'd0;
+            tx_bit_idx       <= 3'd0;
+            tx_data_reg      <= 8'h00;
+            uart_tx          <= 1'b1; // Idle high
+            clks_per_bit_reg <= DEFAULT_CLKS_PER_BIT[15:0];
         end else begin
             // Synchronous update of divider only when both engines are idle and no TX is pending
             if (rx_state == RX_IDLE && tx_state == TX_IDLE && !s_axis_tvalid) begin
@@ -172,7 +261,6 @@ module socdebug_uart #(
                     tx_bit_idx <= 3'd0;
                     if (s_axis_tvalid) begin
                         tx_data_reg <= s_axis_tdata;
-                        tx_state    <= TX_START;
                     end
                 end
 
@@ -182,7 +270,6 @@ module socdebug_uart #(
                         tx_clk_cnt <= tx_clk_cnt + 1'b1;
                     end else begin
                         tx_clk_cnt <= 16'd0;
-                        tx_state   <= TX_DATA;
                     end
                 end
 
@@ -196,7 +283,6 @@ module socdebug_uart #(
                             tx_bit_idx <= tx_bit_idx + 1'b1;
                         end else begin
                             tx_bit_idx <= 3'd0;
-                            tx_state   <= TX_STOP;
                         end
                     end
                 end
@@ -207,11 +293,14 @@ module socdebug_uart #(
                         tx_clk_cnt <= tx_clk_cnt + 1'b1;
                     end else begin
                         tx_clk_cnt <= 16'd0;
-                        tx_state   <= TX_IDLE;
                     end
                 end
 
-                default: tx_state <= TX_IDLE;
+                default: begin
+                    uart_tx    <= 1'b1;
+                    tx_clk_cnt <= 16'd0;
+                    tx_bit_idx <= 3'd0;
+                end
             endcase
         end
     end

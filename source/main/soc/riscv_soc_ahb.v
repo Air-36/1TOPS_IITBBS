@@ -257,7 +257,6 @@ module riscv_soc_ahb #(
     ) u_ahb_mux (
         .HCLK(HCLK),
         .HRESETn(HRESETn),
-        .core_halt(dbg_core_halt_status),
 
         // Master 0: CPU Core
         .M0_HADDR(core_HADDR),
