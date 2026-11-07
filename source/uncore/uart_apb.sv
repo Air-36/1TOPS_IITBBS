@@ -11,7 +11,6 @@ module uart_apb #(
     input  logic              PSEL,
     input  logic [ 2:0]       PADDR,
     input  logic [XLEN-1:0]   PWDATA,
-    input  logic [XLEN/8-1:0] PSTRB,
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [XLEN-1:0]   PRDATA,
@@ -123,7 +122,7 @@ end else begin : gen_fast_model
             UART_LCR:         dout = lcr;
             UART_MCR:         dout = mcr;
             UART_LSR:         dout = lsr;
-            UART_MSR:         dout = 8'h00;
+            UART_MSR:         dout = {~DCDb, ~RIb, ~DSRb, ~CTSb, 3'b000, SIN};
             UART_SCR:         dout = scr;
             default:          dout = 8'd0;
         endcase

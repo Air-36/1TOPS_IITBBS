@@ -65,11 +65,6 @@ module ram_ahb #(
   wire [PA_BITS-1:0]    rel_addr  = RamAddr - BASE_ADDR;
   wire [ADDR_WIDTH-1:0] word_addr = rel_addr[ADDR_WIDTH+OFFSET-1:OFFSET];
 
-  // Backward-compatible alias signals for testbench hierarchical monitoring
-// synthesis translate_off
-  wire                  write_reg   = memwriteD;
-  wire [ADDR_WIDTH-1:0] wr_addr_reg = word_addr;
-// synthesis translate_on
 
 `ifdef ALTERA_RESERVED_QIS
     `define INFER_BYTE_RAM_M9K

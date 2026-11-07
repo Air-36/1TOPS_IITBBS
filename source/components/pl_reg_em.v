@@ -37,8 +37,31 @@ module pl_reg_em (
     output reg [31:0] InstrM
 );
 
-always @(posedge clk) begin
-    if (reset || clr) begin
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        RegWriteM     <= 0;
+        MemWriteM     <= 0;
+        ResultSrcM    <= 0;
+        ALUResultM    <= 0;
+        WriteDataM    <= 0;
+        PCPlus4M      <= 0;
+        RdM           <= 0;
+        PCM           <= 0;
+        lAuiPCM       <= 0;
+        funct3M       <= 0;
+        SrcAM         <= 0;
+        uimmM         <= 0;
+        CSRAdrM       <= 0;
+        CSRReadM      <= 0;
+        CSRWriteM     <= 0;
+        mretM         <= 0;
+        wfiM          <= 0;
+        ecallM        <= 0;
+        ebreakM       <= 0;
+        IllegalInstrM <= 0;
+        ValidM        <= 0;
+        InstrM        <= 32'h00000013;
+    end else if (clr) begin
         RegWriteM     <= 0;
         MemWriteM     <= 0;
         ResultSrcM    <= 0;

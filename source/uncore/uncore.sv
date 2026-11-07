@@ -15,18 +15,13 @@ module uncore #(
 )(
     input  logic                 HCLK,
     input  logic                 HRESETn,
-    input  logic                 TIMECLK,
 
     // AHB Bus Master Interface (connected to CPU Core)
     input  logic [31:0]          HADDR,
     input  logic [XLEN-1:0]      HWDATA,
     input  logic [XLEN/8-1:0]    HWSTRB,
     input  logic                 HWRITE,
-    input  logic [ 2:0]          HSIZE,
-    input  logic [ 2:0]          HBURST,
-    input  logic [ 3:0]          HPROT,
     input  logic [ 1:0]          HTRANS,
-    input  logic                 HMASTLOCK,
     input  logic                 HREADY,
     output logic [XLEN-1:0]      HRDATA,
     output logic                 HREADYOUT,
@@ -61,7 +56,6 @@ module uncore #(
     output logic                 SPIOut,
     output logic [3:0]           SPICS,
     output logic                 SPICLK,
-    input  logic                 SDCIn,
     output logic                 SDCCmd,
     output logic [3:0]           SDCCS,
     output logic                 SDCCLK
@@ -292,7 +286,6 @@ module uncore #(
             .PSEL(PSEL[1]),
             .PADDR(PADDR[27:0]),
             .PWDATA(PWDATA),
-            .PSTRB(PSTRB),
             .PWRITE(PWRITE),
             .PENABLE(PENABLE),
             .PRDATA(PRDATA_PLIC),
@@ -323,7 +316,6 @@ module uncore #(
             .PSEL(PSEL[2]),
             .PADDR(PADDR[2:0]),
             .PWDATA(PWDATA),
-            .PSTRB(PSTRB),
             .PWRITE(PWRITE),
             .PENABLE(PENABLE),
             .PRDATA(PRDATA_UART),
@@ -335,12 +327,16 @@ module uncore #(
             .DCDb(1'b1),
             .CTSb(1'b0),
             .RIb(1'b1),
+            // spyglass disable_block W287b
+            // SMD: Instance output port is not connected
+            // SJ: Modem control and status signals unused in 2-wire UART mode
             .RTSb(),
             .DTRb(),
             .OUT1b(),
             .OUT2b(),
             .TXRDYb(),
             .RXRDYb()
+            // spyglass enable_block W287b
         );
     end else begin : gen_no_uart
         assign PRDATA_UART = '0;
@@ -360,7 +356,6 @@ module uncore #(
             .PSEL(PSEL[3]),
             .PADDR(PADDR[7:0]),
             .PWDATA(PWDATA),
-            .PSTRB(PSTRB),
             .PWRITE(PWRITE),
             .PENABLE(PENABLE),
             .PREADY(PREADY_SPI),
@@ -388,7 +383,6 @@ module uncore #(
             .PSEL(PSEL[4]),
             .PADDR(PADDR[7:0]),
             .PWDATA(PWDATA),
-            .PSTRB(PSTRB),
             .PWRITE(PWRITE),
             .PENABLE(PENABLE),
             .PRDATA(PRDATA_GPIO),

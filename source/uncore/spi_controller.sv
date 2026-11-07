@@ -56,7 +56,6 @@ module spi_controller (
   logic       LastBit;
 
   // Transmit Stuff
-  logic       ContinueTransmit;
   logic       EndTransmission;
   // logic       TransmitRegLoaded; // TODO: Could be replaced by TransmitRegLoaded?
   logic       NextEndDelay;
@@ -71,7 +70,6 @@ module spi_controller (
 
   logic       HasCSSCK;
   logic       HasSCKCS;
-  logic       HasINTERCS;
   logic       HasINTERXFR;
 
   logic       EndOfCSSCK;
@@ -93,7 +91,6 @@ module spi_controller (
   // Do we have delay for anything?
   assign HasCSSCK = cssck > 8'b0;
   assign HasSCKCS = sckcs > 8'b0;
-  assign HasINTERCS = intercs > 8'b0;
   assign HasINTERXFR = interxfr > 8'b0;
 
   // Have we hit full delay for any of the delays?
@@ -110,11 +107,10 @@ module spi_controller (
   // Active at 2x SCLK frequency to account for implicit half cycle delays and actions on both clock edges depending on phase
   assign SCLKenable = DivCounter == SckDiv;
 
-  assign ContinueTransmit = ~TransmitFIFOEmpty & EndOfFrame;
   assign EndTransmission = TransmitFIFOEmpty & EndOfFrame;
   assign Phase = SckMode[0];
 
-  always_ff @(posedge PCLK) begin
+  always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       DivCounter <= 12'b0;
       SPICLK <= SckMode[1];
@@ -181,8 +177,12 @@ module spi_controller (
   // Aligned EXACTLY ON THE MIDDLE of the leading and trailing edges.
   // Sweeeeeeeeeet...
   assign InvertClock = ^SckMode;
-  always_ff @(negedge PCLK) begin
-    if (~PRESETn | TransmitStart) begin
+  always_ff @(negedge PCLK or negedge PRESETn) begin
+    if (~PRESETn) begin
+      ShiftEdge <= 0;
+      SampleEdge <= 0;
+      EndOfFrame <= 0;
+    end else if (TransmitStart) begin
       ShiftEdge <= 0;
       SampleEdge <= 0;
       EndOfFrame <= 0;
@@ -193,7 +193,7 @@ module spi_controller (
     end
   end
 
-  always_ff @(posedge PCLK) begin
+  always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       CurrState <= INACTIVE;
     end else if (SCLKenable) begin

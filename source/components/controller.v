@@ -31,7 +31,7 @@ module controller (
 
     wire [1:0] ALUOp;
     wire       CSRRead_int;
-    wire       PrivilegedD, CSRInstrD, IllegalPrivD, IllegalCSRD;
+    wire       IllegalPrivD, IllegalCSRD;
 
     main_decoder md (
         .op(op),
@@ -58,8 +58,12 @@ module controller (
 
     priv_decoder pd (
         .InstrD(InstrD),
-        .PrivilegedD(PrivilegedD),
-        .CSRInstrD(CSRInstrD),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Decoded sub-instruction signals used directly; summary flags unused
+        .PrivilegedD(),
+        .CSRInstrD(),
+        // spyglass enable_block W287b
         .mretD(mretD),
         .wfiD(wfiD),
         .ecallD(ecallD),

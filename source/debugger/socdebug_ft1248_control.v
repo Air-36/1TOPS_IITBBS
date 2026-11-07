@@ -18,8 +18,8 @@ module socdebug_ft1248_control #(
   output wire                    ft_ssn_o,      // SS_N
   input  wire                    ft_miso_i,     // MISO
   output wire [FT1248_WIDTH-1:0] ft_miosio_o,   // MIOSIO tristate output when enabled
-  output wire [FT1248_WIDTH-1:0] ft_miosio_e,   // MIOSIO tristate output enable (active hi)
-  output wire [FT1248_WIDTH-1:0] ft_miosio_z,   // MIOSIO tristate output enable (active lo)
+  output reg  [FT1248_WIDTH-1:0] ft_miosio_e,   // MIOSIO tristate output enable (active hi)
+  output reg  [FT1248_WIDTH-1:0] ft_miosio_z,   // MIOSIO tristate output enable (active lo)
   input  wire [FT1248_WIDTH-1:0] ft_miosio_i,   // MIOSIO tristate input
   
   input  wire [7:0] ft_clkdiv,    // divider prescaler to ensure SCLK <1MHz
@@ -77,7 +77,6 @@ module socdebug_ft1248_control #(
   wire bwid8 = (FT1248_WIDTH==8);
   wire bwid4 = (FT1248_WIDTH==4);
   wire bwid2 = (FT1248_WIDTH==2);
-  wire bwid1 = (FT1248_WIDTH==1);
 
   wire [7:0] ft_rdmasked;
 
@@ -85,8 +84,6 @@ module socdebug_ft1248_control #(
     if (FT1248_WIDTH == 8) begin
       assign ft_rdmasked[7:1] =  ft_miosio_i[7:1];
       assign ft_miosio_o[7:1] =  ft_reg[7:1];
-      assign ft_miosio_e[7:1] =  {7{ft_state[1]}};
-      assign ft_miosio_z[7:1] = ~{7{ft_state[1]}};
     end 
   endgenerate
 
@@ -94,8 +91,6 @@ module socdebug_ft1248_control #(
     if (FT1248_WIDTH == 4) begin
       assign ft_rdmasked[7:1] =  {4'b1111, ft_miosio_i[3:1]};
       assign ft_miosio_o[3:1] =  ft_reg[3:1];
-      assign ft_miosio_e[3:1] =  {3{ft_state[1]}};
-      assign ft_miosio_z[3:1] = ~{3{ft_state[1]}};
     end
   endgenerate
 
@@ -103,8 +98,6 @@ module socdebug_ft1248_control #(
     if (FT1248_WIDTH == 2) begin
       assign ft_rdmasked[7:1] =  {6'b111111, ft_miosio_i[1]};
       assign ft_miosio_o[1] =  ft_reg[1];
-      assign ft_miosio_e[1] =  ft_state[1];
-      assign ft_miosio_z[1] = ~ft_state[1];
     end
   endgenerate
 
@@ -116,8 +109,6 @@ module socdebug_ft1248_control #(
 
   assign ft_rdmasked[0] = ft_miosio_i[0];
   assign ft_miosio_o[0] =  ft_reg[0];
-  assign ft_miosio_e[0] =  ft_state[1];
-  assign ft_miosio_z[0] = ~ft_state[1];
 
   assign ft_clk_o =  ft_state[0];
   assign ft_ssn_o = !ft_state[4];
@@ -205,9 +196,6 @@ module socdebug_ft1248_control #(
   // FTDI1248 commands
   wire [3:0] wcmd = 4'b0000; // write request
   wire [3:0] rcmd = 4'b0001; // read  request
-  wire [3:0] fcmd = 4'b0100; // write flush request
-  //wire [3:0] rcmd = 4'b1000; // read  request BE bit-pattern
-  //wire [3:0] fcmd = 4'b0010; // write flush request BE bit-pattern
   // and full FT1248 command bit patterns (using top-bits for shift sequencing)
   wire [8:0] wcmdpatt = {2'b11, wcmd[0], wcmd[1], 1'b0, wcmd[2], 1'b0, 1'b0, wcmd[3]};
   wire [8:0] rcmdpatt = {2'b11, rcmd[0], rcmd[1], 1'b0, rcmd[2], 1'b0, 1'b0, rcmd[3]};
@@ -226,13 +214,18 @@ module socdebug_ft1248_control #(
 
   // FTDI1248 state machine - separated sequential state register and combinational next-state decoder
 
-  // Sequential state register
+  // Sequential state register and registered tristate enable outputs
   always @(posedge clk or negedge resetn)
   begin
-    if (!resetn)
-      ft_state <= FT_0_IDLE;
-    else
-      ft_state <= ft_next_state;
+    if (!resetn) begin
+      ft_state    <= FT_0_IDLE;
+      ft_miosio_e <= {FT1248_WIDTH{1'b0}};
+      ft_miosio_z <= {FT1248_WIDTH{1'b1}};
+    end else begin
+      ft_state    <= ft_next_state;
+      ft_miosio_e <= {FT1248_WIDTH{ft_next_state[1]}};
+      ft_miosio_z <= ~{FT1248_WIDTH{ft_next_state[1]}};
+    end
   end
 
   // Combinational next-state logic
@@ -305,7 +298,6 @@ module socdebug_ft1248_control #(
   begin
     if (!resetn) begin
       ft_reg   <= {9{1'b0}};
-      txdata   <= {9{1'b0}};
       rxdone   <= 1'b0;
       ft_wcyc  <= 1'b0;
       ft_txf   <= 1'b1; // ftdi channel  TXE# ('1' full)
@@ -314,7 +306,6 @@ module socdebug_ft1248_control #(
     end else begin
       ft_txf <= (ft_ssn_o) ? (ft_miosio_i[0] | ft_miosio_i0_sync) : 1'b1; //ft_txf & !( ft_wcyc &(ft_state==FT_ZBT_CLKHI) & ft_miso_i);
       ft_rxe <= (ft_ssn_o) ? (ft_miso_i | ft_miso_i_sync)  : 1'b1; //ft_rxe & !(!ft_wcyc & (ft_state==FT_ZBT_CLKHI) & ft_miso_i);
-      txdata[8] <= txdata[8] & !txd_tready; // tx_valid handshake
       rxdone   <= (ft_clken & (ft_state==FT_ZWD_CLKLO) & !ft_nak) | (rxdone & !rxd_tvalid); // hold until acknowledged
       if (ft_clken) begin
         case (ft_state)
@@ -391,17 +382,33 @@ module socdebug_ft1248_control #(
         FT_RD_CLKLO:
           if (ft_nak) begin
             ft_nak<= 1'b0;
-            txdata <= 9'b000000000;
             end // terminate without TX handshake
           else if (ft_reg[0]) begin
             ft_reg[0] <= !(bwid8);
             end // loop until all 8 bits shifted in (or 8-bit read repeated)
           else begin
-            txdata <= {1'b1,ft_reg[8:1]};
             end
         default: ;
         endcase
         end
       end
     end
+
+  // Synchronous TX data register update (single assignment block)
+  always @(posedge clk or negedge resetn) begin
+    if (!resetn) begin
+      txdata <= 9'b000000000;
+    end else if (ft_clken && (ft_state == FT_RD_CLKLO)) begin
+      if (ft_nak) begin
+        txdata <= 9'b000000000;
+      end else if (!ft_reg[0]) begin
+        txdata <= {1'b1, ft_reg[8:1]};
+      end else begin
+        txdata[8] <= txdata[8] & !txd_tready;
+      end
+    end else begin
+      txdata[8] <= txdata[8] & !txd_tready;
+    end
+  end
+
 endmodule

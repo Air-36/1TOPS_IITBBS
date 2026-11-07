@@ -9,7 +9,6 @@ module gpio_apb #(
     input  logic              PSEL,
     input  logic [ 7:0]       PADDR,
     input  logic [31:0]       PWDATA,
-    input  logic [ 3:0]       PSTRB,
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [31:0]       PRDATA,

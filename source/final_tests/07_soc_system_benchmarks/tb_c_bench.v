@@ -27,7 +27,10 @@ module tb_c_bench;
     // Instantiate complete RISC-V AHB-Lite SoC
     riscv_soc_ahb #(
         .RESET_PC(32'h8000_0000),
-        .MEM_SIZE_BYTES(MEM_SIZE_BYTES)
+        .MEM_SIZE_BYTES(MEM_SIZE_BYTES),
+        .IRAM_SIZE_BYTES(IRAM_WORDS * 4),
+        .DRAM_BASE(32'h8000_0000 + (IRAM_WORDS * 4)),
+        .DRAM_SIZE_BYTES(DRAM_WORDS * 4)
     ) dut (
         .clk(clk),
         .reset(reset),
@@ -106,8 +109,8 @@ module tb_c_bench;
         reset = 0;
     end
 
-    wire tohost_hit = (dut.uncore.ram_i.write_reg && (tohost_word < IRAM_WORDS) && (dut.uncore.ram_i.wr_addr_reg == tohost_word[17:0])) ||
-                      (dut.uncore.ram_d.write_reg && (tohost_word >= IRAM_WORDS) && (dut.uncore.ram_d.wr_addr_reg == (tohost_word[17:0] - IRAM_WORDS[17:0])));
+    wire tohost_hit = (dut.uncore.ram_i.memwriteD && (tohost_word < IRAM_WORDS) && (dut.uncore.ram_i.word_addr == tohost_word[17:0])) ||
+                      (dut.uncore.ram_d.memwriteD && (tohost_word >= IRAM_WORDS) && (dut.uncore.ram_d.word_addr == (tohost_word[17:0] - IRAM_WORDS[17:0])));
 
     // Cycle counter & tohost monitor
     always @(posedge clk) begin

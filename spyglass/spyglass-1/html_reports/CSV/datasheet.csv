@@ -8,7 +8,7 @@ PCW,OUTPUT,[31:0],-,-,Yes,-,,,Execution Trace Outputs (Testben...
 ResultW,OUTPUT,[31:0],-,-,No,-,,,-
 SPICLK,OUTPUT,,-,-,Yes,-,,,-
 SPICS,OUTPUT,[3:0],-,-,No,-,,,-
-SPIIn,INPUT,,-,-,No,-,,,-
+SPIIn,INPUT,,-,-,Yes,-,,,-
 SPIOut,OUTPUT,,-,-,Yes,-,,,-
 TrapM,OUTPUT,,-,-,No,-,,,-
 UARTSin,INPUT,,-,-,No,-,,,-

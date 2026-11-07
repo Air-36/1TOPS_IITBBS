@@ -50,7 +50,11 @@ module riscv_soc_ahb #(
     output            ft1248_clk,      // SCLK output to FT232H
     output            ft1248_ss_n,     // SS# output to FT232H
     input             ft1248_miso,     // MISO / RXF# input (idle HIGH)
+    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
+    // SMD: Tristate buffer has logic in enable condition
+    // SJ: External FT1248 bidirectional PMOD pad driven by on-chip transceiver output enable
     inout      [0:0]  ft1248_miosio,   // Bidirectional MIOSIO data bus
+    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
     output            core_halted_led  // LED output indicating core is halted
 );
 
@@ -95,11 +99,7 @@ module riscv_soc_ahb #(
     wire [31:0] HWDATA;
     wire [ 3:0] HWSTRB;
     wire        HWRITE;
-    wire [ 2:0] HSIZE;
-    wire [ 2:0] HBURST;
-    wire [ 3:0] HPROT;
     wire [ 1:0] HTRANS;
-    wire        HMASTLOCK;
     wire [31:0] HRDATA;
     wire        HREADY;
     wire        HRESP;
@@ -177,6 +177,19 @@ module riscv_soc_ahb #(
     wire        ahb_ft_clkdiv_we;
     wire [ 7:0] ahb_ft_clkdiv_val;
 
+    // Top-Level Bidirectional I/O Pad Interface for FT1248
+    wire [FT_WIDTH-1:0] dbg_ft1248_miosio_o;
+    wire [FT_WIDTH-1:0] dbg_ft1248_miosio_oe;
+    wire [FT_WIDTH-1:0] dbg_ft1248_miosio_i = ft1248_miosio;
+    wire                ft1248_oe           = dbg_ft1248_miosio_oe[0];
+    wire                ft1248_out          = dbg_ft1248_miosio_o[0];
+
+    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
+    // SMD: Tristate buffer has logic in enable condition
+    // SJ: External FT1248 bidirectional PMOD pad driven by on-chip transceiver output enable
+    assign ft1248_miosio[0] = ft1248_oe ? ft1248_out : 1'bz;
+    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
+
     // 1. Dual-Protocol Hardware Debugger Subsystem (UART + FT1248)
     riscv_debugger_top #(
         .CLK_FREQ(CLK_FREQ),
@@ -193,7 +206,9 @@ module riscv_soc_ahb #(
         .ft1248_clk(ft1248_clk),
         .ft1248_ss_n(ft1248_ss_n),
         .ft1248_miso(ft1248_miso_safe),
-        .ft1248_miosio(ft1248_miosio),
+        .ft1248_miosio_o(dbg_ft1248_miosio_o),
+        .ft1248_miosio_oe(dbg_ft1248_miosio_oe),
+        .ft1248_miosio_i(dbg_ft1248_miosio_i),
         .core_halt_o(dbg_core_halt),
         .core_reset_o(dbg_core_reset),
         .core_halted_i(dbg_core_halt_status),
@@ -212,7 +227,11 @@ module riscv_soc_ahb #(
         .DEBUG_HRDATA(dbg_HRDATA),
         .DEBUG_HREADY(dbg_HREADY),
         .DEBUG_HRESP(dbg_HRESP),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: GPO8 is an optional general-purpose output from debugger CLI
         .GPO8(),
+        // spyglass enable_block W287b
         .GPI8({dbg_fault_flags, dbg_trap_latched, dbg_step_done, dbg_step_busy, dbg_core_halt_status}),
         .ahb_uart_clkdiv_we_i (ahb_uart_clkdiv_we),
         .ahb_uart_clkdiv_i    (ahb_uart_clkdiv_val),
@@ -240,7 +259,11 @@ module riscv_soc_ahb #(
         .core_stall_o(core_stall_effective),
         .step_busy_o(dbg_step_busy),
         .step_done_o(dbg_step_done),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Step counter is optional debug telemetry unused at SoC top
         .step_count_o()
+        // spyglass enable_block W287b
     );
 
     assign dbg_core_halt_status = core_stall_effective & ~dbg_step_busy;
@@ -289,10 +312,14 @@ module riscv_soc_ahb #(
         .S_HWDATA(HWDATA),
         .S_HWRITE(HWRITE),
         .S_HTRANS(HTRANS),
-        .S_HSIZE(HSIZE),
-        .S_HBURST(HBURST),
-        .S_HPROT(HPROT),
-        .S_HMASTLOCK(HMASTLOCK),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Shared interconnect burst/size/prot signals unused by downstream uncore
+        .S_HSIZE(),
+        .S_HBURST(),
+        .S_HPROT(),
+        .S_HMASTLOCK(),
+        // spyglass enable_block W287b
         .S_HRDATA(HRDATA),
         .S_HREADY(HREADY),
         .S_HRESP(HRESP),
@@ -379,8 +406,12 @@ module riscv_soc_ahb #(
         .HRESP(core_HRESP),
         .PC(core_PCF),
         .PCW(PCW),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Writeback pipeline stage probe taps unused at SoC top
         .ALUResultW(),
         .WriteDataW(),
+        // spyglass enable_block W287b
         .Result(ResultW),
         .MTimerInt(MTimerInt),
         .MSwInt(MSwInt),
@@ -429,11 +460,7 @@ module riscv_soc_ahb #(
         .HWDATA(HWDATA),
         .HWSTRB(HWSTRB),
         .HWRITE(HWRITE),
-        .HSIZE(HSIZE),
-        .HBURST(HBURST),
-        .HPROT(HPROT),
         .HTRANS(HTRANS),
-        .HMASTLOCK(HMASTLOCK),
         .HREADY(HREADY),
         .HRDATA(HRDATA),
         .HREADYOUT(HREADYOUT_uncore),
@@ -449,9 +476,12 @@ module riscv_soc_ahb #(
         .MTimerInt(MTimerInt),
         .MSwInt(MSwInt),
         .MExtInt(MExtInt_uncore),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Supervisor external interrupt unused in M-mode only SoC
         .SExtInt(),
+        // spyglass enable_block W287b
         .MTIME_CLINT(MTIME_CLINT),
-        .TIMECLK(1'b0),
         .GPIOIN(gpio_in_safe),
         .GPIOOUT(GPIOOUT),
         .GPIOEN(GPIOEN),
@@ -461,10 +491,13 @@ module riscv_soc_ahb #(
         .SPIOut(SPIOut),
         .SPICS(SPICS),
         .SPICLK(SPICLK),
-        .SDCIn(1'b0),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: SDC peripheral ports are unused at SoC boundary
         .SDCCmd(),
         .SDCCS(),
         .SDCCLK()
+        // spyglass enable_block W287b
     );
 
     // =========================================================================
@@ -480,9 +513,6 @@ module riscv_soc_ahb #(
         .HADDR(HADDR),
         .HWDATA(HWDATA),
         .HWRITE(HWRITE),
-        .HSIZE(HSIZE),
-        .HBURST(HBURST),
-        .HPROT(HPROT),
         .HTRANS(HTRANS),
         .HREADY(HREADY),
         .HREADYOUT(HREADYCOREDBG),
@@ -542,9 +572,6 @@ module riscv_soc_ahb #(
         .HADDR(HADDR),
         .HWDATA(HWDATA),
         .HWRITE(HWRITE),
-        .HSIZE(HSIZE),
-        .HBURST(HBURST),
-        .HPROT(HPROT),
         .HTRANS(HTRANS),
         .HREADY(HREADY),
         .HREADYOUT(HREADYEXT),

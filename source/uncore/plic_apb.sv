@@ -9,7 +9,6 @@ module plic_apb #(
     input  logic              PSEL,
     input  logic [27:0]       PADDR,
     input  logic [31:0]       PWDATA,
-    input  logic [ 3:0]       PSTRB,
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [31:0]       PRDATA,
@@ -52,30 +51,22 @@ module plic_apb #(
     wire src4_active = pending[4] & enables[4] & (priority_src4 > threshold);
 
     // Determine highest priority active interrupt
-    logic [2:0] claim_id;
-    logic [2:0] max_prio;
+    wire       win1  = src1_active && (priority_src1 > threshold);
+    wire [2:0] prio1 = win1 ? priority_src1 : threshold;
+    wire [2:0] id1   = win1 ? 3'd1 : 3'd0;
 
-    always_comb begin
-        claim_id = 3'd0;
-        max_prio = threshold;
+    wire       win2  = src2_active && (priority_src2 > prio1);
+    wire [2:0] prio2 = win2 ? priority_src2 : prio1;
+    wire [2:0] id2   = win2 ? 3'd2 : id1;
 
-        if (src1_active && (priority_src1 > max_prio)) begin
-            claim_id = 3'd1;
-            max_prio = priority_src1;
-        end
-        if (src2_active && (priority_src2 > max_prio)) begin
-            claim_id = 3'd2;
-            max_prio = priority_src2;
-        end
-        if (src3_active && (priority_src3 > max_prio)) begin
-            claim_id = 3'd3;
-            max_prio = priority_src3;
-        end
-        if (src4_active && (priority_src4 > max_prio)) begin
-            claim_id = 3'd4;
-            max_prio = priority_src4;
-        end
-    end
+    wire       win3  = src3_active && (priority_src3 > prio2);
+    wire [2:0] prio3 = win3 ? priority_src3 : prio2;
+    wire [2:0] id3   = win3 ? 3'd3 : id2;
+
+    wire       win4  = src4_active && (priority_src4 > prio3);
+    wire [2:0] id4   = win4 ? 3'd4 : id3;
+
+    wire [2:0] claim_id = id4;
 
     // Interrupt output to CPU
     always_ff @(posedge PCLK or negedge PRESETn) begin

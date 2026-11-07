@@ -14,8 +14,13 @@ module pl_reg_fd (
 // end
 // // synthesis translate_on
 
-    always @(posedge clk) begin
-        if (reset || FlushD) begin
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            InstrD   <= 32'h00000013;
+            PCD      <= 32'd0;
+            PCPlus4D <= 32'd0;
+            ValidD   <= 1'b0;
+        end else if (FlushD) begin
             InstrD   <= 32'h00000013;
             PCD      <= 32'd0;
             PCPlus4D <= 32'd0;

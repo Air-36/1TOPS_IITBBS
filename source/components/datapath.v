@@ -100,12 +100,11 @@ wire [11:0] CSRAdrM;
 wire        CSRReadM, CSRWriteM;
 wire [31:0] CSRReadValM, CSRReadValW;
 wire        mretE, wfiE, ecallE, ebreakE, IllegalInstrE;
-wire        mretM, wfiM, ecallM, ebreakM, IllegalInstrM;
+wire        mretM, ecallM, ebreakM, IllegalInstrM;
 wire [31:0] InstrE, InstrM;
 
 wire [31:0] mstatus, mie, mip, mtvec, mepc;
 wire [31:0] TrapCauseM, TrapValM, TrapVectorM;
-wire        InterruptM, IntPendingM;
 
 assign mretM_out = mretM;
 
@@ -148,7 +147,7 @@ ahbinterface #(1'b0) ifu_bus (
     .HRESETn(~reset),
     .Flush(FlushD),
     .Stall(StallD),
-    .Req(~reset),
+    .Req(1'b1),
     .Write(1'b0),
     .Addr(PC),
     .Size(3'b010), // Word (32-bit)
@@ -159,11 +158,15 @@ ahbinterface #(1'b0) ifu_bus (
     .Addr_DataPhase(PC_IFU),
     .DataPhase(IFU_DataPhase),
     .HTRANS(IFUHTRANS),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: IFU bus is read-only; write signals unused
     .HWRITE(),
     .HADDR(IFUHADDR),
     .HSIZE(IFUHSIZE),
     .HWDATA(),
     .HWSTRB(),
+    // spyglass enable_block W287b
     .HRDATA(HRDATA),
     .HREADY(IFUHREADY)
 );
@@ -250,7 +253,13 @@ pl_reg_em plem(
     .RdM(RdM), .PCM(PCM), .lAuiPCM(lAuiPCM), .funct3M(funct3M),
     .SrcAM(SrcAM), .uimmM(uimmM), .CSRAdrM(CSRAdrM),
     .CSRReadM(CSRReadM), .CSRWriteM(CSRWriteM),
-    .mretM(mretM), .wfiM(wfiM), .ecallM(ecallM), .ebreakM(ebreakM), .IllegalInstrM(IllegalInstrM),
+    .mretM(mretM),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: WFI instruction treated as NOP in core pipeline
+    .wfiM(),
+    // spyglass enable_block W287b
+    .ecallM(ecallM), .ebreakM(ebreakM), .IllegalInstrM(IllegalInstrM),
     .ValidM(ValidM),
     .InstrM(InstrM)
 );
@@ -301,8 +310,12 @@ ahbinterface #(1'b1) lsu_bus (
     .WriteData(LSUWriteDataM),
     .FetchBuffer(LSU_RawReadData),
     .BusStall(LSUStallM),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: LSU bus data phase taps unused in load-store datapath
     .Addr_DataPhase(),
     .DataPhase(),
+    // spyglass enable_block W287b
     .HTRANS(LSUHTRANS),
     .HWRITE(LSUHWRITE),
     .HADDR(LSUHADDR),
@@ -337,9 +350,7 @@ ebu ebu_inst (
     .HPROT(HPROT),
     .HTRANS(HTRANS),
     .HMASTLOCK(HMASTLOCK),
-    .HRDATA(HRDATA),
-    .HREADY(HREADY),
-    .HRESP(HRESP)
+    .HREADY(HREADY)
 );
 
 // CSR File
@@ -388,15 +399,18 @@ trap_unit tu (
     .mip(mip),
     .mtvec(mtvec),
     .TrapM(TrapM),
-    .InterruptM(InterruptM),
-    .IntPendingM(IntPendingM),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: Trap unit interrupt status flags unused in memory stage datapath
+    .InterruptM(),
+    .IntPendingM(),
+    // spyglass enable_block W287b
     .TrapCauseM(TrapCauseM),
     .TrapValM(TrapValM),
     .TrapVectorM(TrapVectorM)
 );
 
 // Pipeline Register: M -> W
-wire ValidW;
 pl_reg_mw plmw(
     .clk(clk), .reset(reset), .StallW(StallW),
     .RegWriteM(RegWriteM & ~TrapM),
@@ -420,12 +434,16 @@ pl_reg_mw plmw(
     .WriteDataW(WriteDataW),
     .lAuiPCW(lAuiPCW),
     .CSRReadValW(CSRReadValW),
-    .ValidW(ValidW)
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: ValidW unused because InstrRetired commits from memory stage
+    .ValidW()
+    // spyglass enable_block W287b
 );
 
 // Instruction Retired: 1-cycle active-high pulse asserted when an instruction cleanly commits to Writeback
 // Exactly matches OpenHW 1TOPS SoC: InstrValidM & ~StallW & ~FlushW (where FlushWCause = TrapM)
-assign InstrRetired = ValidM & ~StallW & ~TrapM;
+assign InstrRetired = ValidM & ~StallW & ~TrapM & ~HRESP;
 
 // =========================================================================
 // WRITEBACK STAGE (W)

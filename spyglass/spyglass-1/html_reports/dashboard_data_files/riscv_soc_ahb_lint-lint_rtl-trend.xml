@@ -25,6 +25,24 @@
 		<data_point date_time="11/06/2026 (02:35)" value="0" />
 		<data_point date_time="11/06/2026 (02:39)" value="0" />
 		<data_point date_time="11/06/2026 (02:48)" value="0" />
+		<data_point date_time="11/07/2026 (19:25)" value="0" />
+		<data_point date_time="11/07/2026 (19:47)" value="0" />
+		<data_point date_time="11/08/2026 (00:49)" value="0" />
+		<data_point date_time="11/08/2026 (00:53)" value="0" />
+		<data_point date_time="11/08/2026 (00:59)" value="0" />
+		<data_point date_time="11/08/2026 (01:01)" value="0" />
+		<data_point date_time="11/08/2026 (01:06)" value="0" />
+		<data_point date_time="11/08/2026 (01:09)" value="0" />
+		<data_point date_time="11/08/2026 (01:11)" value="0" />
+		<data_point date_time="11/08/2026 (01:15)" value="0" />
+		<data_point date_time="11/08/2026 (01:24)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:44)" value="0" />
+		<data_point date_time="11/08/2026 (01:50)" value="0" />
+		<data_point date_time="11/08/2026 (01:56)" value="0" />
+		<data_point date_time="11/08/2026 (02:03)" value="0" />
+		<data_point date_time="11/08/2026 (02:11)" value="0" />
 	  </severity> 
 	  <severity name="Error" color="16711680" line_type="solid">
 		<data_point date_time="11/05/2026 (10:09)" value="14" />
@@ -50,6 +68,24 @@
 		<data_point date_time="11/06/2026 (02:35)" value="2" />
 		<data_point date_time="11/06/2026 (02:39)" value="2" />
 		<data_point date_time="11/06/2026 (02:48)" value="2" />
+		<data_point date_time="11/07/2026 (19:25)" value="2" />
+		<data_point date_time="11/07/2026 (19:47)" value="2" />
+		<data_point date_time="11/08/2026 (00:49)" value="2" />
+		<data_point date_time="11/08/2026 (00:53)" value="0" />
+		<data_point date_time="11/08/2026 (00:59)" value="0" />
+		<data_point date_time="11/08/2026 (01:01)" value="0" />
+		<data_point date_time="11/08/2026 (01:06)" value="0" />
+		<data_point date_time="11/08/2026 (01:09)" value="0" />
+		<data_point date_time="11/08/2026 (01:11)" value="0" />
+		<data_point date_time="11/08/2026 (01:15)" value="0" />
+		<data_point date_time="11/08/2026 (01:24)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:44)" value="0" />
+		<data_point date_time="11/08/2026 (01:50)" value="0" />
+		<data_point date_time="11/08/2026 (01:56)" value="0" />
+		<data_point date_time="11/08/2026 (02:03)" value="0" />
+		<data_point date_time="11/08/2026 (02:11)" value="0" />
 	  </severity> 
 	  <severity name="Warning" color="15696483" line_type="solid">
 		<data_point date_time="11/05/2026 (10:09)" value="271" />
@@ -75,6 +111,24 @@
 		<data_point date_time="11/06/2026 (02:35)" value="92" />
 		<data_point date_time="11/06/2026 (02:39)" value="91" />
 		<data_point date_time="11/06/2026 (02:48)" value="90" />
+		<data_point date_time="11/07/2026 (19:25)" value="90" />
+		<data_point date_time="11/07/2026 (19:47)" value="73" />
+		<data_point date_time="11/08/2026 (00:49)" value="65" />
+		<data_point date_time="11/08/2026 (00:53)" value="63" />
+		<data_point date_time="11/08/2026 (00:59)" value="63" />
+		<data_point date_time="11/08/2026 (01:01)" value="61" />
+		<data_point date_time="11/08/2026 (01:06)" value="61" />
+		<data_point date_time="11/08/2026 (01:09)" value="61" />
+		<data_point date_time="11/08/2026 (01:11)" value="61" />
+		<data_point date_time="11/08/2026 (01:15)" value="59" />
+		<data_point date_time="11/08/2026 (01:24)" value="59" />
+		<data_point date_time="11/08/2026 (01:34)" value="59" />
+		<data_point date_time="11/08/2026 (01:34)" value="59" />
+		<data_point date_time="11/08/2026 (01:44)" value="58" />
+		<data_point date_time="11/08/2026 (01:50)" value="46" />
+		<data_point date_time="11/08/2026 (01:56)" value="38" />
+		<data_point date_time="11/08/2026 (02:03)" value="22" />
+		<data_point date_time="11/08/2026 (02:11)" value="0" />
 	  </severity> 
 	  <severity name="Waived-Error" color="0" line_type="dotted">
 		<data_point date_time="11/05/2026 (10:09)" value="0" />
@@ -100,6 +154,24 @@
 		<data_point date_time="11/06/2026 (02:35)" value="0" />
 		<data_point date_time="11/06/2026 (02:39)" value="0" />
 		<data_point date_time="11/06/2026 (02:48)" value="0" />
+		<data_point date_time="11/07/2026 (19:25)" value="0" />
+		<data_point date_time="11/07/2026 (19:47)" value="0" />
+		<data_point date_time="11/08/2026 (00:49)" value="0" />
+		<data_point date_time="11/08/2026 (00:53)" value="0" />
+		<data_point date_time="11/08/2026 (00:59)" value="0" />
+		<data_point date_time="11/08/2026 (01:01)" value="0" />
+		<data_point date_time="11/08/2026 (01:06)" value="0" />
+		<data_point date_time="11/08/2026 (01:09)" value="0" />
+		<data_point date_time="11/08/2026 (01:11)" value="0" />
+		<data_point date_time="11/08/2026 (01:15)" value="0" />
+		<data_point date_time="11/08/2026 (01:24)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:44)" value="0" />
+		<data_point date_time="11/08/2026 (01:50)" value="0" />
+		<data_point date_time="11/08/2026 (01:56)" value="0" />
+		<data_point date_time="11/08/2026 (02:03)" value="0" />
+		<data_point date_time="11/08/2026 (02:11)" value="0" />
 	  </severity> 
 	  <severity name="Waived-Warning" color="0" line_type="dotted">
 		<data_point date_time="11/05/2026 (10:09)" value="0" />
@@ -125,6 +197,24 @@
 		<data_point date_time="11/06/2026 (02:35)" value="0" />
 		<data_point date_time="11/06/2026 (02:39)" value="0" />
 		<data_point date_time="11/06/2026 (02:48)" value="0" />
+		<data_point date_time="11/07/2026 (19:25)" value="0" />
+		<data_point date_time="11/07/2026 (19:47)" value="0" />
+		<data_point date_time="11/08/2026 (00:49)" value="0" />
+		<data_point date_time="11/08/2026 (00:53)" value="0" />
+		<data_point date_time="11/08/2026 (00:59)" value="0" />
+		<data_point date_time="11/08/2026 (01:01)" value="0" />
+		<data_point date_time="11/08/2026 (01:06)" value="0" />
+		<data_point date_time="11/08/2026 (01:09)" value="0" />
+		<data_point date_time="11/08/2026 (01:11)" value="0" />
+		<data_point date_time="11/08/2026 (01:15)" value="0" />
+		<data_point date_time="11/08/2026 (01:24)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:34)" value="0" />
+		<data_point date_time="11/08/2026 (01:44)" value="1" />
+		<data_point date_time="11/08/2026 (01:50)" value="1" />
+		<data_point date_time="11/08/2026 (01:56)" value="9" />
+		<data_point date_time="11/08/2026 (02:03)" value="25" />
+		<data_point date_time="11/08/2026 (02:11)" value="38" />
 	  </severity> 
 	<title>Module:riscv_soc_ahb     Goal: lint/lint_rtl </title>
 	<xaxis_label>Date</xaxis_label>

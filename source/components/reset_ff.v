@@ -10,7 +10,7 @@ module reset_ff #(parameter WIDTH = 32, RESET_VAL = 0) (
 // end
 // // synthesis translate_on
 
-    always @(posedge clk) begin
+    always @(posedge clk or posedge rst) begin
         if (rst) q <= RESET_VAL;
         else if (!clr) q <= d;
     end

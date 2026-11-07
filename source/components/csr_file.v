@@ -136,7 +136,7 @@ module csr_file #(parameter WIDTH = 32) (
     // =========================================================================
     // 3. Sequential CSR Update and Traps
     // =========================================================================
-    always @(posedge clk) begin
+    always @(posedge clk or posedge reset) begin
         if (reset) begin
             mstatus       <= 32'h0000_1800; // MPP = 2'b11 (Machine mode on reset)
             mie           <= 32'h0000_0000;
@@ -187,7 +187,7 @@ module csr_file #(parameter WIDTH = 32) (
     wire csr_write_instret_l = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC02 || CSRAdrM == 12'hB02);
     wire csr_write_instret_h = CSRWriteM && !TrapM && !mretM && (CSRAdrM == 12'hC82 || CSRAdrM == 12'hB82);
 
-    always @(posedge clk) begin
+    always @(posedge clk or posedge reset) begin
         if (reset) begin
             cycle_cnt <= 64'd0;
         end else if (csr_write_cycle_l) begin
@@ -199,7 +199,7 @@ module csr_file #(parameter WIDTH = 32) (
         end
     end
 
-    always @(posedge clk) begin
+    always @(posedge clk or posedge reset) begin
         if (reset) begin
             instret_cnt <= 64'd0;
         end else if (csr_write_instret_l) begin

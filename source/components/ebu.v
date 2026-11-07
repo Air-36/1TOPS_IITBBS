@@ -33,9 +33,7 @@ module ebu (
     output     [ 3:0] HPROT,
     output     [ 1:0] HTRANS,
     output            HMASTLOCK,
-    input      [31:0] HRDATA,
-    input             HREADY,
-    input             HRESP
+    input             HREADY
 );
 
     wire LSUReq = (LSUHTRANS != 2'b00);

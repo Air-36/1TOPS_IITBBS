@@ -1,12 +1,12 @@
 SpyGlass DashBoard,,,,,,,,,,,,,, 
-Created: Fri Nov 6 02:49:01 IST 2026 by 23EC01009,,,,,,,,,,,,,, 
+Created: Sun Nov 8 02:11:16 IST 2026 by 23EC01009,,,,,,,,,,,,,, 
 riscv_soc_ahb,,,,,,,,,,,
 ,Category,Run status,Design objective,,,,,Success criteria,Pass/Fail status,Graph
 ,Summary,Not completed,,,,,,Failed objectives = 0,Unknown
 
 ,Quality goals,Run status,Unresolved Messages,,,Waived Messages,,Success criteria,Pass/Fail status,Graph
 ,,,FATAL,ERROR,WARNING,ERROR,WARNING,,,,
-,Summary,Completed,0,2,90,0,0,Failed goals = 1,Fail
-,lint/lint_rtl::,Completed,0,2,90,0,0, Fatal =0; Error =0,Fail
+,Summary,Completed,0,0,0,0,38,Failed goals = 0,Pass
+,lint/lint_rtl::,Completed,0,0,0,0,38, Fatal =0; Error =0,Pass
 
- Note: The SpyGlass configuration file used to collect data for this report is: /tmp/config_3227406,,,,,,,,,,,,,,
+ Note: The SpyGlass configuration file used to collect data for this report is: /tmp/config_2797361,,,,,,,,,,,,,,

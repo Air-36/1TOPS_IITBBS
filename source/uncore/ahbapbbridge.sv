@@ -65,16 +65,17 @@ module ahbapbbridge #(
     assign PSTRB  = HWSTRB;
 
     // Multiplex read data and ready signals from selected APB peripheral
-    always_comb begin
-        HRDATA    = '0;
-        PREADYOUT = 1'b1;
+    function automatic int get_sel_idx(input logic [PERIPHS-1:0] sel);
+        int idx = 0;
         for (int i = 0; i < PERIPHS; i++) begin
-            if (PSEL[i]) begin
-                HRDATA    = PRDATA[i*XLEN +: XLEN];
-                PREADYOUT = PREADY[i];
-            end
+            if (sel[i]) idx = i;
         end
-    end
+        return idx;
+    endfunction
+
+    wire [31:0] sel_idx = get_sel_idx(PSEL);
+    assign HRDATA    = (|PSEL) ? PRDATA[sel_idx*XLEN +: XLEN] : '0;
+    assign PREADYOUT = (|PSEL) ? PREADY[sel_idx] : 1'b1;
 
     // Hold HREADYOUT low during setup cycle, release when APB access phase completes
     assign HREADYOUT = PREADYOUT & ~initTransSelD;

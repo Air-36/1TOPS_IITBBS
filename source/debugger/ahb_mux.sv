@@ -63,8 +63,6 @@ module ahb_mux #(
         output wire                  grant_data
     );
 
-    // Master 0 (Core) transfer request (NONSEQ or SEQ)
-    wire m0_req = (M0_HTRANS == 2'b10) || (M0_HTRANS == 2'b11);
     // Master 1 (Debugger) transfer request (NONSEQ or SEQ)
     wire m1_req = (M1_HTRANS == 2'b10) || (M1_HTRANS == 2'b11);
 

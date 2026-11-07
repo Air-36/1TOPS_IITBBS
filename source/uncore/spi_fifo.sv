@@ -9,40 +9,35 @@ module spi_fifo #(parameter M=3, N=8)(                 // 2^M entries of N bits 
 
     logic [N-1:0] mem[2**M];
     logic [M:0] rptr, wptr;
-    logic [M:0] rptrnext, wptrnext;
     logic [M-1:0] raddr;
     logic [M-1:0] waddr;
 
-  logic [M-1:0] numVals;
-
-  assign numVals = waddr - raddr;
+    wire write_en = wen & winc & ~wfull;
+    wire read_en  = ren & rinc & ~rempty;
 
     assign rdata = mem[raddr];
     always_ff @(posedge PCLK)
-        if (winc & wen & ~wfull) mem[waddr] <= wdata;
+        if (write_en) mem[waddr] <= wdata;
 
-    // write and read are enabled
-    always_ff @(posedge PCLK)
+    wire [M:0] wptr_eff = write_en ? (wptr + 1'b1) : wptr;
+    wire [M:0] rptr_eff = read_en  ? (rptr + 1'b1) : rptr;
+
+    // write and read pointer and status registers
+    always_ff @(posedge PCLK or negedge PRESETn)
         if (~PRESETn) begin
-            rptr <= '0;
-            wptr <= '0;
-            wfull <= 1'b0;
+            rptr   <= '0;
+            wptr   <= '0;
+            wfull  <= 1'b0;
             rempty <= 1'b1;
         end else begin
-            if (wen) begin
-                wfull <= ({~wptrnext[M], wptrnext[M-1:0]} == rptr);
-                wptr  <= wptrnext;
-            end
-            if (ren) begin
-                rptr <= rptrnext;
-                rempty <= (wptr == rptrnext);
-            end
+            if (write_en) wptr <= wptr + 1'b1;
+            if (read_en)  rptr <= rptr + 1'b1;
+            wfull  <= ({~wptr_eff[M], wptr_eff[M-1:0]} == rptr_eff);
+            rempty <= (wptr_eff == rptr_eff);
         end
 
     assign raddr = rptr[M-1:0];
-    assign rptrnext = rptr + {{(M){1'b0}}, (rinc & ~rempty)};
-    assign rwatermark = ((waddr - raddr) < rwatermarklevel) & ~wfull;
     assign waddr = wptr[M-1:0];
+    assign rwatermark = ((waddr - raddr) < rwatermarklevel) & ~wfull;
     assign wwatermark = ((waddr - raddr) > wwatermarklevel) | wfull;
-    assign wptrnext = wptr + {{(M){1'b0}}, (winc & ~wfull)};
 endmodule

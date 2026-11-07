@@ -38,8 +38,38 @@ module pl_reg_de (
     output reg [31:0] InstrE
 );
 
-always @(posedge clk) begin
-    if (reset || clr) begin
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        RegWriteE     <= 0;
+        MemWriteE     <= 0;
+        JumpE         <= 0;
+        JalrE         <= 0;
+        BranchE       <= 0;
+        ALUSrcE       <= 0;
+        ResultSrcE    <= 0;
+        ALUControlE   <= 0;
+        ReadData1E    <= 0;
+        ReadData2E    <= 0;
+        PCE           <= 0;
+        PCPlus4E      <= 0;
+        Rs1E          <= 0;
+        Rs2E          <= 0;
+        RdE           <= 0;
+        ImmExtE       <= 0;
+        funct3E       <= 0;
+        InstrE_31_12  <= 0;
+        InstrE_5      <= 0;
+        CSRReadE      <= 0;
+        CSRWriteE     <= 0;
+        mretE         <= 0;
+        wfiE          <= 0;
+        ecallE        <= 0;
+        ebreakE       <= 0;
+        IllegalInstrE <= 0;
+        FenceIE       <= 0;
+        ValidE        <= 0;
+        InstrE        <= 32'h00000013; // nop
+    end else if (clr) begin
         RegWriteE     <= 0;
         MemWriteE     <= 0;
         JumpE         <= 0;

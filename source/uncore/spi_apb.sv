@@ -9,7 +9,6 @@ module spi_apb #(
   input  logic                PSEL,
   input  logic [7:0]          PADDR,
   input  logic [XLEN-1:0]     PWDATA,
-  input  logic [XLEN/8-1:0]   PSTRB,
   input  logic                PWRITE,
   input  logic                PENABLE,
   output logic                PREADY,
@@ -72,7 +71,7 @@ module spi_apb #(
   txState CurrState, NextState;
 
   // FIFO Watermark signals - TransmitReadMark = ip[0], ReceiveWriteMark = ip[1]
-  logic        TransmitWriteMark, TransmitReadMark, ReceiveWriteMark, ReceiveReadMark;
+  logic        TransmitReadMark, ReceiveWriteMark;
 
   // Transmit FIFO Signals
   logic        TransmitFIFOFull, TransmitFIFOEmpty;
@@ -83,11 +82,8 @@ module spi_apb #(
   // ReceiveFIFO Signals
   logic        ReceiveFIFOWriteInc;
   logic        ReceiveFIFOReadInc;
-  logic        ReceiveFIFOFull, ReceiveFIFOEmpty;
+  logic        ReceiveFIFOEmpty;
 
-  /* verilator lint_off UNDRIVEN */
-  logic [2:0]  TransmitWriteWatermarkLevel, ReceiveReadWatermarkLevel; // unused generic FIFO outputs
-  /* verilator lint_on UNDRIVEN */
   logic [7:0]  ReceiveShiftRegEndian;              // Reverses ReceiveShiftReg if Format[2] set (little endian transmission)
 
   // Shift reg signals
@@ -120,7 +116,7 @@ module spi_apb #(
   assign PRDATA = (XLEN == 64) ? {Dout, Dout} : Dout;
 
   // Register access
-  always_ff@(posedge PCLK)
+  always_ff @(posedge PCLK or negedge PRESETn)
     if (~PRESETn) begin
       SckDiv <= 12'd3;
       SckMode <= 2'b0;
@@ -135,6 +131,7 @@ module spi_apb #(
       ReceiveWatermark <= 3'b0;
       InterruptEnable <= 2'b0;
       InterruptPending <= 2'b0;
+      Dout <= 32'b0;
     end else begin // writes
       /* verilator lint_off CASEINCOMPLETE */
       if (Memwrite)
@@ -213,7 +210,7 @@ module spi_apb #(
 
   // Check whether TransmitReg has been loaded.
   // We use this signal to prevent returning to the Ready state for TransmitStart
-  always_ff @(posedge PCLK) begin
+  always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       TransmitRegLoaded <= 1'b0;
     end else if (TransmitLoad) begin
@@ -224,7 +221,7 @@ module spi_apb #(
   end
 
   // Setup TransmitStart state machine
-  always_ff @(posedge PCLK)
+  always_ff @(posedge PCLK or negedge PRESETn)
     if (~PRESETn) CurrState <= READY;
     else          CurrState <= NextState;
 
@@ -242,20 +239,32 @@ module spi_apb #(
 
   // Delayed TransmitStart signal for incrementing tx read point.
   assign TransmitStart = (CurrState == START);
-  always_ff @(posedge PCLK)
+  always_ff @(posedge PCLK or negedge PRESETn)
     if (~PRESETn) TransmitStartD <= 1'b0;
     else if (TransmitStart) TransmitStartD <= 1'b1;
     else if (SCLKenable) TransmitStartD <= 1'b0;
 
   // Transmit FIFO
-  spi_fifo #(3,8) txFIFO(PCLK, 1'b1, SCLKenable, PRESETn,
-                         TransmitFIFOWriteInc, TransmitFIFOReadInc,
-                         TransmitData[7:0],
-                         TransmitWriteWatermarkLevel, TransmitWatermark[2:0],
-                         TransmitReadData[7:0],
-                         TransmitFIFOFull,
-                         TransmitFIFOEmpty,
-                         TransmitWriteMark, TransmitReadMark);
+  spi_fifo #(3,8) txFIFO (
+    .PCLK(PCLK),
+    .wen(1'b1),
+    .ren(SCLKenable),
+    .PRESETn(PRESETn),
+    .winc(TransmitFIFOWriteInc),
+    .rinc(TransmitFIFOReadInc),
+    .wdata(TransmitData[7:0]),
+    .wwatermarklevel(3'b000),
+    .rwatermarklevel(TransmitWatermark[2:0]),
+    .rdata(TransmitReadData[7:0]),
+    .wfull(TransmitFIFOFull),
+    .rempty(TransmitFIFOEmpty),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: TX write watermark unused; only read watermark triggers interrupt
+    .wwatermark(),
+    // spyglass enable_block W287b
+    .rwatermark(TransmitReadMark)
+  );
 
   // Receive FIFO ----------------------------------------------------
 
@@ -272,14 +281,30 @@ module spi_apb #(
   end
 
   // Receive FIFO
-  spi_fifo #(3,8) rxFIFO(PCLK, SCLKenable, 1'b1, PRESETn,
-                         ReceiveFIFOWriteInc, ReceiveFIFOReadInc,
-                         ReceiveShiftRegEndian, ReceiveWatermark[2:0],
-                         ReceiveReadWatermarkLevel,
-                         ReceiveData[7:0],
-                         ReceiveFIFOFull,
-                         ReceiveFIFOEmpty,
-                         ReceiveWriteMark, ReceiveReadMark);
+  spi_fifo #(3,8) rxFIFO (
+    .PCLK(PCLK),
+    .wen(SCLKenable),
+    .ren(1'b1),
+    .PRESETn(PRESETn),
+    .winc(ReceiveFIFOWriteInc),
+    .rinc(ReceiveFIFOReadInc),
+    .wdata(ReceiveShiftRegEndian),
+    .wwatermarklevel(ReceiveWatermark[2:0]),
+    .rwatermarklevel(3'b000),
+    .rdata(ReceiveData[7:0]),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: RX FIFO full status and read watermark unused by SPI peripheral
+    .wfull(),
+    // spyglass enable_block W287b
+    .rempty(ReceiveFIFOEmpty),
+    .wwatermark(ReceiveWriteMark),
+    // spyglass disable_block W287b
+    // SMD: Instance output port is not connected
+    // SJ: RX read watermark unused
+    .rwatermark()
+    // spyglass enable_block W287b
+  );
 
   // Shift Registers --------------------------------------------------
   // Transmit shift register
@@ -287,7 +312,7 @@ module spi_apb #(
   wire [7:0] TransmitReadDataReversed = {TransmitReadData[0], TransmitReadData[1], TransmitReadData[2], TransmitReadData[3],
                                          TransmitReadData[4], TransmitReadData[5], TransmitReadData[6], TransmitReadData[7]};
   assign TransmitDataEndian = Format[0] ? TransmitReadDataReversed : TransmitReadData[7:0];
-  always_ff @(posedge PCLK)
+  always_ff @(posedge PCLK or negedge PRESETn)
     if(~PRESETn)            TransmitReg <= 8'b0;
     else if (TransmitLoad)  TransmitReg <= TransmitDataEndian;
     else if (ShiftEdge)     TransmitReg <= {TransmitReg[6:0], TransmitReg[0]};
@@ -301,7 +326,7 @@ module spi_apb #(
   assign ShiftIn = SPI_LOOPBACK_TEST ? SPIOut : SPIIn;
 
   // Receive shift register
-  always_ff @(posedge PCLK)
+  always_ff @(posedge PCLK or negedge PRESETn)
     if(~PRESETn) begin
       ReceiveShiftReg <= 8'b0;
     end else if (SampleEdge) begin

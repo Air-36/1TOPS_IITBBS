@@ -1,0 +1,19 @@
+
+INFO:    It is recommended to set environment variable
+         SNPSLMD_LICENSE_FILE for faster license checkout.
+
+        ********** LICENSE FAILURE NOTIFICATION **********
+        Some of the required license features could not be checked out.
+
+        Feature name: "checker 2024.09 (or > 2024.09)" [The desired vendor daemon is down.]
+        Feature details: "checker" (license token)
+                     - Required to run SpyGlass Lint
+
+        SNPSLMD_LICENSE_FILE = (not set)
+        LM_LICENSE_FILE = 1717@14.139.1.126
+
+        Please check your license setup, or contact your CAD administrator.
+        SpyGlass is aborting current run.
+        ********** END OF LICENSE FAILURE NOTIFICATION **********
+
+Spyglass Exit Code 4 (License failure, rule-checking aborted)
