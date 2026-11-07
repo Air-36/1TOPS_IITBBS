@@ -73,6 +73,10 @@
                     <spirit:direction>out</spirit:direction>
                 </spirit:signal>
                 <spirit:signal>
+                    <spirit:name>boot_mode</spirit:name>
+                    <spirit:direction>in</spirit:direction>
+                </spirit:signal>
+                <spirit:signal>
                     <spirit:name>clk</spirit:name>
                     <spirit:direction>in</spirit:direction>
                 </spirit:signal>

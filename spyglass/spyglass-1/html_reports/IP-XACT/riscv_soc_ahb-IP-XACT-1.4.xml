@@ -111,6 +111,12 @@
                          </spirit:wire>
                 </spirit:port>
                 <spirit:port>
+                    <spirit:name>boot_mode</spirit:name>
+                         <spirit:wire>
+                             <spirit:direction>in</spirit:direction>
+                         </spirit:wire>
+                </spirit:port>
+                <spirit:port>
                     <spirit:name>clk</spirit:name>
                          <spirit:wire>
                              <spirit:direction>in</spirit:direction>

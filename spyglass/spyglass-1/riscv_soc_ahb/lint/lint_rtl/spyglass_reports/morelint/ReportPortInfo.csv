@@ -1,6 +1,7 @@
 Module Name,Module Type,Port Name,Direction,Width,Index,Comment Source,Comment 
 riscv_soc_ahb,Top_Level,clk,INPUT,1,-,-,-
 riscv_soc_ahb,Top_Level,reset,INPUT,1,-,-,-
+riscv_soc_ahb,Top_Level,boot_mode,INPUT,1,-,module port,0 = Boot from Internal ROM, 1 = ...
 riscv_soc_ahb,Top_Level,MExtInt,INPUT,1,-,module port,Hardware Interrupt Lines
 riscv_soc_ahb,Top_Level,TrapM,OUTPUT,1,-,-,-
 riscv_soc_ahb,Top_Level,mretM,OUTPUT,1,-,-,-

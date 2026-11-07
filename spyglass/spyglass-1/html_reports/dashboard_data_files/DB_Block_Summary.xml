@@ -6,8 +6,8 @@
                           <design_objectives> 
 </design_objectives> 
 <quality_goals>
-<goal name="lint/lint_rtl" header_link="dashboard_data_files/lint-lint_rtl.xml" pass_status="Pass" cell_link="dashboard_data_files/riscv_soc_ahb_lint-lint_rtl-trend.xml" date_time="11/08/2026 (02:11)"/>
+<goal name="lint/lint_rtl" header_link="dashboard_data_files/lint-lint_rtl.xml" pass_status="Fail" cell_link="dashboard_data_files/riscv_soc_ahb_lint-lint_rtl-trend.xml" date_time="11/08/2026 (02:44)"/>
  </quality_goals>
-<oldest_update>11/08/2026 (02:11) </oldest_update>
+<oldest_update>11/08/2026 (02:44) </oldest_update>
                 </module> 
 </modules>
