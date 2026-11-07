@@ -89,7 +89,7 @@ module sysctrl_apb #(
 
     always_ff @(posedge PCLK or negedge PRESETn) begin
         if (!PRESETn) begin
-            strap_boot_mode_latched <= boot_mode_pin;
+            strap_boot_mode_latched <= 1'b0;
         end else if (!internal_rst_n) begin
             strap_boot_mode_latched <= boot_mode_pin;
         end else begin

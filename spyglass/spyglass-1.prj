@@ -112,6 +112,7 @@ set_option language_mode mixed
 set_option designread_enable_synthesis no
 set_option designread_disable_flatten no
 set_option enableSV yes
+set_option mthresh 65536
 set_option top riscv_soc_ahb
 set_option active_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
 
