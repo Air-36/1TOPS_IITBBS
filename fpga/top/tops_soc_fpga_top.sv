@@ -19,6 +19,9 @@ module tops_soc_fpga_top #(
   input  logic                clk,              // 100 MHz on-board oscillator (Pin W5)
   input  logic                reset_btn,        // Pushbutton btnC (Pin U18 - Active High)
 
+  // 1.1 Boot Configuration Pin Strap (Slide Switch SW1)
+  input  logic                boot_mode,        // SW1 (Pin V16: 0=Internal ROM, 1=External SPI Flash)
+
   // 2. Dual-Protocol Hardware Debugger Pins (On-Board Micro-USB B18/A18)
   input  logic                dbg_sel,          // Slide Switch SW0 (Pin V17: 0=UART, 1=FT1248)
   input  logic                uart_rx,          // USB-UART RX (Pin B18: from host PC)
@@ -247,6 +250,7 @@ module tops_soc_fpga_top #(
   ) soc (
     .clk              (clk_soc),
     .reset            (reset_ext),
+    .boot_mode        (boot_mode),
     .MExtInt          (1'b0),
     .TrapM            (),
     .mretM            (),

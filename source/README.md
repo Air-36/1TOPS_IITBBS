@@ -1,12 +1,12 @@
 # 1TOPS RISC-V System-on-Chip (1TOPS SoC)
 
-A high-performance, synthesizable 5-stage pipelined RV32I RISC-V System-on-Chip featuring an AMBA 3 AHB-Lite and APB bus fabric, an integrated dual-protocol in-hardware debugger (UART + FT1248), a non-intrusive post-mortem core inspection slave, comprehensive uncore peripherals, and a dedicated 16 MB neural accelerator socket.
+A high-performance, synthesizable 5-stage pipelined RV32I RISC-V System-on-Chip featuring an AMBA 3 AHB-Lite and APB bus fabric, an integrated dual-protocol in-hardware debugger (UART + FT1248), a non-intrusive post-mortem core inspection slave, comprehensive uncore peripherals with System Control Block and Dual-Mode Bootloader (Internal ROM & SPI Flash), and a dedicated 16 MB accelerator IP socket integrated as part of uncore.
 
 ---
 
 ## 1. System Architecture & Circuitry Block Diagram
 
-The SoC integrates the pipelined processor core, the hardware debugger subsystem, the bus arbiter, the uncore peripherals, and the hardware accelerator.
+The SoC integrates the pipelined processor core, the hardware debugger subsystem, the bus arbiter, the uncore peripherals (including the accelerator IP socket), and the system control/boot block.
 
 ```text
 ========================================================================================================================
@@ -15,7 +15,7 @@ The SoC integrates the pipelined processor core, the hardware debugger subsystem
 
   +------------------------------------------------------------------------------------------------------------------+
   |                                            EXTERNAL PHYSICAL PINS & I/O                                          |
-  |  clk, reset_btn, dbg_sel, uart_rx, uart_tx, ft1248_clk, ft1248_ss_n, ft1248_miso, ft1248_miosio,               |
+  |  clk, reset_btn, boot_mode, dbg_sel, uart_rx, uart_tx, ft1248_clk, ft1248_ss_n, ft1248_miso, ft1248_miosio,       |
   |  UARTSin, UARTSout, SPIIn, SPIOut, SPICS[3:0], SPICLK, GPIOIN[31:0], GPIOOUT[31:0], GPIOEN[31:0], core_halted_led  |
   +------------------------------------------------------------------------------------------------------------------+
           |           |           |           |           |           |           |           |
@@ -90,16 +90,16 @@ The SoC integrates the pipelined processor core, the hardware debugger subsystem
            |                            |                             |           |           |
            v                            v                             v           |           |
   +--------------------+      +--------------------+      +---------------------+ |           |
-  | CORE POST-MORTEM   |      | 1TOPS NEURAL       |      | UNCORE SUBSYSTEM    | |           |
-  | DEBUG AHB SLAVE    |      | ACCELERATOR SOCKET |      | (source/uncore/     | |           |
+  | CORE POST-MORTEM   |      | ACCELERATOR IP     |      | UNCORE SUBSYSTEM    | |           |
+  | DEBUG AHB SLAVE    |      | SOCKET (UNCORE)    |      | (source/uncore/     | |           |
   | (0x0B00_0000)      |      | (0x3000_0000)      |      |  uncore.sv)         | |           |
   | - GPRs x0 - x31    |      | - 16 MB Aperture   |      | - AHB Address Dec   | |           |
   | - Pipeline PCs     |      | - Hardware Multi-  |      | - Delay Phase Regs  | |           |
-  |   (PCF..PCW)       |      |   plier / Neural   |      | - Interrupt Router  | |           |
-  | - CSRs (mstatus,   |      |   Matrix Engine    |      +----------+----------+ |           |
-  |   mcause, mepc...) |      | - Registers:       |                 |            |           |
-  | - 16-Entry Trace   |      |   OPA, OPB,        |                 |            |           |
-  | - Sticky Traps     |      |   RESULT, PRINT    |                 |            |           |
+  |   (PCF..PCW)       |      |   plier / Accel IP |      | - Interrupt Router  | |           |
+  | - CSRs (mstatus,   |      | - Registers:       |      | - System Control    | |           |
+  |   mcause, mepc...) |      |   OPA, OPB,        |      |   (sysctrl_apb.sv)  | |           |
+  | - 16-Entry Trace   |      |   RESULT, PRINT    |      +----------+----------+ |           |
+  | - Sticky Traps     |      |   (Part of Uncore) |                 |            |           |
   | - Clock Dividers   |      +--------------------+                 |            |           |
   +--------------------+                                             |            |           |
                                                                      |            |           |
@@ -257,7 +257,8 @@ The SoC address map allocates dedicated spaces for on-chip memories, debug apert
 | `0x1000_0000` | `0x1000_0FFF` | 8 B | 4 KB | APB | `uart_apb.sv` | Uncore Application TI PC16550D UART (FIFOs, baud generator, user console) |
 | `0x1004_0000` | `0x1004_0FFF` | 4 KB | 4 KB | APB | `spi_apb.sv` | SiFive FU540-compatible SPI Master controller with 8-byte TX/RX FIFOs |
 | `0x1006_0000` | `0x1006_00FF` | 256 B | 256 B | APB | `gpio_apb.sv` | 32-bit Bidirectional GPIO with XOR polarity inversion & edge capture |
-| `0x3000_0000` | `0x30FF_FFFF` | 16 MB | 16 MB | AHB | `multiplier_ahb.v` | 1TOPS Dedicated Neural Network Multiplier / Matrix Engine Socket |
+| `0x1008_0000` | `0x1008_00FF` | 256 B | 256 B | APB | `sysctrl_apb.sv` | System Control Block: Reset/Clock control, strap sampling, programmable vector, ROM remap |
+| `0x3000_0000` | `0x30FF_FFFF` | 16 MB | 16 MB | AHB | `multiplier_ahb.v` | Accelerator IP Socket (Part of Uncore) |
 | `0x8000_0000` | `0x8000_7FFF` | **32 KB** | 64 KB | AHB | `ram_ahb.sv` (`ram_i`) | **Instruction RAM (IRAM)**: Executable code space (Reset Vector = `0x8000_0000`) |
 | `0x8001_0000` | `0x8001_7FFF` | **32 KB** | 64 KB | AHB | `ram_ahb.sv` (`ram_d`) | **Data RAM (DRAM)**: Variables, heap, stack (Stack Top = `0x8001_8000`) |
 
@@ -304,12 +305,13 @@ source/
 │   │   └── riscv_pipelined.v            # Lightweight core variant
 │   └── soc/
 │       ├── riscv_soc_ahb.v              # Master SoC top-level integrating Core, Debugger, Uncore
-│       ├── multiplier_ahb.v             # 1TOPS hardware accelerator slave (0x3000_0000)
-│       └── ahb_interconnect.v           # Multiplexed AHB bus fabric
+│       └── multiplier_ahb.v             # Accelerator IP socket slave (0x3000_0000, part of uncore)
 ├── uncore/                              # Uncore Subsystem & Peripherals
 │   ├── uncore.sv                        # Top-level uncore with address decoding & delay registers
 │   ├── ram_ahb.sv                       # Synthesizable BRAM-inferring on-chip SRAM (ram_i, ram_d)
 │   ├── rom_ahb.sv                       # On-chip Boot ROM (0x0000_1000)
+│   ├── bootrom.mem                      # Default precompiled dual-mode Boot ROM hex image
+│   ├── sysctrl_apb.sv                   # System Control Block (Reset, Straps, Remap, Clocks)
 │   ├── ahbapbbridge.sv                  # AHB-to-APB protocol translation bridge
 │   ├── clint_apb.sv                     # Core Local Interruptor (mtime, mtimecmp, msip)
 │   ├── plic_apb.sv                      # Platform-Level Interrupt Controller
@@ -391,13 +393,25 @@ Provides precision stepping capabilities for microarchitectural debugging:
 - **Native Block RAM Inference**: `ram_ahb.sv` implements 4 independent byte-wide memory arrays (`mem0`..`mem3`), guaranteeing 100% native Block RAM inference (`RAMB36E1` on Xilinx 7-series, `M9K` on Intel/Altera) without consuming tens of thousands of logic LUTs.
 - **Subword-Accurate HWSTRB Byte Decoding**: Byte (`sb`), halfword (`sh`), and word (`sw`) stores generate individual byte lane strobes (`HWSTRB[3:0]`), preventing corrupted adjacent bytes during subword memory stores or binary byte uploads (`U`).
 
-### E. Dedicated 1TOPS Neural Accelerator Socket (`multiplier_ahb.v` at `0x3000_0000`)
-The SoC provides a dedicated high-throughput accelerator socket mapped to `0x3000_0000`:
+### E. Accelerator IP Socket (Part of Uncore - `multiplier_ahb.v` at `0x3000_0000`)
+The SoC provides a dedicated accelerator IP socket integrated as part of the uncore subsystem, mapped to `0x3000_0000`:
 - `0x3000_0000`: Operand A Register (`OPA` - Write)
 - `0x3000_0004`: Operand B Register (`OPB` - Write)
-- `0x3000_0008`: Product / Matrix Result Register (`RESULT` - Read)
+- `0x3000_0008`: Product / Accelerator Result Register (`RESULT` - Read)
 - `0x3000_000C`: Print / Debug Character Register (`PRINT` - Write)
-- `0x3000_1000 - 0x30FF_FFFF`: Extended accelerator buffer aperture (weights and activations).
+- `0x3000_1000 - 0x30FF_FFFF`: Extended accelerator buffer aperture.
+
+### F. System Control Block & Dual-Mode Bootloader (`sysctrl_apb.sv` & `rom_ahb.sv`)
+- **System Control Block (`sysctrl_apb.sv`) at Base `0x1008_0000` (APB Slot 5)**:
+  * 2-stage reset synchronizer and 16-cycle hold counter to eliminate metastability.
+  * Reset strap sampler: samples external `boot_mode` pin upon reset release and latches into read-only `REG_BOOT_STATUS` (`0x1008_0008`).
+  * Programmable CPU reset vector register (`REG_RESET_VEC` at `0x1008_0004`, default `0x0000_1000`).
+  * Dynamic ROM remap register (`REG_REMAP_CTRL` at `0x1008_000C`) aliasing `0x0000_0000` to Instruction RAM.
+  * Peripheral clock gating mask register (`REG_CLK_CTRL` at `0x1008_0010`).
+  * General-purpose firmware / debugger diagnostics scratchpad (`REG_SCRATCHPAD` at `0x1008_0014`).
+- **Synthesizable Dual-Mode Boot ROM (`rom_ahb.sv`) at Base `0x0000_1000`**:
+  * **Mode 0 (`boot_mode = 0`)**: Executes internal ROM self-test and reaches `main()` directly within ROM.
+  * **Mode 1 (`boot_mode = 1`)**: Programs SPI controller (`0x1004_0000`), issues READ command `0x03` to external SPI Flash, streams instructions into IMEM (`0x8000_0000`), and executes `jr 0x8000_0000`.
 
 ---
 

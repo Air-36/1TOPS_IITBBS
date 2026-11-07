@@ -1,0 +1,273 @@
+0
+82
++incdir+source/components
++incdir+source/debugger
++incdir+source/main
++incdir+source/main/soc
++incdir+source/uncore
++v2k
+-Mamsrun=
+-Masflags=
+-Mcc=gcc
+-Mcfl= -pipe -fPIC -O -I/cad/synopsys/vcs/W-2024.09-SP2-8/include
+-Mcplusplus=g++
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mexternalobj=
+-Mldflags= -rdynamic
+-Mobjects= /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libvirsim.so /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/liberrorinf.so /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libsnpsmalloc.so /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libvfs.so
+-Mout=simv_boot
+-Msaverestoreobj=/cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=-ldl
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/cad/synopsys/vcs/W-2024.09-SP2-8/include
+-Mxllcflags=
+-full64
+-gen_obj
+-o simv_boot
+-picarchive
+-sverilog
+-timescale=1ns/1ps
+/cad/synopsys/vcs/W-2024.09-SP2-8/linux64/bin/vcs1
+simv_boot
+source/components/adder.v
+source/components/ahbinterface.v
+source/components/alu_decoder.v
+source/components/alu.v
+source/components/branching_unit.v
+source/components/controller.v
+source/components/csr_file.v
+source/components/datapath.v
+source/components/ebu.v
+source/components/hazard.v
+source/components/imm_extend.v
+source/components/main_decoder.v
+source/components/mux2.v
+source/components/mux3.v
+source/components/mux4.v
+source/components/mux5.v
+source/components/pl_reg_de.v
+source/components/pl_reg_em.v
+source/components/pl_reg_fd.v
+source/components/pl_reg_mw.v
+source/components/priv_decoder.v
+source/components/reg_file.v
+source/components/reset_ff.v
+source/components/subword_unit.v
+source/components/trap_unit.v
+source/main/ahb_ram.v
+source/main/riscv_cpu.v
+source/main/soc/multiplier_ahb.v
+source/main/soc/riscv_soc_ahb.v
+source/uncore/ahbapbbridge.sv
+source/uncore/clint_apb.sv
+source/uncore/gpio_apb.sv
+source/uncore/plic_apb.sv
+source/uncore/ram_ahb.sv
+source/uncore/rom_ahb.sv
+source/uncore/spi_apb.sv
+source/uncore/spi_controller.sv
+source/uncore/spi_fifo.sv
+source/uncore/sysctrl_apb.sv
+source/uncore/uart_apb.sv
+source/uncore/uartPC16550D.sv
+source/uncore/uncore.sv
+source/debugger/core_debug_ahb.v
+source/debugger/socdebug_adp_control.v
+source/debugger/socdebug_ahb.v
+source/debugger/socdebug_ft1248_control.v
+source/debugger/socdebug_uart.v
+source/debugger/ahb_mux.sv
+source/debugger/core_step_controller.sv
+source/debugger/riscv_debugger_top.sv
+source/final_tests/05_peripherals/tb/tb_sysctrl_boot.sv
+127
+which_declare=declare -f
+__LMOD_REF_COUNT_PATH=/cad/synopsys/vcs/W-2024.09-SP2-8/bin:1;/home/23EC01043/.local/bin:16;/home/23EC01043/tools/xpack-riscv-none-elf-gcc-15.2.0-1/bin:4;/home/23EC01043/Desktop/NanoSoc/NanoSoc/accelerator-project/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin:4;/cad/mentor/questa_sim-2023.4_5/questasim/bin:4;/home/23EC01043/.gemini/antigravity/bin:1;/home/23EC01043/bin:1;/bin:1;/usr/bin:1;/opt/thinlinc/bin:1;/usr/local/bin:1;/usr/bin/X11:1;/sbin:1;/usr/sbin:1;/usr/local/sbin:1;/opt/thinlinc/sbin:1
+__LMOD_REF_COUNT_MODULEPATH=/cad/modulefiles:2;/tools/modulefiles:2;/etc/scl/modulefiles:2;/etc/modulefiles:1;/usr/share/modulefiles:1;/usr/share/modulefiles/Linux:1;/usr/share/modulefiles/Core:1;/usr/share/lmod/lmod/modulefiles/Core:1
+__LMOD_REF_COUNT_LM_LICENSE_FILE=1717@14.139.1.126:1;27020@14.139.1.126:1
+_ModuleTable_Sz_=3
+_ModuleTable003_=bmFsIiwKfSwKfSwKbXBhdGhBID0gewoiL2NhZC9tb2R1bGVmaWxlcyIsICIvdG9vbHMvbW9kdWxlZmlsZXMiLCAiL2V0Yy9zY2wvbW9kdWxlZmlsZXMiCiwgIi9jYWQvbW9kdWxlZmlsZXMiLCAiL3Rvb2xzL21vZHVsZWZpbGVzIiwgIi9ldGMvc2NsL21vZHVsZWZpbGVzIgosICIvZXRjL21vZHVsZWZpbGVzIiwgIi91c3Ivc2hhcmUvbW9kdWxlZmlsZXMiLCAiL3Vzci9zaGFyZS9tb2R1bGVmaWxlcy9MaW51eCIKLCAiL3Vzci9zaGFyZS9tb2R1bGVmaWxlcy9Db3JlIiwgIi91c3Ivc2hhcmUvbG1vZC9sbW9kL21vZHVsZWZpbGVzL0NvcmUiLAp9LApzeXN0ZW1CYXNlTVBBVEggPSAiL2V0Yy9tb2R1bGVmaWxlczovdXNyL3NoYXJlL21vZHVsZWZpbGVzIiwKfQo=
+_ModuleTable002_=XSA9IHsKZGVwVCA9IHsKZGVwQSA9IHsKewpzbiA9ICJzeW5vcHN5cy9jb21tb24iLAp2ZXJzaW9uID0gewpraW5kID0gImJvb2wiLAp2YWx1ZSA9IHRydWUsCn0sCn0sCn0sCn0sCmZuID0gIi9jYWQvbW9kdWxlZmlsZXMvc3lub3BzeXMvdmNzL1ctMjAyNC4wOS1TUDItOC5sdWEiLApmdWxsTmFtZSA9ICJzeW5vcHN5cy92Y3MvVy0yMDI0LjA5LVNQMi04IiwKbG9hZE9yZGVyID0gMiwKcHJvcFQgPSB7fSwKc3RhY2tEZXB0aCA9IDAsCnN0YXR1cyA9ICJhY3RpdmUiLAp1c2VyTmFtZSA9ICJzeW5vcHN5cy92Y3MvVy0yMDI0LjA5LVNQMi04IiwKd1YgPSAiKncuKnpmaW5hbC0uMDAwMDAyMDI0LjAwMDAwMDAwOS4qc3AuMDAwMDAwMDAyLip6ZmluYWwtLjAwMDAwMDAwOC4qemZp
+_ModuleTable001_=X01vZHVsZVRhYmxlXyA9IHsKTVR2ZXJzaW9uID0gMywKY19yZWJ1aWxkVGltZSA9IGZhbHNlLApjX3Nob3J0VGltZSA9IGZhbHNlLApkZXB0aFQgPSB7fSwKZmFtaWx5ID0gewpzeW5vcHN5c192Y3MgPSAic3lub3BzeXMvdmNzIiwKfSwKbVQgPSB7Clsic3lub3BzeXMvY29tbW9uIl0gPSB7CmZuID0gIi9jYWQvbW9kdWxlZmlsZXMvc3lub3BzeXMvY29tbW9uLmx1YSIsCmZ1bGxOYW1lID0gInN5bm9wc3lzL2NvbW1vbiIsCmxvYWRPcmRlciA9IDEsCnByb3BUID0ge30sCnJlZl9jb3VudCA9IDEsCnN0YWNrRGVwdGggPSAxLApzdGF0dXMgPSAiYWN0aXZlIiwKdXNlck5hbWUgPSAic3lub3BzeXMvY29tbW9uIiwKd1YgPSAiTS4qemZpbmFsIiwKfSwKWyJzeW5vcHN5cy92Y3Mi
+_LMFILES_=/cad/modulefiles/synopsys/common.lua:/cad/modulefiles/synopsys/vcs/W-2024.09-SP2-8.lua
+XMODIFIERS=@im=ibus
+XDG_SESSION_TYPE=x11
+XDG_SESSION_DESKTOP=gnome
+XDG_SESSION_CLASS=user
+XDG_RUNTIME_DIR=/run/user/1004
+XDG_MENU_PREFIX=gnome-
+XDG_DATA_DIRS=/home/23EC01043/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+XDG_CURRENT_DESKTOP=GNOME
+XAUTHORITY=/var/opt/thinlinc/sessions/23EC01043/25/Xauthority
+VTE_VERSION=6402
+VSCODE_PID=2842337
+VSCODE_NLS_CONFIG={"userLocale":"en-us","osLocale":"en-us","resolvedLanguage":"en","defaultMessagesFile":"/home/23EC01043/Downloads/Antigravity IDE/resources/app/out/nls.messages.json","locale":"en-us","availableLanguages":{}}
+VSCODE_IPC_HOOK=/run/user/1004/vscode-29c9f1ac-1.10-main.sock
+VSCODE_HANDLES_UNCAUGHT_ERRORS=true
+VSCODE_ESM_ENTRYPOINT=vs/workbench/api/node/extensionHostProcess
+VSCODE_CWD=/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/source
+VSCODE_CRASH_REPORTER_PROCESS_TYPE=extensionHost
+VSCODE_CODE_CACHE_PATH=/home/23EC01043/.config/Antigravity IDE/CachedData/9e3a5da5d6731effd57d47d88bbe5df14ac6ccdd
+VMR_MODE_FLAG=64
+VCS_PYTHON3=/cad/synopsys/vcs/W-2024.09-SP2-8/linux64/bin/Python3/bin/python3
+VCS_PATHMAP_PRELOAD_DONE=1
+VCS_MX_HOME_INTERNAL=1
+VCS_MODE_FLAG=64
+VCS_INTERNAL_CONVERTEDLIBS=
+VCS_HOME=/cad/synopsys/vcs/W-2024.09-SP2-8
+VCS_EXEC_DONE=1
+VCS_DEPTH=0
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH=linux64
+VCS=/cad/synopsys/vcs/W-2024.09-SP2-8
+USERPROFILE=/home/23EC01043
+USERNAME=23EC01043
+UNAME=/bin/uname
+TOWN=Springfield
+TOOL_HOME=/cad/synopsys/vcs/W-2024.09-SP2-8/linux64
+TLSESSIONDATA=/var/opt/thinlinc/sessions/23EC01043/25
+TLPROFILE=gnome
+TLPREFIX=/opt/thinlinc
+S_COLORS=auto
+SYSTEMD_EXEC_PID=2825938
+SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt
+SSH_AUTH_SOCK=/run/user/1004/keyring/ssh
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+SOC=/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS
+SNPS_VCS_PYTHON3=/cad/synopsys/vcs/W-2024.09-SP2-8/linux64/bin/Python3/bin/python3
+SNPS_VCS_CLANG_PATH=/cad/synopsys/vcs/W-2024.09-SP2-8/linux64/clang
+SNPS_INTERNAL_VCS_LINUX_OS=linux
+SESSION_MANAGER=local/unix:@/tmp/.ICE-unix/2824585,unix/unix:/tmp/.ICE-unix/2824585
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+QT_IM_MODULE=ibus
+PULSE_SERVER=/var/opt/thinlinc/sessions/23EC01043/25/pulse/native 127.0.0.1:5155
+PULSE_RUNTIME_PATH=/var/opt/thinlinc/sessions/23EC01043/25/pulse
+PULSE_COOKIE=/var/opt/thinlinc/sessions/23EC01043/25/pulse-cookie
+PCSCTUN_SERVER=127.0.0.1:5156
+PCSCTUN_COOKIE=/var/opt/thinlinc/sessions/23EC01043/25/pcsctun-cookie
+OVA_UUM=0
+NO_AT_BRIDGE=1
+NODE_EXTRA_CA_CERTS=/etc/pki/tls/certs/ca-bundle.crt
+MODULESHOME=/usr/share/lmod/lmod
+MODULEPATH_ROOT=/usr/share/modulefiles
+MODULEPATH=/cad/modulefiles:/tools/modulefiles:/etc/scl/modulefiles:/etc/modulefiles:/usr/share/modulefiles:/usr/share/modulefiles/Linux:/usr/share/modulefiles/Core:/usr/share/lmod/lmod/modulefiles/Core
+MGLS_LICENSE_FILE=1717@14.139.1.126
+LOADEDMODULES=synopsys/common:synopsys/vcs/W-2024.09-SP2-8
+LMOD_sys=Linux
+LMOD_VERSION=8.7.65
+LMOD_SETTARG_FULL_SUPPORT=no
+LMOD_ROOT=/usr/share/lmod
+LMOD_PKG=/usr/share/lmod/lmod
+LMOD_FAMILY_SYNOPSYS_VCS_VERSION=W-2024.09-SP2-8
+LMOD_FAMILY_SYNOPSYS_VCS=synopsys/vcs
+LMOD_DIR=/usr/share/lmod/lmod/libexec
+LMOD_CMD=/usr/share/lmod/lmod/libexec/lmod
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LC_ALL=C
+JJ_PAGER=cat
+JJ_EDITOR=false
+HISTCONTROL=ignoredups
+HGEDITOR=false
+GUESTFISH_RESTORE=\e[0m
+GUESTFISH_PS1=\[\e[1;32m\]><fs>\[\e[0;31m\] 
+GUESTFISH_OUTPUT=\e[0m
+GUESTFISH_INIT=\e[1;34m
+GNOME_TERMINAL_SERVICE=:1.92
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/bc0549f7_1c78_47bd_b6fd_9ff29636f588
+GIT_PAGER=cat
+GIT_EDITOR=false
+GDK_BACKEND=x11
+FPATH=/usr/share/lmod/lmod/init/ksh_funcs
+FC_FONTATIONS=1
+ELECTRON_RUN_AS_NODE=1
+DESKTOP_SESSION=gnome
+DEBUGINFOD_IMA_CERT_PATH=/etc/keys/ima:
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1004/bus
+CV_SW_TOOLCHAIN=/home/23EC01043/tools/xpack-riscv-none-elf-gcc-15.2.0-1
+CV_SW_PREFIX=riscv-none-elf-
+CORE_V_VERIF=/home/23EC01043/Desktop/RiscV_Core_verification/OpenHW/core-v-verif
+COLORTERM=truecolor
+CHROME_DESKTOP=antigravity-ide.desktop
+BASH_FUNC_which%%=() {  ( alias;_ eval ${which_declare} ) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@_}
+BASH_FUNC_scl%%=() {  if [ "$1" = "load" -o "$1" = "unload" ]; then_ eval "module $@";_ else_ /usr/bin/scl "$@";_ fi_}
+BASH_FUNC_module%%=() {  if [ -z "${LMOD_SH_DBG_ON+x}" ]; then_ case "$-" in _ *v*x*)_ __lmod_sh_dbg='vx'_ ;;_ *v*)_ __lmod_sh_dbg='v'_ ;;_ *x*)_ __lmod_sh_dbg='x'_ ;;_ esac;_ fi;_ if [ -n "${__lmod_sh_dbg:-}" ]; then_ set +$__lmod_sh_dbg;_ echo "Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output" 1>&2;_ fi;_ eval "$($LMOD_CMD shell "$@")" && eval "$(${LMOD_SETTARG_CMD:-:} -s sh)";_ __lmod_my_status=$?;_ if [ -n "${__lmod_sh_dbg:-}" ]; then_ echo "Shell debugging restarted" 1>&2;_ set -$__lmod_sh_dbg;_ fi;_ unset __lmod_sh_dbg;_ return $__lmod_my_status_}
+BASH_FUNC_ml%%=() {  eval "$($LMOD_DIR/ml_cmd "$@")"_}
+BASH_ENV=/usr/share/lmod/lmod/init/bash
+ARM_IP_LIBRARY_PATH=/home/23EC01043/Desktop/NanoSoc/NanoSoc/ARM_IP
+ANTIGRAVITY_VSCODE_HOST=1
+ANTIGRAVITY_TRAJECTORY_ID=0f38e93f-1942-4583-b6e3-5b78deb71f55
+ANTIGRAVITY_SOURCE_METADATA={"tool":{"conversationId":"0af2453f-0ecc-493a-81d4-a60300e2cb51","stepIndex":670,"toolCall":{"id":"call_5689385908923532149","name":"run_command","argumentsJson":"{\"BypassSandbox\":true,\"CommandLine\":\"bash -lc \\\"module load synopsys/vcs/W-2024.09-SP2-8 \\u0026\\u0026 cd /home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS \\u0026\\u0026 vcs -sverilog -full64 +v2k -timescale=1ns/1ps +incdir+source/main +incdir+source/main/soc +incdir+source/components +incdir+source/uncore +incdir+source/debugger source/components/*.v source/main/*.v source/main/soc/*.v source/uncore/*.sv source/debugger/*.v source/debugger/*.sv source/final_tests/05_peripherals/tb/tb_sysctrl_boot.sv -o simv_boot\\\"\",\"WaitMsBeforeAsync\":10000,\"toolSummary\":\"Recompile with VCS\"}"}}}
+ANTIGRAVITY_PROJECT_ID=c932805f-23ed-4874-869d-b20be1b68b8c
+ANTIGRAVITY_LS_VERSION=cli-2.29.0
+ANTIGRAVITY_LS_ADDRESS=localhost:35011
+ANTIGRAVITY_CSRF_TOKEN=9a63d565-4d61-4e67-afc6-a7b63fdc8a87
+ANTIGRAVITY_CONVERSATION_ID=0af2453f-0ecc-493a-81d4-a60300e2cb51
+ANTIGRAVITY_AUTH_SUCCESS_APP=antigravity-ide
+ANTIGRAVITY_APP_DATA_DIR=/home/23EC01043/.gemini/antigravity
+ANTIGRAVITY_AGENTAPI_EXE=/home/23EC01043/.gemini/bin/agy
+ANTIGRAVITY_AGENT=1
+AGY_ENABLE_HUB=1
+0
+0
+51
+1794071659 source/final_tests/05_peripherals/tb/tb_sysctrl_boot.sv
+1793962115 source/debugger/riscv_debugger_top.sv
+1793962115 source/debugger/core_step_controller.sv
+1793962115 source/debugger/ahb_mux.sv
+1793962115 source/debugger/socdebug_uart.v
+1793962115 source/debugger/socdebug_ft1248_control.v
+1793962115 source/debugger/socdebug_ahb.v
+1793962115 source/debugger/socdebug_adp_control.v
+1793962115 source/debugger/core_debug_ahb.v
+1794053178 source/uncore/uncore.sv
+1793642674 source/uncore/uartPC16550D.sv
+1793642674 source/uncore/uart_apb.sv
+1794056633 source/uncore/sysctrl_apb.sv
+1793642674 source/uncore/spi_fifo.sv
+1793642674 source/uncore/spi_controller.sv
+1793642674 source/uncore/spi_apb.sv
+1794071514 source/uncore/rom_ahb.sv
+1793962115 source/uncore/ram_ahb.sv
+1793642674 source/uncore/plic_apb.sv
+1793642674 source/uncore/gpio_apb.sv
+1793642674 source/uncore/clint_apb.sv
+1793642674 source/uncore/ahbapbbridge.sv
+1794053258 source/main/soc/riscv_soc_ahb.v
+1793642644 source/main/soc/multiplier_ahb.v
+1793167544 source/main/riscv_cpu.v
+1793163773 source/main/ahb_ram.v
+1793642731 source/components/trap_unit.v
+1793642634 source/components/subword_unit.v
+1793962115 source/components/reset_ff.v
+1793962115 source/components/reg_file.v
+1793642731 source/components/priv_decoder.v
+1793642634 source/components/pl_reg_mw.v
+1793962115 source/components/pl_reg_fd.v
+1793642634 source/components/pl_reg_em.v
+1793642634 source/components/pl_reg_de.v
+1793642634 source/components/mux5.v
+1793642634 source/components/mux4.v
+1793642634 source/components/mux3.v
+1793642634 source/components/mux2.v
+1793962115 source/components/main_decoder.v
+1793642634 source/components/imm_extend.v
+1793642634 source/components/hazard.v
+1793642634 source/components/ebu.v
+1793642634 source/components/datapath.v
+1793962115 source/components/csr_file.v
+1793642634 source/components/controller.v
+1793642634 source/components/branching_unit.v
+1793642634 source/components/alu.v
+1793642634 source/components/alu_decoder.v
+1793962115 source/components/ahbinterface.v
+1793642634 source/components/adder.v
+4
+1770353894 /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libvirsim.so
+1770351771 /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/liberrorinf.so
+1770351765 /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libsnpsmalloc.so
+1770351754 /cad/synopsys/vcs/W-2024.09-SP2-8/linux64/lib/libvfs.so
+1794071670 simv_boot.daidir
+-1 partitionlib

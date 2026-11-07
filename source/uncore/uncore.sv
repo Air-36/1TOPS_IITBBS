@@ -6,7 +6,8 @@ module uncore #(
     parameter DRAM_BASE         = 32'h8001_0000,
     parameter DRAM_SIZE_BYTES   = 32768,
     parameter XLEN              = 32,
-    parameter BOOTROM_SUPPORTED = 0,
+    parameter BOOTROM_SUPPORTED = 1,
+    parameter SYSCTRL_SUPPORTED = 1,
     parameter SPI_SUPPORTED     = 1,
     parameter CLINT_SUPPORTED   = 1,
     parameter PLIC_SUPPORTED    = 1,
@@ -58,7 +59,15 @@ module uncore #(
     output logic                 SPICLK,
     output logic                 SDCCmd,
     output logic [3:0]           SDCCS,
-    output logic                 SDCCLK
+    output logic                 SDCCLK,
+
+    // System Control & Boot Configuration Pins
+    input  logic                 boot_mode_pin,
+    input  logic                 dbg_core_reset_i,
+    output logic                 boot_mode_latched,
+    output logic                 remap_en,
+    output logic                 soft_core_rst_n,
+    output logic [31:0]          reset_vector
 );
 
     // Default SDC un-driven lines
@@ -69,22 +78,27 @@ module uncore #(
     // =========================================================================
     // 1. AHB Address Decoding
     // =========================================================================
-    wire HSELRam_I      = (HADDR >= IRAM_BASE && HADDR < (IRAM_BASE + IRAM_SIZE_BYTES));
+    wire remap_en_wire;
+    assign remap_en = remap_en_wire;
+
+    wire HSELRam_I      = (HADDR >= IRAM_BASE && HADDR < (IRAM_BASE + IRAM_SIZE_BYTES)) ||
+                          (remap_en_wire && (HADDR >= 32'h0000_0000 && HADDR < 32'h0000_8000));
     wire HSELRam_D      = (HADDR >= DRAM_BASE && HADDR < (DRAM_BASE + DRAM_SIZE_BYTES));
     wire HSELEXT_int    = (HADDR >= 32'h3000_0000 && HADDR <= 32'h30FF_FFFF);
-    wire HSELBootRom    = (HADDR >= 32'h0000_1000 && HADDR <= 32'h0000_1FFF);
+    wire HSELBootRom    = (!remap_en_wire) && (HADDR >= 32'h0000_1000 && HADDR <= 32'h0000_1FFF);
     wire HSELCLINT      = (HADDR >= 32'h0200_0000 && HADDR <= 32'h0200_FFFF);
     wire HSELPLIC       = (HADDR >= 32'h0C00_0000 && HADDR <= 32'h0FFF_FFFF);
     wire HSELUART       = (HADDR >= 32'h1000_0000 && HADDR <= 32'h1000_0FFF);
     wire HSELSPI        = (HADDR >= 32'h1004_0000 && HADDR <= 32'h1004_0FFF);
     wire HSELGPIO       = (HADDR >= 32'h1006_0000 && HADDR <= 32'h1006_0FFF);
+    wire HSELSYSCTRL    = (HADDR >= 32'h1008_0000 && HADDR <= 32'h1008_0FFF);
     wire HSELCOREDBG_int= (HADDR >= 32'h0B00_0000 && HADDR <= 32'h0B00_0FFF);
 
     assign HSELEXT     = HSELEXT_int;
     assign HSELCOREDBG = HSELCOREDBG_int;
 
-    localparam APB_PERIPHS = 5;
-    wire [APB_PERIPHS-1:0] HSEL_APB = {HSELGPIO, HSELSPI, HSELUART, HSELPLIC, HSELCLINT};
+    localparam APB_PERIPHS = 6;
+    wire [APB_PERIPHS-1:0] HSEL_APB = {HSELSYSCTRL, HSELGPIO, HSELSPI, HSELUART, HSELPLIC, HSELCLINT};
     wire                   HSELBRIDGE = |HSEL_APB;
 
     // =========================================================================
@@ -246,10 +260,10 @@ module uncore #(
     );
 
     // =========================================================================
-    // 7. APB Peripherals (CLINT, PLIC, UART, SPI, GPIO)
+    // 7. APB Peripherals (CLINT, PLIC, UART, SPI, GPIO, SYSCTRL)
     // =========================================================================
-    logic [XLEN-1:0] PRDATA_CLINT, PRDATA_PLIC, PRDATA_UART, PRDATA_SPI, PRDATA_GPIO;
-    logic            PREADY_CLINT, PREADY_PLIC, PREADY_UART, PREADY_SPI, PREADY_GPIO;
+    logic [XLEN-1:0] PRDATA_CLINT, PRDATA_PLIC, PRDATA_UART, PRDATA_SPI, PRDATA_GPIO, PRDATA_SYSCTRL;
+    logic            PREADY_CLINT, PREADY_PLIC, PREADY_UART, PREADY_SPI, PREADY_GPIO, PREADY_SYSCTRL;
     logic            UARTIntr, GPIOIntr, SPIIntr;
 
     generate
@@ -399,11 +413,43 @@ module uncore #(
         assign GPIOEN      = 32'd0;
         assign GPIOIntr    = 1'b0;
     end
+
+    // Peripheral 5: System Control Block (Base: 0x1008_0000, APB Slot 5)
+    if (SYSCTRL_SUPPORTED) begin : gen_sysctrl
+        sysctrl_apb #(XLEN) sysctrl (
+            .PCLK(PCLK),
+            .PRESETn(PRESETn),
+            .PSEL(PSEL[5]),
+            .PADDR(PADDR[7:0]),
+            .PWDATA(PWDATA),
+            .PSTRB(PSTRB),
+            .PWRITE(PWRITE),
+            .PENABLE(PENABLE),
+            .PREADY(PREADY_SYSCTRL),
+            .PRDATA(PRDATA_SYSCTRL),
+            .boot_mode_pin(boot_mode_pin),
+            .dbg_core_reset_i(dbg_core_reset_i),
+            .soft_core_rst_n_o(soft_core_rst_n),
+            .soft_periph_rst_n_o(),
+            .boot_mode_latched_o(boot_mode_latched),
+            .boot_mode_live_o(),
+            .remap_en_o(remap_en_wire),
+            .reset_vector_o(reset_vector),
+            .clk_gate_mask_o()
+        );
+    end else begin : gen_no_sysctrl
+        assign PRDATA_SYSCTRL      = '0;
+        assign PREADY_SYSCTRL      = 1'b1;
+        assign soft_core_rst_n     = 1'b1;
+        assign boot_mode_latched   = 1'b0;
+        assign remap_en_wire       = 1'b0;
+        assign reset_vector        = 32'h0000_1000;
+    end
     endgenerate
 
-    // Pack APB Peripheral responses into bus arrays
-    assign PREADY_PERIPHS = {PREADY_GPIO, PREADY_SPI, PREADY_UART, PREADY_PLIC, PREADY_CLINT};
-    assign PRDATA_PERIPHS = {PRDATA_GPIO, PRDATA_SPI, PRDATA_UART, PRDATA_PLIC, PRDATA_CLINT};
+    // Pack APB Peripheral responses into bus arrays (Slots 5, 4, 3, 2, 1, 0)
+    assign PREADY_PERIPHS = {PREADY_SYSCTRL, PREADY_GPIO, PREADY_SPI, PREADY_UART, PREADY_PLIC, PREADY_CLINT};
+    assign PRDATA_PERIPHS = {PRDATA_SYSCTRL, PRDATA_GPIO, PRDATA_SPI, PRDATA_UART, PRDATA_PLIC, PRDATA_CLINT};
 
     // =========================================================================
     // 8. AHB Read Multiplexer & Response Logic

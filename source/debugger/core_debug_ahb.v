@@ -127,7 +127,7 @@ module core_debug_ahb #(
 
     always @(posedge HCLK or negedge HRESETn) begin
         if (!HRESETn) begin
-            halt_on_trap_en    <= 1'b1; // Default enabled for instant post-mortem capture
+            halt_on_trap_en    <= 1'b0; // FIX C1: off by default; the debugger arms it via DBG_CTRL (0x0D0)
             halt_on_ebreak_en  <= 1'b1;
             trap_latched       <= 1'b0;
             trap_cause_latched <= 32'd0;
@@ -161,8 +161,8 @@ module core_debug_ahb #(
                 trap_pc_latched    <= 32'd0;
             end else if (write_en_d && (addr_d == 12'h0D0) && HWDATA[2]) begin
                 trap_latched       <= 1'b0; // Software write-1-to-clear
-            end else if (TrapM && !trap_latched) begin
-                // Sticky trap capture on first occurrence of TrapM
+            end else if (TrapM && !TrapCauseM[31] && !trap_latched) begin
+                // FIX C1: capture exceptions only (mcause[31]=0); interrupts are normal events, not crashes
                 trap_latched       <= 1'b1;
                 trap_cause_latched <= TrapCauseM;
                 trap_val_latched   <= TrapValM;

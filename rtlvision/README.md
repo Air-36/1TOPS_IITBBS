@@ -1,6 +1,6 @@
 # RTLvision PRO Schematic Viewer for 1TOPS SoC
 
-This directory contains the setup, filelist, and launcher script to view the entire **1TOPS SoC + Neural Accelerator** schematic using **RTLvision PRO**.
+This directory contains the setup, filelist, and launcher script to view the entire **1TOPS SoC** schematic (with accelerator IP socket in uncore) using **RTLvision PRO**.
 
 ---
 
@@ -40,8 +40,8 @@ When the GUI opens:
    - **`u_debugger` (`riscv_debugger_top`):** The dual-protocol (UART + FT1248) hardware debugger subsystem and AXI-stream multiplexer.
    - **`u_step_controller` (`core_step_controller`):** Single-step execution and hardware auto-halt on trap freeze controller.
    - **`u_ahb_mux` (`ahb_mux`):** 2-to-1 AHB bus arbiter granting priority to debugger.
-   - **`u_uncore` (`uncore`):** Memory map decoder with `HSELCOREDBG` (`0x0B00_0000`), AHB-APB bridge, UART, GPIO, SPI, PLIC, CLINT, Boot ROM, and SRAMs.
-   - **`u_accel` (`multiplier_ahb`):** The neural accelerator slave on the AHB bus.
+   - **`u_uncore` (`uncore`):** Memory map decoder with `HSELCOREDBG` (`0x0B00_0000`), AHB-APB bridge, UART, GPIO, SPI, PLIC, CLINT, System Control (`sysctrl_apb`), Boot ROM, and SRAMs.
+   - **`u_accel` (`multiplier_ahb`):** Accelerator IP socket on the AHB bus (part of uncore).
 3. **Signal Tracing:**
    - Right-click any signal or bus -> **Trace Fan-in (Cone of Logic)** or **Trace Fan-out** to see data paths.
    - Right-click submodules to generate FSM transition bubble diagrams (e.g. `core_step_controller` or `socdebug_adp_control`).

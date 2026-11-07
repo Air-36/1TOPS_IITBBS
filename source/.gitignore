@@ -1,0 +1,31 @@
+# Synopsys VCS Simulation Artifacts
+csrc/
+simv*
+*.daidir/
+ucli.key
+vc_hdrs.h
+*.vpd
+*.fsdb
+*.vdb
+DVEfiles/
+verdiLog/
+novas.conf
+novas.rc
+
+# QuestaSim / ModelSim / Verilator Simulation Artifacts
+work/
+rtl_work/
+obj_dir/
+transcript*
+msim_transcript*
+vsim.wlf
+*.wlf
+modelsim.ini
+*.vcd
+
+# Python cache & temporary files
+__pycache__/
+*.py[cod]
+*~
+*.swp
+

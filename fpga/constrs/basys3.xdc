@@ -19,6 +19,13 @@ set_property PACKAGE_PIN V17 [get_ports dbg_sel]
 set_property IOSTANDARD LVCMOS33 [get_ports dbg_sel]
 set_property PULLDOWN TRUE [get_ports dbg_sel]
 
+## 3.1 Boot Mode Selection Switch (Slide Switch SW1)
+##    SW1 = 0 (Down) -> Boot from Internal ROM
+##    SW1 = 1 (Up)   -> Boot from External SPI Flash
+set_property PACKAGE_PIN V16 [get_ports boot_mode]
+set_property IOSTANDARD LVCMOS33 [get_ports boot_mode]
+set_property PULLDOWN TRUE [get_ports boot_mode]
+
 ## 4. Uncore Application 16550 UART on PMOD JA (Top Row)
 ## Pin 1 (J1) = UARTSin (Connect to external USB-UART Dongle TXD)
 set_property PACKAGE_PIN J1 [get_ports UARTSin]
@@ -74,6 +81,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports led_rx_detect]
 ## 8. Asynchronous I/O False Paths (Buttons, Switches, LEDs, Serial Lines, FT1248 PMOD)
 set_false_path -from [get_ports reset_btn]
 set_false_path -from [get_ports dbg_sel]
+set_false_path -from [get_ports boot_mode]
 set_false_path -from [get_ports uart_rx]
 set_false_path -from [get_ports UARTSin]
 set_false_path -from [get_ports ft1248_miso]

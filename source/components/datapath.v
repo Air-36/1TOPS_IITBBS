@@ -383,7 +383,7 @@ csr_file csr_inst (
     .mscratch_out(dbg_mscratch),
     .cycle_cnt_out(dbg_cycle_cnt),
     .instret_cnt_out(dbg_instret_cnt),
-    .ValidM(ValidM)
+    .ValidM(ValidM & ~StallW)   // FIX N1: minstret counts an instruction only in the cycle it really retires
 );
 
 // Trap Unit

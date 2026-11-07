@@ -8,7 +8,7 @@
 // =============================================================================
 
 module riscv_soc_ahb #(
-    parameter RESET_PC        = 32'h8000_0000,
+    parameter RESET_PC        = 32'h0000_1000,
     parameter MEM_SIZE_BYTES  = 65536,
     parameter IRAM_BASE        = 32'h8000_0000,
     parameter IRAM_SIZE_BYTES  = 32768,
@@ -22,6 +22,9 @@ module riscv_soc_ahb #(
 )(
     input             clk,
     input             reset,
+
+    // Boot Configuration Pin Strap
+    input             boot_mode,       // 0 = Boot from Internal ROM, 1 = Boot from External SPI Flash
 
     // Hardware Interrupt Lines
     input             MExtInt,
@@ -131,6 +134,7 @@ module riscv_soc_ahb #(
     wire        dbg_sel_safe      = dbg_sel;
     wire        uart_rx_safe      = uart_rx;
     wire        ft1248_miso_safe  = ft1248_miso;
+    wire        boot_mode_safe    = boot_mode;
 `elsif SYNTHESIS
     wire [31:0] gpio_in_safe      = GPIOIN;
     wire        uart_sin_safe     = UARTSin;
@@ -138,6 +142,7 @@ module riscv_soc_ahb #(
     wire        dbg_sel_safe      = dbg_sel;
     wire        uart_rx_safe      = uart_rx;
     wire        ft1248_miso_safe  = ft1248_miso;
+    wire        boot_mode_safe    = boot_mode;
 `elsif VERILATOR
     wire [31:0] gpio_in_safe      = GPIOIN;
     wire        uart_sin_safe     = UARTSin;
@@ -145,6 +150,7 @@ module riscv_soc_ahb #(
     wire        dbg_sel_safe      = dbg_sel;
     wire        uart_rx_safe      = uart_rx;
     wire        ft1248_miso_safe  = ft1248_miso;
+    wire        boot_mode_safe    = boot_mode;
 `else
     // synthesis translate_off
     wire [31:0] gpio_in_safe      = (GPIOIN  === 32'bzzzz_zzzz_zzzz_zzzz_zzzz_zzzz_zzzz_zzzz || GPIOIN === 32'bxxxx_xxxx_xxxx_xxxx_xxxx_xxxx_xxxx_xxxx) ? 32'd0 : GPIOIN;
@@ -153,6 +159,7 @@ module riscv_soc_ahb #(
     wire        dbg_sel_safe      = (dbg_sel === 1'bz || dbg_sel === 1'bx) ? 1'b0 : dbg_sel;
     wire        uart_rx_safe      = (uart_rx === 1'bz || uart_rx === 1'bx) ? 1'b1 : uart_rx;
     wire        ft1248_miso_safe  = (ft1248_miso === 1'bz || ft1248_miso === 1'bx) ? 1'b1 : ft1248_miso;
+    wire        boot_mode_safe    = (boot_mode === 1'bz || boot_mode === 1'bx) ? 1'b0 : boot_mode;
     // synthesis translate_on
 `endif
 
@@ -243,7 +250,11 @@ module riscv_soc_ahb #(
 
     // 1.1 Step Debugging FSM Controller Instance
     wire core_instr_retired;
-    wire core_HRESETn = HRESETn & ~dbg_core_reset;
+    wire boot_mode_latched;
+    wire remap_en;
+    wire soft_core_rst_n;
+    wire [31:0] sysctrl_reset_vector;
+    wire core_HRESETn = HRESETn & ~dbg_core_reset & soft_core_rst_n;
 
     core_step_controller #(
         .WATCHDOG_LIMIT(65536)
@@ -496,8 +507,14 @@ module riscv_soc_ahb #(
         // SJ: SDC peripheral ports are unused at SoC boundary
         .SDCCmd(),
         .SDCCS(),
-        .SDCCLK()
+        .SDCCLK(),
         // spyglass enable_block W287b
+        .boot_mode_pin(boot_mode_safe),
+        .dbg_core_reset_i(dbg_core_reset),
+        .boot_mode_latched(boot_mode_latched),
+        .remap_en(remap_en),
+        .soft_core_rst_n(soft_core_rst_n),
+        .reset_vector(sysctrl_reset_vector)
     );
 
     // =========================================================================

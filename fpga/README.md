@@ -64,6 +64,17 @@ This directory contains the standalone, FPGA-tuned implementation of the **1TOPS
 - **16-Entry Circular Micro-Trace Buffer**: Records the last 16 committed instruction PCs leading up to the crash.
 - **Scan-Chain Friendly**: Single clock domain (`HCLK`), standard active-low reset (`HRESETn`), pure synchronous D-FFs with zero latches and zero gated clocks.
 
+### G. System Control Block & Dual-Mode Bootloader (`boot_mode` Strap Pin)
+- **External Boot Mode Strap (`boot_mode` on SW1 / Pin V16)**:
+  - Synchronously sampled and debounced with a 16-cycle hold window on system reset deassertion by `sysctrl_apb.sv` (Base: `0x1008_0000`).
+  - **Mode 0 (`SW1 = 0`) — Boot from Internal ROM**:
+    - The CPU vectors to `0x0000_1000`, runs internal ROM self-test and executes `main()` directly in ROM, reporting completion status via scratchpad register `0x1008_0014`.
+  - **Mode 1 (`SW1 = 1`) — Boot from External SPI Flash**:
+    - The Boot ROM First-Stage Bootloader (FSBL) activates the uncore SPI master (`0x1004_0000`), asserts chip select `SPICS[0] = 0`, sends READ command `0x03` with 24-bit address `0x000000`, sequentially copies firmware code into Instruction SRAM (`0x8000_0000`), deasserts CS, and executes `jr 0x8000_0000` to start execution from RAM.
+- **Dynamic Reset Vector & ROM Remapping**:
+  - `SYSCTRL_RESET_VEC` (`0x1008_0004`): Allows the debugger or software to dynamically re-point the core reset vector to any 32-bit address (e.g. `0x8000_0000`).
+  - `SYSCTRL_REMAP_CTRL` (`0x1008_000C`): Aliases `0x0000_0000 - 0x0000_7FFF` to Instruction SRAM, allowing legacy 0x0-based vectors without modifying core datapath.
+
 ---
 
 ## 3. Physical Hardware Pinout (Basys 3)
@@ -73,6 +84,7 @@ This directory contains the standalone, FPGA-tuned implementation of the **1TOPS
 | `clk` | **Pin W5** | Input | 100 MHz on-board oscillator (MMCM produces 50 MHz `clk_soc`) |
 | `reset_btn` | **Pin U18 (btnC)** | Input | Center pushbutton (active-high system reset; OR'd with MMCM lock) |
 | `dbg_sel` | **Pin V17 (SW0)** | Input | Slide switch: `0` (Down) = UART, `1` (Up) = FT1248 |
+| `boot_mode` | **Pin V16 (SW1)** | Input | Slide switch: `0` (Down) = Boot Internal ROM, `1` (Up) = Boot SPI Flash |
 | `uart_rx` | **PMOD JA Pin 1 (J1)** | Input | Debugger UART RX (connect to USB-UART Dongle TXD) |
 | `uart_tx` | **PMOD JA Pin 2 (L2)** | Output | Debugger UART TX (connect to USB-UART Dongle RXD) |
 | `ft1248_clk` | **PMOD JB Pin 1 (A14)** | Output | FT1248 Serial Clock (SCLK to FT232H) |
@@ -220,7 +232,9 @@ The repository includes a dedicated 64-byte stepping verification binary (`step_
 1. **Halt CPU**: `C 0202`
 2. **Zero DRAM**: `A 80010000` $\rightarrow$ `V 00000000` $\rightarrow$ `F 08`
 3. **Upload `step_test.bin`**: `A 80000000` $\rightarrow$ `U 40` $\rightarrow$ send `step_test.bin` in HTerm.
-4. **Reset PC to 0x80000000**: `C 0201` $\rightarrow$ `C 0101`
+4. **Configure Reset Vector & Reset Core**:
+   - Set reset vector to IMEM: `A 10080004` $\rightarrow$ `W 80000000`
+   - Pulse core reset: `C 0201` $\rightarrow$ `C 0101`
 5. **Step Instructions**:
    - Send `C 0204` then `C 0104` four times.
    - Read Data RAM: `A 80010000` $\rightarrow$ `R` $\rightarrow$ replies `R 0x11111111`!

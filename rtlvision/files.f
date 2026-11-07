@@ -62,9 +62,9 @@
 ../source/uncore/spi_fifo.sv
 ../source/uncore/uart_apb.sv
 ../source/uncore/uartPC16550D.sv
+../source/uncore/sysctrl_apb.sv
 ../source/uncore/uncore.sv
 
 // 5. SoC Interconnect, Accelerator & Top-Level (source/main/soc/)
-../source/main/soc/ahb_interconnect.v
 ../source/main/soc/multiplier_ahb.v
 ../source/main/soc/riscv_soc_ahb.v
