@@ -79,7 +79,48 @@ test_plic: compile_soc
 	@cp $(SOC_DIR)/test_instr.mem $(SIM_DIR)/ && cp $(SOC_DIR)/test_data.mem $(SIM_DIR)/
 	@cd $(SIM_DIR) && $(VSIM) -c -voptargs="+acc" -do "run -all; quit -f" work.tb | grep -E "Test Result|PASSED|FAILED|signature"
 
-test_all: test_multiplier test_gpio test_uart test_clint test_plic
+# 6. System Control & Dual-Mode Booting Test (Internal ROM & SPI Flash)
+test_boot_sysctrl:
+	@echo "================================================================"
+	@echo " Running Test: System Control Block & Dual-Mode Booting (ROM/SPI)"
+	@echo "================================================================"
+	rm -rf work transcript vsim.wlf
+	$(VLIB) work >/dev/null
+	$(VLOG) -sv -timescale 1ns/1ps -work work \
+		+incdir+$(ROOT_DIR)/main \
+		+incdir+$(ROOT_DIR)/main/soc \
+		+incdir+$(ROOT_DIR)/components \
+		+incdir+$(ROOT_DIR)/uncore \
+		+incdir+$(ROOT_DIR)/debugger \
+		$(ROOT_DIR)/components/*.v \
+		$(ROOT_DIR)/main/*.v \
+		$(ROOT_DIR)/main/soc/*.v \
+		$(ROOT_DIR)/uncore/*.sv \
+		$(ROOT_DIR)/debugger/*.v \
+		$(ROOT_DIR)/debugger/*.sv \
+		tb/tb_sysctrl_boot.sv >/dev/null
+	$(VSIM) -c -voptargs="+acc" -do "run -all; quit -f" work.tb_sysctrl_boot | grep -E "PASS|FAIL|REGRESSION|TEST"
+
+test_boot_sysctrl_vcs:
+	@echo "================================================================"
+	@echo " Running Test: System Control & Dual Boot (Synopsys VCS)        "
+	@echo "================================================================"
+	vcs -sverilog -full64 +v2k -timescale=1ns/1ps \
+		+incdir+$(ROOT_DIR)/main \
+		+incdir+$(ROOT_DIR)/main/soc \
+		+incdir+$(ROOT_DIR)/components \
+		+incdir+$(ROOT_DIR)/uncore \
+		+incdir+$(ROOT_DIR)/debugger \
+		$(ROOT_DIR)/components/*.v \
+		$(ROOT_DIR)/main/*.v \
+		$(ROOT_DIR)/main/soc/*.v \
+		$(ROOT_DIR)/uncore/*.sv \
+		$(ROOT_DIR)/debugger/*.v \
+		$(ROOT_DIR)/debugger/*.sv \
+		tb/tb_sysctrl_boot.sv -o simv_boot >/dev/null
+	./simv_boot
+
+test_all: test_multiplier test_gpio test_uart test_clint test_plic test_boot_sysctrl
 	@echo ""
 	@echo "================================================================"
 	@echo " ALL PERIPHERAL & ACCELERATOR TESTS PASSED SUCCESSFULLY!        "

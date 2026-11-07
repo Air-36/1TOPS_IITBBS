@@ -10,7 +10,7 @@ The subsystem features **Dual-Protocol Hardware Interface Integration**:
 5. **ASCII Debug Protocol (ADP) Controller & AHB Master** (`socdebug_adp_control.v` / `socdebug_ahb.v`).
 6. **RISC-V CPU Pipeline Hazard Unit & Stall Hooks** (`hazard.sv` / `tops_core.sv`).
 7. **2-Master AHB-Lite Bus Arbiter & Multiplexer** (`ahb_mux.sv`).
-8. **Downstream Slaves & Memories**: 1TOPS Accelerator Multiplier, IRAM, DRAM, Boot ROM, APB Bridge.
+8. **Downstream Slaves & Memories**: Accelerator IP Socket (Part of Uncore), IRAM, DRAM, Boot ROM, APB Bridge (including System Control `sysctrl_apb.sv`).
 9. **Core Debug & Post-Mortem AHB Slave** (`core_debug_ahb.v` at Base `0x0B00_0000`): Non-intrusive direct readout of GPRs `x0`–`x31`, privileged CSRs, pipeline PCs, 16-entry micro-trace buffer, and hardware auto-halt trap freeze.
 
 ---
@@ -38,6 +38,7 @@ graph TD
 
     subgraph HardwarePads ["Dedicated External Physical Pins and Package Pads"]
         PAD_SEL["dbg_sel - Protocol Select Pin 0=UART 1=FT1248"]:::pin
+        PAD_BOOT["boot_mode - Boot Strap Pin 0=ROM 1=SPI Flash"]:::pin
         PAD_URX["uart_rx - Dedicated UART Input"]:::pin
         PAD_UTX["uart_tx - Dedicated UART Output"]:::pin
         PAD_FTCLK["ft1248_clk - FTDI Serial Clock"]:::pin
@@ -60,6 +61,7 @@ graph TD
         UNC_UART["Uncore 16550 Application UART - Base 0x1001_3000"]:::uncoreuart
         DEC["Address Decoder - adrdecs.sv"]:::slave
         RMUX["HRDATA and HREADY Read Multiplexer"]:::slave
+        SYSCTRL["System Control Block - Base 0x1008_0000"]:::uncoreuart
     end
 
     subgraph CPUSub ["RISC-V CPU Core - riscv_cpu.v"]
@@ -74,11 +76,11 @@ graph TD
     end
 
     subgraph Slaves ["Downstream Memories, Accelerators and Core Debug"]
-        ACC["1TOPS Accelerator Multiplier - 0x3000_0000"]:::slave
+        ACC["Accelerator IP Socket (Part of Uncore) - 0x3000_0000"]:::slave
         IRAM["Instruction SRAM - ram_i 0x8000_0000"]:::slave
         DRAM["Data SRAM - ram_d 0x8001_0000"]:::slave
         ROM["Boot ROM - bootrom 0x0001_0000"]:::slave
-        APB["APB Peripherals - CLINT PLIC GPIO"]:::slave
+        APB["APB Peripherals - UART SPI GPIO SYSCTRL PLIC CLINT"]:::slave
         CDBG["Core Debug & Post-Mortem AHB Slave - 0x0B00_0000"]:::slave
     end
 
@@ -308,12 +310,12 @@ vsim -c -do "run -all; quit" tb_debugger
 | **1.1** | UART (`dbg_sel = 0`) | Core Halt & Status Verification | `C 0202` halt asserted, verified via `core_halted_i` and `C` query | **PASS** |
 | **1.2** | UART (`dbg_sel = 0`) | IRAM Program Code Loading | Loaded 32-bit instructions at `0x8000_0000`, verified with `R after A` | **PASS** |
 | **1.3** | UART (`dbg_sel = 0`) | DRAM Sub-word & Word Access | Written `0xdeadbeef` to DRAM `0x8001_0000`, verified readback | **PASS** |
-| **1.4** | UART (`dbg_sel = 0`) | 1TOPS Accelerator Multiplier | Loaded OpA=8, OpB=9 at `0x3000_0000`, readback product `72` (`0x48`) | **PASS** |
+| **1.4** | UART (`dbg_sel = 0`) | Accelerator IP Socket | Loaded OpA=8, OpB=9 at `0x3000_0000`, readback product `72` (`0x48`) | **PASS** |
 | **1.5** | UART (`dbg_sel = 0`) | Illegal Bus Address Error | Accessed `0x5000_0000`, verified `R!0x00000000` exclamation indicator | **PASS** |
 | **1.6** | UART (`dbg_sel = 0`) | Core Resume | `C 0102` resume asserted, verified via `core_halt_o = 0` and `C` query | **PASS** |
 | **2.1** | FT1248 (`dbg_sel = 1`)| Dynamic Hardware Pad Switch | Switched pad to `1`, halted core via FT1248 `C 0202`, verified status | **PASS** |
 | **2.2** | FT1248 (`dbg_sel = 1`)| DRAM Write & Readback | Written `0x55aa55aa` to `0x8001_0000` via FT1248, verified readback | **PASS** |
-| **2.3** | FT1248 (`dbg_sel = 1`)| 1TOPS Multiplier over FT1248 | OpA=15, OpB=3, readback product `45` (`0x2D`) via FT1248 | **PASS** |
+| **2.3** | FT1248 (`dbg_sel = 1`)| Accelerator IP Socket over FT1248 | OpA=15, OpB=3, readback product `45` (`0x2D`) via FT1248 | **PASS** |
 | **2.4** | FT1248 (`dbg_sel = 1`)| Hardware Register Polling | Configured `M 000000ff`, `V 0000002d`, polled `P`, verified match | **PASS** |
 | **2.5** | FT1248 (`dbg_sel = 1`)| Core Resume over FT1248 | Resumed core via FT1248 `C 0102`, verified running status | **PASS** |
 | **3.1** | Isolation Test | UART Traffic Blocking | Sent UART commands while `dbg_sel = 1`; verified UART ignored | **PASS** |

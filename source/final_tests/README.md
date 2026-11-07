@@ -35,18 +35,17 @@ final_tests/
 │   ├── Makefile                 # Interconnect verification runner
 │   └── README.md                # Bus arbitration and bridge documentation
 │
-├── 05_peripherals/              # Subsystem 05: Peripherals & Hardware Accelerators
-│   ├── tb/                      # AHB Multiplier accelerator testbench
+├── 05_peripherals/              # Subsystem 05: Peripherals, Accelerator IP Socket & System Control
+│   ├── tb/                      # AHB Multiplier accelerator & Boot/SysCtrl testbenches
 │   ├── soc_level/               # Assembly tests for GPIO, UART, CLINT, PLIC
 │   ├── sim/                     # SoC simulation environment
 │   ├── Makefile                 # Peripheral verification runner
 │   └── README.md                # Peripheral memory map and test documentation
 │
 ├── 06_debugger_subsystem/       # Subsystem 06: Hardware Debugger Subsystem & CPU Features
-│   ├── tb/                      # Microarchitectural features & ADP protocol testbenches
-│   ├── assertions/              # Pipeline invariant monitors
-│   ├── Makefile                 # Debugger test runner
-│   └── README.md                # ExternalStall, InstrRetired & ADP documentation
+├── assertions/                  # Pipeline invariant monitors
+├── Makefile                     # Debugger test runner
+└── README.md                    # ExternalStall, InstrRetired & ADP documentation
 │
 ├── 07_soc_system_benchmarks/    # Subsystem 07: SoC Top-Level System & Bare-Metal C Benchmarks
 │   ├── bsp/                     # Linker script, crt0.S startup, syscalls, UART driver
@@ -70,7 +69,7 @@ final_tests/
 | **02. Pipeline & Hazards** | `02_pipeline_hazard_stress/` | 5-stage CPU Pipeline, Hazard Unit, Forwarding Muxes | Stress assembly programs with formal SystemVerilog Assertions (SVA) | `hazard_forwarding`, `branch_collision`, `interrupt_trap`, `exception_trap`, `subword_access`, `apb_bus_stress` |
 | **03. Architectural Compliance** | `03_cpu_core_arch/` | RV32I Base Integer, Privileged M-mode, Zicsr Extension | Lock-step architectural comparison against Spike Golden ISS | `test_alu_arch`, `test_branch_arch`, `test_memory_arch`, `test_priv_arch`, `test_zicsr_arch` |
 | **04. Bus Interconnect** | `04_bus_fabric/` | 2-Master AHB Arbiter (`ahb_mux.sv`), AHB-to-APB Bridge (`ahbapbbridge.v`) | Constrained-Random Verification (CRV) with protocol assertions | `test_ahb_mux` (priority, contention, core halt), `test_apb_bridge` (setup, access, wait-states) |
-| **05. Peripherals & Accelerators** | `05_peripherals/` | AHB Multiplier Accelerator, APB GPIO, 16550 UART, CLINT, PLIC | Directed unit testbenches + 1TOPS SoC peripheral firmware | `test_multiplier`, `test_gpio`, `test_uart`, `test_clint`, `test_plic` |
+| **05. Peripherals & Accelerators** | `05_peripherals/` | Accelerator IP Socket, APB GPIO, 16550 UART, CLINT, PLIC, System Control & Boot ROM | Directed unit testbenches + 1TOPS SoC peripheral firmware + SPI Flash Model | `test_multiplier`, `test_gpio`, `test_uart`, `test_clint`, `test_plic`, `test_boot_sysctrl` |
 | **06. Debugger Subsystem** | `06_debugger_subsystem/` | SoCDebug Top (`riscv_debugger_top.sv`), ADP Controller, Step Controller | Deterministic signal-level timing checks & ADP protocol testbench | `test_features` (`ExternalStall`, `InstrRetired`, `dbg_core_reset`), `test_adp_protocol` (UART/FT1248) |
 | **07. System C Benchmarks** | `07_soc_system_benchmarks/` | Full SoC System (CPU, 2MB RAM, UART, CSR Performance Counters) | Bare-metal C execution with real-time UART streaming & `tohost` | `test_hello` (loop math), `test_matmul` (8x8 matrix), `test_qsort` (64-int quicksort) |
 
@@ -109,7 +108,7 @@ make test_04_bus_fabric
 # OR
 cd 04_bus_fabric && make test_all
 
-# Subsystem 05: Peripherals & Hardware Accelerators
+# Subsystem 05: Peripherals, Accelerator IP Socket & System Control
 make test_05_peripherals
 # OR
 cd 05_peripherals && make test_all

@@ -160,17 +160,20 @@ The debugger automatically adjusts AHB transfer size (`HSIZE` = byte, halfword, 
 
 | Address Range | Size | Region | Purpose |
 | :--- | :--- | :--- | :--- |
-| `0x0000_1000 - 0x0000_1FFF` | 4 KB | Boot ROM | Initial boot code |
+| `0x0000_1000 - 0x0000_1FFF` | 4 KB | Boot ROM | Default reset vector (`RESET_PC = 0x0000_1000`), dual-mode bootloader |
 | `0x0B00_0000 - 0x0B00_0FFF` | 4 KB | Core Debug & Post-Mortem | CPU GPRs (x0-x31), CSRs, Trace Buffer & Crash Trap Registers |
 | `0x1000_0000 - 0x1000_0007` | 8 B | 16550 Uncore UART | Application printf/console UART |
-| `0x3000_0000` | 4 B | Multiplier Op A | Accelerator operand A / Control |
-| `0x3000_0004` | 4 B | Multiplier Op B | Accelerator operand B / Status |
-| `0x3000_0008` | 4 B | Multiplier Product | Accelerator product result |
-| `0x3000_000C` | 4 B | Multiplier Print | Console character write |
-| `0x3000_1000 - 0x300F_FFFF` | ~1 MB | Accelerator Input Buffer | Feature activations |
-| `0x3010_0000 - 0x307F_FFFF` | ~7 MB | Accelerator Weights Buffer | Model parameters / weights |
+| `0x1004_0000 - 0x1004_000F` | 16 B | SPI Master Controller | Uncore SPI master (Flash boot & external peripherals) |
+| `0x1006_0000 - 0x1006_0007` | 8 B | GPIO Controller | Uncore general-purpose I/O |
+| `0x1008_0000 - 0x1008_00FF` | 256 B | System Control Block | `sysctrl_apb.sv` (Reset vector, soft reset, boot strap, ROM remap) |
+| `0x3000_0000` | 4 B | Accelerator IP Socket | Operand A / Control (part of uncore) |
+| `0x3000_0004` | 4 B | Accelerator IP Socket | Operand B / Status (part of uncore) |
+| `0x3000_0008` | 4 B | Accelerator IP Socket | Product result (part of uncore) |
+| `0x3000_000C` | 4 B | Accelerator IP Socket | Console character write (part of uncore) |
+| `0x3000_1000 - 0x300F_FFFF` | ~1 MB | Accelerator Input Buffer | Feature activations buffer |
+| `0x3010_0000 - 0x307F_FFFF` | ~7 MB | Accelerator Weights Buffer | Model parameters / weights buffer |
 | `0x3080_0000 - 0x30FF_FFFF` | ~8 MB | Accelerator Output Buffer | Inference / results buffer |
-| `0x8000_0000 - 0x8000_7FFF` | 32 KB | Instruction SRAM (`ram_i`) | Program code (reset vector) |
+| `0x8000_0000 - 0x8000_7FFF` | 32 KB | Instruction SRAM (`ram_i`) | Program code (target of SPI flash copy / direct debugger load) |
 | `0x8001_0000 - 0x8001_7FFF` | 32 KB | Data SRAM (`ram_d`) | Program data, heap, and stack |
 
 ---
@@ -378,9 +381,13 @@ W 0x00B52023
 W 0x00100073
 ```
 
-#### Step 4: Reset the CPU Program Counter to 0x8000_0000
-Pulse the core reset line while remaining halted:
+#### Step 4: Configure Reset Vector and Reset the CPU Core
+Program the reset vector register in the System Control block (`SYSCTRL_RESET_VEC` at `0x1008_0004`) to point to `0x8000_0000` (so the core jumps straight to your loaded code in IMEM rather than the default Boot ROM), then pulse the core reset line while remaining halted:
 ```
+] A 10080004
+A 0x10080004
+] W 80000000
+W 0x80000000
 ] C 0201
 C 0x00010201
 ] C 0101
