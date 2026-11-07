@@ -50,7 +50,21 @@ schematics/rv32_core_schematic/
 rtlvision/*.log
 rtlvision/work/
 
-# 4. QuestaSim / ModelSim / Verilator Simulation Artifacts
+# 4. Synopsys VCS Simulation Artifacts
+csrc/
+simv*
+*.daidir/
+ucli.key
+vc_hdrs.h
+*.vpd
+*.fsdb
+*.vdb
+DVEfiles/
+verdiLog/
+novas.conf
+novas.rc
+
+# 5. QuestaSim / ModelSim / Verilator Simulation Artifacts
 work/
 rtl_work/
 obj_dir/
@@ -60,9 +74,8 @@ vsim.wlf
 *.wlf
 modelsim.ini
 *.vcd
-*.vpd
 
-# 5. Compiler & Bare-Metal Software Build Artifacts
+# 6. Compiler & Bare-Metal Software Build Artifacts
 **/build/*
 !**/build/.gitkeep
 *.elf
@@ -74,7 +87,7 @@ modelsim.ini
 software/*.bin
 software/*.mem
 
-# 6. Quartus Compilation & Project Outputs
+# 7. Quartus Compilation & Project Outputs
 output_files/
 db/
 incremental_db/
@@ -154,7 +167,6 @@ spyglass/**/*.env
 spyglass/**/html_reports/log/
 spyglass/**/Run_Summary/.*
 
-
 # 9. Python Cache, Editors & OS Files
 __pycache__/
 *.py[cod]
@@ -164,4 +176,3 @@ __pycache__/
 *~
 *.bak*
 .DS_Store
-

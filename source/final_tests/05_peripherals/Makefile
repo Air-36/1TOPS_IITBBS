@@ -128,5 +128,6 @@ test_all: test_multiplier test_gpio test_uart test_clint test_plic test_boot_sys
 
 clean:
 	rm -rf work transcript vsim.wlf
+	rm -rf csrc simv* *.daidir ucli.key vc_hdrs.h
 	@$(MAKE) -C $(SOC_DIR) clean
 	rm -rf $(SIM_DIR)/work $(SIM_DIR)/transcript $(SIM_DIR)/vsim.wlf $(SIM_DIR)/*.mem
