@@ -86,6 +86,12 @@ module core_debug_ahb #(
         input  wire                   dbg_sel_i
     );
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, HADDR[31:12], HWDATA[31:16], 1'b0};
+    // spyglass enable_block W528
+
     // =========================================================================
     // 1. AHB-Lite Bus Control & Address Pipelining
     // =========================================================================

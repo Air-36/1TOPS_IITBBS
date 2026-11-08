@@ -38,6 +38,12 @@ module ahbapbbridge #(
     assign PCLK    = HCLK;
     assign PRESETn = HRESETn;
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, HTRANS[0], 1'b0};
+    // spyglass enable_block W528
+
     logic initTrans;
     logic initTransSel;
     logic initTransSelD;

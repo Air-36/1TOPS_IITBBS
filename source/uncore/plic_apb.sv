@@ -25,6 +25,12 @@ module plic_apb #(
     output logic              SExtInt
 );
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PADDR[27:24], PWDATA[31:5], 1'b0};
+    // spyglass enable_block W528
+
     // Register Offsets
     localparam PLIC_PRIORITY_SRC1 = 24'h000004; // Priority for Source 1 (UART)
     localparam PLIC_PRIORITY_SRC2 = 24'h000008; // Priority for Source 2 (GPIO)

@@ -42,6 +42,12 @@ module rom_ahb #(
     assign HREADYRom = 1'b1;
     assign HRESPRom  = 1'b0;
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, HADDR[31:12], HADDR[1:0], HTRANS[0], 1'b0};
+    // spyglass enable_block W528
+
     wire [ADDR_WIDTH-1:0] word_addr = HADDR[ADDR_WIDTH+OFFSET-1:OFFSET];
 
     // Synthesizable combinational ROM lookup function

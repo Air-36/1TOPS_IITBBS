@@ -31,6 +31,12 @@ module trap_unit #(parameter WIDTH = 32) (
     output [WIDTH-1:0] TrapVectorM       // Next PC address to jump to
 );
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, mstatus[31:4], mstatus[2:0], mip[31:12], mie[31:12], 1'b0};
+    // spyglass enable_block W528
+
     // 1. Pending & Enabled Interrupts
     wire [11:0] PendingInts = mip[11:0] & mie[11:0];
     assign IntPendingM      = |PendingInts;

@@ -23,6 +23,12 @@ module clint_apb #(
     output logic              MSwInt
 );
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PADDR[1:0], 1'b0};
+    // spyglass enable_block W528
+
     // Register Offsets (word-aligned)
     localparam CLINT_MSIP      = 16'h0000;
     localparam CLINT_MTIMECMP  = 16'h4000;

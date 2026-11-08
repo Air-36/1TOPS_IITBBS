@@ -36,6 +36,12 @@ module uart_apb #(
     output logic              RXRDYb
 );
 
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PWDATA[31:8], 1'b0};
+    // spyglass enable_block W528
+
 generate
 if (USE_REAL_UART == 1) begin : gen_real_uart
     // Full bit-by-bit TI PC16550D hardware UART with baud generator & FIFOs
