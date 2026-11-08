@@ -110,17 +110,21 @@ simulation/
 *.fit.summary
 *.flow.rpt
 
-# 8. Synopsys SpyGlass Lint & CDC
-# Ignore all internal databases, compiled work libraries, and caches
-**/spyglass_spysch/
-**/.SG_SaveRestoreDB/
-**/.design_setup_db/
-**/WORK/
-**/in_tool_debug_data/
-**/.tmp*
-**/smdb/
-**/nomdb/
-**/*.vdbdir/
+# 8. Synopsys SpyGlass Lint, CDC & RDC
+# Ignore all internal run directories, schematic databases, caches, and dumps
+spyglass/**/riscv_soc_ahb/
+spyglass/**/spyglass_spysch/
+spyglass/**/.SG_SaveRestoreDB/
+spyglass/**/.design_setup_db/
+spyglass/**/WORK/
+spyglass/**/in_tool_debug_data/
+spyglass/**/.tmp*
+spyglass/**/smdb/
+spyglass/**/nomdb/
+spyglass/**/sch.vdbdir/
+spyglass/**/*.vdbdir/
+spyglass/**/html_reports/
+spyglass/**/Run_Summary/
 
 # SpyGlass binary databases, dumps, and intermediate artifacts
 spyglass/**/*.sdb
@@ -138,7 +142,8 @@ spyglass/**/*.nlv
 spyglass/**/*.psd
 spyglass/**/.*
 
-# Machine/User-specific environment & local GUI logs (contains licenses & paths)
+# Machine/User-specific environment & local GUI logs (contains licenses, user IDs & machine paths)
+spyglass/**/*.env
 spyglass/**/gui_command.log
 spyglass/**/dashboard.log
 spyglass/**/datasheet.log
@@ -152,20 +157,18 @@ spyglass/**/sg_msgtag.*
 spyglass/**/tag_name_id_mapping.txt
 spyglass/**/NomSavedStatus
 
-# Explicitly un-ignore required proof reports, logs, and project configurations
+# Explicitly keep required project configuration, constraints, and consolidated sign-off proof reports
 !spyglass/**/*.prj
-!spyglass/**/consolidated_reports/**
-!spyglass/**/Run_Summary/**
-!spyglass/**/html_reports/**
-!spyglass/**/spyglass_reports/**
 !spyglass/**/*.sgdc
 !spyglass/**/*.swl
-!spyglass/**/*.rpt
+!spyglass/**/consolidated_reports/**
+!spyglass/**/consolidated_reports/**/*.rpt
+!spyglass/**/consolidated_reports/**/README
+!spyglass/**/consolidated_reports/**/ReportPortInfo
+!spyglass/**/consolidated_reports/**/*.log
 
-# Re-ignore sensitive environment & machine-specific files inside report folders
+# STRICT: Machine-specific environment files must NEVER be tracked (contain paths & user IDs)
 spyglass/**/*.env
-spyglass/**/html_reports/log/
-spyglass/**/Run_Summary/.*
 
 # 9. Python Cache, Editors & OS Files
 __pycache__/

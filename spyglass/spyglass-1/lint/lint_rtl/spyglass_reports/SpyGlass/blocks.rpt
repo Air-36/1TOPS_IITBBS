@@ -1,7 +1,0 @@
-riscv_debugger_top@@@@riscv_soc_ahb.u_debugger
-core_step_controller@@@@riscv_soc_ahb.u_step_controller
-ahb_mux@@@@riscv_soc_ahb.u_ahb_mux
-riscv_cpu@@@@riscv_soc_ahb.cpu
-uncore@@@@riscv_soc_ahb.uncore
-core_debug_ahb@@@@riscv_soc_ahb.u_core_dbg
-multiplier_ahb@@@@riscv_soc_ahb.accel

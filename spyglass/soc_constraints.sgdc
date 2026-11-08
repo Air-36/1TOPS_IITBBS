@@ -1,0 +1,11 @@
+current_design "riscv_soc_ahb"
+
+# 1. Primary System Clock (100 MHz, 10 ns period)
+clock -name "clk" -domain "CLK_100M" -period 10.0 -edge {0.0 5.0}
+
+# 2. Primary Asynchronous Reset (Active HIGH on the top-level pad)
+reset -name "reset" -value 1
+
+# 3. Quasi-Static Configuration Strap Pins (static during execution)
+quasi_static -name "boot_mode"
+quasi_static -name "dbg_sel"
