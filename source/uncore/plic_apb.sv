@@ -7,8 +7,12 @@ module plic_apb #(
     input  logic              PCLK,
     input  logic              PRESETn,
     input  logic              PSEL,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PADDR[27:24] upper decode bits and PWDATA[31:5] unused by 5-bit interrupt controller
     input  logic [27:0]       PADDR,
     input  logic [31:0]       PWDATA,
+    // spyglass enable_block W240
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [31:0]       PRDATA,

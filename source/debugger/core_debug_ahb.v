@@ -25,8 +25,12 @@ module core_debug_ahb #(
         input  wire                   HRESETn,
         input  wire                   core_reset_i,
         input  wire                   HSEL,
+        // spyglass disable_block W240
+        // SMD: Input declared but not read
+        // SJ: HADDR[31:12] decoded by interconnect; HWDATA[31:16] unused by 16-bit debug registers
         input  wire [31:0]            HADDR,
         input  wire [31:0]            HWDATA,
+        // spyglass enable_block W240
         input  wire                   HWRITE,
         input  wire [ 1:0]            HTRANS,
         input  wire                   HREADY,

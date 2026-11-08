@@ -14,9 +14,13 @@ module trap_unit #(parameter WIDTH = 32) (
     input  [WIDTH-1:0] PCM,              // PC of instruction in M stage
     input  [WIDTH-1:0] InstrM,           // Instruction word in M stage
     // Machine status & configuration registers from csr_file
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: Machine status/interrupt registers contain unused upper custom fields and status flags
     input  [WIDTH-1:0] mstatus,          // Bit 3 = MIE
     input  [WIDTH-1:0] mie,              // Bit 11=MEIE, 7=MTIE, 3=MSIE
     input  [WIDTH-1:0] mip,              // Bit 11=MEIP, 7=MTIP, 3=MSIP
+    // spyglass enable_block W240
     input  [WIDTH-1:0] mtvec,            // Trap vector base register
     // Outputs to Datapath, CSR File, and Hazard Unit
     output             TrapM,            // 1 when any trap is taken

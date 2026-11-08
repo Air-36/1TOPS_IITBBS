@@ -22,9 +22,13 @@ module rom_ahb #(
     input  logic                 HCLK,
     input  logic                 HRESETn,
     input  logic                 HSELRom,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: HTRANS[0] unused; HADDR[31:12] decoded by interconnect; HADDR[1:0] unused (word aligned)
     input  logic [PA_BITS-1:0]   HADDR,
     input  logic                 HREADY,
     input  logic [1:0]           HTRANS,
+    // spyglass enable_block W240
     output logic [XLEN-1:0]      HREADRom,
     output logic                 HRESPRom,
     output logic                 HREADYRom

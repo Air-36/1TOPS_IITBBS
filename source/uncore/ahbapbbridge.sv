@@ -12,7 +12,11 @@ module ahbapbbridge #(
         input  logic [XLEN-1:0]           HWDATA,
         input  logic [XLEN/8-1:0]         HWSTRB,
         input  logic                      HWRITE,
+        // spyglass disable_block W240
+        // SMD: Input declared but not read
+        // SJ: HTRANS[0] unused; Bridge qualifies active transfers via HTRANS[1]
         input  logic [ 1:0]               HTRANS,
+        // spyglass enable_block W240
         input  logic                      HREADY,
         output logic [XLEN-1:0]           HRDATA,
         output logic                      HRESP,

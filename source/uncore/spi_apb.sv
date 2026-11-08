@@ -7,7 +7,11 @@ module spi_apb #(
 )(
   input  logic                PCLK, PRESETn,
   input  logic                PSEL,
+  // spyglass disable_block W240
+  // SMD: Input declared but not read
+  // SJ: PADDR[1:0] unused due to word-aligned register offsets
   input  logic [7:0]          PADDR,
+  // spyglass enable_block W240
   input  logic [XLEN-1:0]     PWDATA,
   input  logic                PWRITE,
   input  logic                PENABLE,

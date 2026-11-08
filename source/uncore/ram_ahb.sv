@@ -16,7 +16,11 @@ module ram_ahb #(
   input  logic [PA_BITS-1:0]   HADDR,
   input  logic                 HWRITE,
   input  logic                 HREADY,
+  // spyglass disable_block W240
+  // SMD: Input declared but not read
+  // SJ: HTRANS[0] unused; RAM slave qualifies active transfers via HTRANS[1]
   input  logic [1:0]           HTRANS,
+  // spyglass enable_block W240
   input  logic [XLEN-1:0]      HWDATA,
   input  logic [XLEN/8-1:0]    HWSTRB,
   output logic [XLEN-1:0]      HREADRam,

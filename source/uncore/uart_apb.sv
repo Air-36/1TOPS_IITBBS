@@ -10,7 +10,11 @@ module uart_apb #(
     input  logic              PRESETn,
     input  logic              PSEL,
     input  logic [ 2:0]       PADDR,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PWDATA[31:8] unused; 16550 registers are 8 bits wide
     input  logic [XLEN-1:0]   PWDATA,
+    // spyglass enable_block W240
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [XLEN-1:0]   PRDATA,

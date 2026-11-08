@@ -7,7 +7,11 @@ module clint_apb #(
     input  logic              PCLK,
     input  logic              PRESETn,
     input  logic              PSEL,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PADDR[1:0] unused due to word-aligned register offsets
     input  logic [15:0]       PADDR,
+    // spyglass enable_block W240
     input  logic [31:0]       PWDATA,
     input  logic [ 3:0]       PSTRB,
     input  logic              PWRITE,
