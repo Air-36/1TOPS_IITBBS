@@ -168,29 +168,32 @@ module tb_ahb_mux_crv;
         // ---------------------------------------------------------------------
         // TEST 1: Uncontended Master 0 (CPU) Transfers
         // ---------------------------------------------------------------------
+        // All checks use ports only (no dut.* hierarchical references), so the
+        // test works with any ahb_mux implementation. Masters are AHB-Lite
+        // compliant: a request is held until that master sees HREADY = 1.
+        // ---------------------------------------------------------------------
+
+        // ---------------------------------------------------------------------
+        // TEST 1: Uncontended Master 0 (Core) Transfers
+        // ---------------------------------------------------------------------
         $display("[TEST 1] Testing uncontended Master 0 transactions...");
         for (int t = 0; t < 20; t++) begin
             tr = new();
             tr.randomize_data();
-
-            @(posedge HCLK);
-            M0_HADDR  = tr.addr;
-            M0_HWRITE = tr.write;
-            M0_HWDATA = tr.data;
-            M0_HTRANS = tr.trans;
-            M0_HSIZE  = tr.size;
-
-            @(posedge HCLK);
-            M0_HTRANS = 2'b00;
-
-            // Verify downstream slave saw Master 0
-            if (S_HADDR !== tr.addr && dut.grant_addr == 1'b0) begin
-                $display("[FAIL] Master 0 address mismatch! S_HADDR=0x%08x, exp=0x%08x", S_HADDR, tr.addr);
+            @(posedge HCLK); #1;
+            M0_HADDR = tr.addr; M0_HWRITE = tr.write; M0_HTRANS = tr.trans; M0_HSIZE = tr.size;
+            #1; while (!M0_HREADY) begin @(posedge HCLK); #1; end
+            // Accepted by M0 -> must be the transfer on the slave bus this cycle
+            if (S_HTRANS !== 2'b10 || S_HADDR !== tr.addr || S_HWRITE !== tr.write) begin
+                $display("[FAIL] Master 0 accepted 0x%08x but slave bus shows HTRANS=%b HADDR=0x%08x", tr.addr, S_HTRANS, S_HADDR);
                 errors++;
             end
+            @(posedge HCLK); #1;
+            M0_HTRANS = 2'b00; M0_HWDATA = tr.data;            // data phase
+            while (!M0_HREADY) begin @(posedge HCLK); #1; end
             verified_trans_count++;
         end
-        $display("[TEST 1] PASSED: Master 0 executed 20 valid transactions.");
+        $display("[TEST 1] done: Master 0 executed 20 transactions.");
 
         // ---------------------------------------------------------------------
         // TEST 2: Uncontended Master 1 (Debugger) Transfers
@@ -199,86 +202,79 @@ module tb_ahb_mux_crv;
         for (int t = 0; t < 20; t++) begin
             tr = new();
             tr.randomize_data();
-
-            @(posedge HCLK);
-            M1_HADDR  = tr.addr;
-            M1_HWRITE = tr.write;
-            M1_HWDATA = tr.data;
-            M1_HTRANS = tr.trans;
-            M1_HSIZE  = tr.size;
-
-            @(posedge HCLK);
-            M1_HTRANS = 2'b00;
-
-            if (S_HADDR !== tr.addr && dut.grant_addr == 1'b1) begin
-                $display("[FAIL] Master 1 address mismatch! S_HADDR=0x%08x, exp=0x%08x", S_HADDR, tr.addr);
+            @(posedge HCLK); #1;
+            M1_HADDR = tr.addr; M1_HWRITE = tr.write; M1_HTRANS = tr.trans; M1_HSIZE = tr.size;
+            #1; while (!M1_HREADY) begin @(posedge HCLK); #1; end
+            if (S_HTRANS !== 2'b10 || S_HADDR !== tr.addr || S_HWRITE !== tr.write) begin
+                $display("[FAIL] Master 1 accepted 0x%08x but slave bus shows HTRANS=%b HADDR=0x%08x", tr.addr, S_HTRANS, S_HADDR);
                 errors++;
             end
+            @(posedge HCLK); #1;
+            M1_HTRANS = 2'b00; M1_HWDATA = tr.data;
+            while (!M1_HREADY) begin @(posedge HCLK); #1; end
             verified_trans_count++;
         end
-        $display("[TEST 2] PASSED: Master 1 executed 20 valid transactions.");
+        $display("[TEST 2] done: Master 1 executed 20 transactions.");
 
         // ---------------------------------------------------------------------
-        // TEST 3: Simultaneous Contention & Priority Arbitration
-        // When both M0 and M1 request simultaneously, M1 (Debugger) must WIN!
+        // TEST 3: Simultaneous Contention
+        // Both masters request in the same cycle. Checks (ports only):
+        //   - the debugger's (M1) address reaches the slave first (priority)
+        //   - BOTH transfers reach the slave exactly once (nothing lost)
         // ---------------------------------------------------------------------
         $display("\n[TEST 3] Testing simultaneous bus contention (M0 vs M1)...");
         for (int t = 0; t < 20; t++) begin
-            @(posedge HCLK);
-            M0_HADDR  = 32'h0000_1000 + (t * 4);
-            M0_HTRANS = 2'b10; // Active request
-            M0_HWRITE = 1'b0;
-
-            M1_HADDR  = 32'h0000_2000 + (t * 4);
-            M1_HTRANS = 2'b10; // Active request
-            M1_HWRITE = 1'b0;
-
-            @(posedge HCLK);
-            #1; // Settle non-blocking update of grant_addr
-            // Master 1 should be granted address phase
-            if (dut.grant_addr !== 1'b1) begin
-                $display("[FAIL] Priority inversion! Master 1 did not win simultaneous contention!");
+            bit m0_done, m1_done;
+            int seen_m0, seen_m1, first;      // first: 0 = none yet, 1 = M1 first, 2 = M0 first
+            @(posedge HCLK); #1;
+            M0_HADDR = 32'h0000_0100 + (t * 4); M0_HWRITE = 1'b0; M0_HTRANS = 2'b10;
+            M1_HADDR = 32'h0000_0200 + (t * 4); M1_HWRITE = 1'b0; M1_HTRANS = 2'b10;
+            m0_done = 0; m1_done = 0; seen_m0 = 0; seen_m1 = 0; first = 0;
+            for (int c = 0; c < 10; c++) begin
+                #1;
+                // slave-side acceptance this cycle
+                if (S_HTRANS[1] && S_HREADY) begin
+                    if (S_HADDR === M0_HADDR) begin seen_m0++; if (first == 0) first = 2; end
+                    if (S_HADDR === M1_HADDR) begin seen_m1++; if (first == 0) first = 1; end
+                end
+                // master-side acceptance this cycle -> drop the request after this edge
+                if (M0_HTRANS[1] && M0_HREADY) m0_done = 1;
+                if (M1_HTRANS[1] && M1_HREADY) m1_done = 1;
+                @(posedge HCLK); #1;
+                if (m0_done) M0_HTRANS = 2'b00;
+                if (m1_done) M1_HTRANS = 2'b00;
+            end
+            if (first != 1) begin
+                $display("[FAIL] Contention %0d: debugger was not first on the slave bus (first=%s)", t, first == 2 ? "M0" : "none");
                 errors++;
             end
-
-            M0_HTRANS = 2'b00;
-            M1_HTRANS = 2'b00;
+            if (seen_m0 != 1 || seen_m1 != 1) begin
+                $display("[FAIL] Contention %0d: slave saw M0 %0d time(s), M1 %0d time(s) (expected 1 each)", t, seen_m0, seen_m1);
+                errors++;
+            end
             verified_trans_count++;
         end
-        $display("[TEST 3] PASSED: Debugger (Master 1) won 100 percent of contention cycles.");
+        $display("[TEST 3] done: 20 contention rounds checked.");
 
         // ---------------------------------------------------------------------
-        // TEST 4: Core Halt Priority Mode (core_halt = 1)
+        // TEST 4: Debugger write is committed to the slave
+        // (the old test set core_halt, which is not a port of ahb_mux, so it
+        //  had no effect; the check below is the same write check, done
+        //  AHB-compliantly)
         // ---------------------------------------------------------------------
-        $display("\n[TEST 4] Testing core_halt priority mode...");
-        core_halt = 1'b1;
-
-        // Request bus
-        @(posedge HCLK);
-        M1_HADDR  = 32'h0000_0000;
-        M1_HTRANS = 2'b10;
-        M1_HWRITE = 1'b1;
-
-        // Wait for grant_addr to become 1
-        @(posedge HCLK);
-        #1;
-
-        // Address phase is now active on slave bus.
-        // On next clock edge, slave latches address and grant_data becomes 1.
-        @(posedge HCLK);
-        #1;
-        M1_HTRANS = 2'b00;
-        M1_HWDATA = 32'hBEEF_CAFE;
-
-        // Slave commits write data at this edge
-        @(posedge HCLK);
-        #1;
-
+        $display("\n[TEST 4] Testing debugger write commit...");
+        @(posedge HCLK); #1;
+        M1_HADDR = 32'h0000_0000; M1_HWRITE = 1'b1; M1_HTRANS = 2'b10;
+        #1; while (!M1_HREADY) begin @(posedge HCLK); #1; end
+        @(posedge HCLK); #1;
+        M1_HTRANS = 2'b00; M1_HWDATA = 32'hBEEF_CAFE;           // data phase
+        while (!M1_HREADY) begin @(posedge HCLK); #1; end
+        @(posedge HCLK); #1;                                     // slave commits at this edge
         if (slave_mem[0] !== 32'hBEEF_CAFE) begin
             $display("[FAIL] Write data not committed to slave! (got 0x%08x, exp 0xBEEF_CAFE)", slave_mem[0]);
             errors++;
         end else begin
-            $display("[TEST 4] PASSED: Debugger wrote memory with core_halt asserted.");
+            $display("[TEST 4] PASSED: Debugger wrote memory.");
         end
 
         // ---------------------------------------------------------------------
