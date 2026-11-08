@@ -53,11 +53,11 @@ module riscv_soc_ahb #(
     output            ft1248_clk,      // SCLK output to FT232H
     output            ft1248_ss_n,     // SS# output to FT232H
     input             ft1248_miso,     // MISO / RXF# input (idle HIGH)
-    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
-    // SMD: Tristate buffer has logic in enable condition
-    // SJ: External FT1248 bidirectional PMOD pad driven by on-chip transceiver output enable
+    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable TristatePort-ML
+    // SMD: Tristate port detected on top level
+    // SJ: External FT1248 bidirectional PMOD pad connected to package pin
     inout      [0:0]  ft1248_miosio,   // Bidirectional MIOSIO data bus
-    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
+    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable TristatePort-ML
     output            core_halted_led  // LED output indicating core is halted
 );
 
@@ -187,15 +187,16 @@ module riscv_soc_ahb #(
     // Top-Level Bidirectional I/O Pad Interface for FT1248
     wire [FT_WIDTH-1:0] dbg_ft1248_miosio_o;
     wire [FT_WIDTH-1:0] dbg_ft1248_miosio_oe;
+
+    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable SigAssignZ-ML TristatePort-ML W444
+    // SMD: Tristate buffer and Z assignment detected on bidirectional pad
+    // SJ: External FT1248 bidirectional PMOD pad driven by on-chip transceiver output enable
     wire [FT_WIDTH-1:0] dbg_ft1248_miosio_i = ft1248_miosio;
     wire                ft1248_oe           = dbg_ft1248_miosio_oe[0];
     wire                ft1248_out          = dbg_ft1248_miosio_o[0];
 
-    // spyglass disable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
-    // SMD: Tristate buffer has logic in enable condition
-    // SJ: External FT1248 bidirectional PMOD pad driven by on-chip transceiver output enable
     assign ft1248_miosio[0] = ft1248_oe ? ft1248_out : 1'bz;
-    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable
+    // spyglass enable_block STARC05-2.5.1.2 STARC-2.5.1.2 LogicInTriEnable SigAssignZ-ML TristatePort-ML W444
 
     // 1. Dual-Protocol Hardware Debugger Subsystem (UART + FT1248)
     riscv_debugger_top #(
