@@ -46,7 +46,8 @@ module core_step_controller #(
         output reg         core_stall_o,     // Drives ExternalStall of 1TOPS SoC core hazard unit
         output reg         step_busy_o,      // High while a step is executing (fed to GPI8[1])
         output reg         step_done_o,      // 1-cycle strobe upon step completion (fed to GPI8[2])
-        output reg [31:0]  step_count_o      // Diagnostic counter of total steps executed
+        output reg [31:0]  step_count_o,     // Diagnostic counter of total steps executed
+        output reg         step_done_flag_o  // FIX C8: sticky 'step done' for GPI8[2]; cleared by the next step or by resume
     );
 
     // State Encoding
@@ -80,9 +81,14 @@ module core_step_controller #(
         if (!rst_n) begin
             state        <= STATE_RUN;
             step_count_o <= 32'd0;
+            step_done_flag_o <= 1'b0;
             watchdog_cnt <= 24'd0;
         end else begin
             state <= next_state;
+
+            // FIX C8: sticky done flag
+            if (state == STATE_STEPPING && next_state == STATE_DONE) step_done_flag_o <= 1'b1;
+            else if (next_state == STATE_STEPPING || next_state == STATE_RUN) step_done_flag_o <= 1'b0;
 
             // Step counter
             if (state == STATE_STEPPING && next_state == STATE_DONE) begin
