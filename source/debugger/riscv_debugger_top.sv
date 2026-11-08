@@ -30,10 +30,12 @@ module riscv_debugger_top #(
         output wire                 uart_tx,
 
         // FT1248 Physical Interface
-        output wire                 ft1248_clk,     // SCLK output to FTDI
-        output wire                 ft1248_ss_n,    // SS_N output to FTDI
-        input  wire                 ft1248_miso,    // MISO input from FTDI (RXF# status)
-        inout  wire [FT_WIDTH-1:0]  ft1248_miosio,  // Bi-directional data (TXE# status when idle)
+        output wire                 ft1248_clk,       // SCLK output to FTDI
+        output wire                 ft1248_ss_n,      // SS_N output to FTDI
+        input  wire                 ft1248_miso,      // MISO input from FTDI (RXF# status)
+        output wire [FT_WIDTH-1:0]  ft1248_miosio_o,  // Output data to FTDI
+        output wire [FT_WIDTH-1:0]  ft1248_miosio_oe, // Output enable to FTDI (active HIGH)
+        input  wire [FT_WIDTH-1:0]  ft1248_miosio_i,  // Input data from FTDI
 
         // Core Control & Status Signals
         output wire                 core_halt_o,      // Connect to ExternalStall of RISC-V Core
@@ -130,13 +132,9 @@ module riscv_debugger_top #(
     wire [FT_WIDTH-1:0] ft_miosio_e;
     wire [FT_WIDTH-1:0] ft_miosio_i;
 
-    genvar g;
-    generate
-        for (g = 0; g < FT_WIDTH; g = g + 1) begin : gen_miosio_buf
-            assign ft1248_miosio[g] = (ft_miosio_e[g]) ? ft_miosio_o[g] : 1'bz;
-            assign ft_miosio_i[g]   = ft1248_miosio[g];
-        end
-    endgenerate
+    assign ft1248_miosio_o  = ft_miosio_o;
+    assign ft1248_miosio_oe = ft_miosio_e;
+    assign ft_miosio_i      = ft1248_miosio_i;
 
     socdebug_ft1248_control #(
         .FT1248_WIDTH (FT_WIDTH),
@@ -150,14 +148,22 @@ module riscv_debugger_top #(
         .ft_miso_i   (ft1248_miso),
         .ft_miosio_o (ft_miosio_o),
         .ft_miosio_e (ft_miosio_e),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: Active-low enable unused in FT1248 stream interface
         .ft_miosio_z (),
+        // spyglass enable_block W287b
         .ft_miosio_i (ft_miosio_i),
 
         // ADP Interface - Data coming from FTDI to ADP
         .txd_tvalid  (ft_adp_rx_valid),
         .txd_tdata   (ft_adp_rx_data),
         .txd_tready  (ft_adp_rx_ready),
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: AXI stream tlast unused by ADP protocol
         .txd_tlast   (),
+        // spyglass enable_block W287b
 
         // ADP Interface - Data from ADP going to FTDI
         .rxd_tvalid  (ft_adp_tx_valid),
@@ -261,12 +267,16 @@ module riscv_debugger_top #(
         .COMTX_TREADY_i (adp_txd_ready),
 
         // Unused STDIO stream tied off
+        // spyglass disable_block W287b
+        // SMD: Instance output port is not connected
+        // SJ: STDIO bypass stream unused in direct command mode
         .STDTX_TVALID_o (),
         .STDTX_TDATA_o  (),
         .STDTX_TREADY_i (1'b1),
         .STDRX_TVALID_i (1'b0),
         .STDRX_TDATA_i  (8'h00),
         .STDRX_TREADY_o (),
+        // spyglass enable_block W287b
 
         // Core Control & Status
         .core_halt_o      (core_halt_o),
