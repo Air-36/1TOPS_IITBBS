@@ -109,10 +109,12 @@ module sysctrl_apb #(
         end else begin
             if (dbg_core_reset_i) begin
                 dbg_reset_occurred <= 1'b1;
+            end else if (PSEL && PENABLE && PWRITE && (PADDR[7:0] == REG_RESET_CTRL) && PSTRB[0] && PWDATA[5]) begin
+                dbg_reset_occurred <= 1'b0; // Write 1 to clear DBG reset flag
             end
-            if (PSEL && PENABLE && PWRITE && (PADDR[7:0] == REG_RESET_CTRL) && PSTRB[0]) begin
-                if (PWDATA[4]) por_occurred       <= 1'b0; // Write 1 to clear POR flag
-                if (PWDATA[5]) dbg_reset_occurred <= 1'b0; // Write 1 to clear DBG reset flag
+
+            if (PSEL && PENABLE && PWRITE && (PADDR[7:0] == REG_RESET_CTRL) && PSTRB[0] && PWDATA[4]) begin
+                por_occurred <= 1'b0; // Write 1 to clear POR flag
             end
         end
     end
