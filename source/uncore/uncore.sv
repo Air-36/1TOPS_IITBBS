@@ -430,12 +430,16 @@ module uncore #(
             .boot_mode_pin(boot_mode_pin),
             .dbg_core_reset_i(dbg_core_reset_i),
             .soft_core_rst_n_o(soft_core_rst_n),
+            // spyglass disable_block W287b
+            // SMD: Instance output port is not connected
+            // SJ: Peripheral soft reset, live boot mode pin, and clock gating mask outputs are reserved for future SoC fabric domains
             .soft_periph_rst_n_o(),
             .boot_mode_latched_o(boot_mode_latched),
             .boot_mode_live_o(),
             .remap_en_o(remap_en_wire),
             .reset_vector_o(reset_vector),
             .clk_gate_mask_o()
+            // spyglass enable_block W287b
         );
     end else begin : gen_no_sysctrl
         assign PRDATA_SYSCTRL      = '0;
