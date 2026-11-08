@@ -190,6 +190,9 @@ module spi_apb #(
   assign ResetSCLKenable = Memwrite & (Entry == SPI_SCKDIV);
   assign FrameLength = Format[4:1];
 
+  // spyglass disable_block W391 bothedges
+  // SMD: Design unit uses both edges of clock
+  // SJ: SPI controller uses negative clock edge to generate half-cycle delayed shift/sample strobe alignment
   spi_controller controller(PCLK, PRESETn,
                             // Transmit Signals
                             TransmitStart, TransmitRegLoaded, ResetSCLKenable,
@@ -203,6 +206,7 @@ module spi_apb #(
                             Transmitting, InactiveState,
                             // Outputs
                             SPICLK);
+  // spyglass enable_block W391 bothedges
 
   // Transmit FIFO ---------------------------------------------------
 
