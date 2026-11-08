@@ -57,10 +57,6 @@ module tb_debugger;
     reg        ft_bfm_rx_valid = 1'b0;
     wire       ft_bfm_rx_ready;
 
-    wire dbg_miosio_o;
-    wire dbg_miosio_oe;
-    assign ft1248_miosio = dbg_miosio_oe ? dbg_miosio_o : 1'bz;
-
     assign ft1248_miosio = (!ft_bfm_miosio_z) ? ft_bfm_miosio_o : 1'bz;
     assign ft1248_miso   = ft_bfm_miso;
 
@@ -202,9 +198,7 @@ module tb_debugger;
         .ft1248_clk      (ft1248_clk),
         .ft1248_ss_n     (ft1248_ss_n),
         .ft1248_miso     (ft1248_miso),
-        .ft1248_miosio_o (dbg_miosio_o),
-        .ft1248_miosio_oe(dbg_miosio_oe),
-        .ft1248_miosio_i (ft1248_miosio),
+        .ft1248_miosio   (ft1248_miosio),
 
         // Core Control & Status
         .core_halt_o      (core_halt_o),
@@ -307,6 +301,9 @@ module tb_debugger;
         .HADDR     (s_haddr),
         .HWDATA    (s_hwdata),
         .HWRITE    (s_hwrite),
+        .HSIZE     (s_hsize),
+        .HBURST    (s_hburst),
+        .HPROT     (s_hprot),
         .HTRANS    (s_htrans),
         .HREADY    (s_hready),
         .HREADYOUT (accel_hreadyout),
@@ -416,13 +413,19 @@ module tb_debugger;
         end
     end
 
-    assign s_hready = accel_hsel ? accel_hreadyout :
+    // Data-phase select for the accelerator (AHB: response belongs to the data phase,
+    // decoded from the address that was accepted in the previous cycle) - same as uncore.sv
+    reg accel_active_d;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) accel_active_d <= 1'b0;
+        else if (s_hready) accel_active_d <= accel_hsel && s_htrans[1];
+    assign s_hready = accel_active_d ? accel_hreadyout :
                       apb_wait_stall ? 1'b0 : 1'b1;
 
-    assign s_hresp  = accel_hsel   ? accel_hresp :
+    assign s_hresp  = accel_active_d ? accel_hresp :
                       error_active_d ? 1'b1 : 1'b0;
 
-    assign s_hrdata = accel_hsel   ? accel_hrdata : mem_hrdata;
+    assign s_hrdata = accel_active_d ? accel_hrdata : mem_hrdata;
 
     // Track AHB read transfers
     reg        ahb_read_addr_phase;
