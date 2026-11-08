@@ -172,8 +172,8 @@ module socdebug_uart #(
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             m_axis_tvalid <= 1'b0;
-        end else if (rx_state == RX_STOP && rx_clk_cnt >= bit_limit) begin
-            m_axis_tvalid <= 1'b1; // New received byte available
+        end else if (rx_state == RX_STOP && rx_clk_cnt >= bit_limit && rx_in) begin
+            m_axis_tvalid <= 1'b1; // New received byte available (FIX C17: only with a valid stop bit)
         end else if (m_axis_tvalid && m_axis_tready) begin
             m_axis_tvalid <= 1'b0; // Handshake completed
         end

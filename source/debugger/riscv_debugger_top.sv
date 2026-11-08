@@ -75,7 +75,13 @@ module riscv_debugger_top #(
     //-------------------------------------------------------------------------
     // Internal Reconfigurable Clock Dividers (Controlled only via Debugger)
     //-------------------------------------------------------------------------
-    localparam [15:0] DEFAULT_UART_DIV = CLK_FREQ / BAUD_RATE;
+    // FIX B9: saturate instead of silently truncating to 16 bits
+    localparam integer UART_DIV_FULL = CLK_FREQ / BAUD_RATE;
+    localparam [15:0] DEFAULT_UART_DIV = (UART_DIV_FULL > 65535) ? 16'hFFFF : UART_DIV_FULL[15:0];
+    // synthesis translate_off
+    initial if (UART_DIV_FULL > 65535 || UART_DIV_FULL < 4)
+        $display("ERROR riscv_debugger_top: CLK_FREQ/BAUD_RATE = %0d is outside 4..65535", UART_DIV_FULL);
+    // synthesis translate_on
 
     wire [15:0] dbg_uart_clkdiv;
     wire [ 7:0] dbg_ft_clkdiv;
@@ -86,6 +92,9 @@ module riscv_debugger_top #(
     wire [7:0] uart_adp_rx_data;
     wire       uart_adp_rx_valid;
     wire       uart_adp_rx_ready;
+    wire [7:0] uart_rx_raw_data;
+    wire       uart_rx_raw_valid;
+    wire       uart_rx_raw_ready;
 
     wire [7:0] uart_adp_tx_data;
     wire       uart_adp_tx_valid;
@@ -100,9 +109,9 @@ module riscv_debugger_top #(
         .clks_per_bit_i (dbg_uart_clkdiv),
         .uart_rx        (uart_rx),
         .uart_tx       (uart_tx),
-        .m_axis_tdata  (uart_adp_rx_data),
-        .m_axis_tvalid (uart_adp_rx_valid),
-        .m_axis_tready (uart_adp_rx_ready),
+        .m_axis_tdata  (uart_rx_raw_data),   // FIX C16: through the RX FIFO below
+        .m_axis_tvalid (uart_rx_raw_valid),
+        .m_axis_tready (uart_rx_raw_ready),
         .s_axis_tdata  (uart_adp_tx_data),
         .s_axis_tvalid (uart_adp_tx_valid),
         .s_axis_tready (uart_adp_tx_ready)
@@ -176,22 +185,56 @@ module riscv_debugger_top #(
     wire       adp_txd_ready;
 
     // Rx Stream (Host -> ADP Controller)
-    assign adp_rxd_data      = (dbg_sel) ? ft_adp_rx_data  : uart_adp_rx_data;
-    assign adp_rxd_valid     = (dbg_sel) ? ft_adp_rx_valid : uart_adp_rx_valid;
+    // FIX B6: synchronise the dbg_sel pin and change the selection only when no
+    // reply byte is waiting to go out (never in the middle of a reply).
+    reg [1:0] dbg_sel_sync;
+    reg       sel_q;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin dbg_sel_sync <= 2'b00; sel_q <= 1'b0; end
+        else begin
+            dbg_sel_sync <= {dbg_sel_sync[0], dbg_sel};
+            if (!adp_txd_valid) sel_q <= dbg_sel_sync[1];
+        end
+    end
 
-    // Backpressure routing: Only the active transceiver receives ready from ADP
-    assign uart_adp_rx_ready = (!dbg_sel) ? adp_rxd_ready : 1'b0;
-    assign ft_adp_rx_ready   = ( dbg_sel) ? adp_rxd_ready : 1'b0;
+    // FIX C16: 16-byte receive FIFO between the UART and the ADP, so bytes typed
+    // while a reply is being sent are queued instead of overwritten.
+    reg [7:0] rxf_mem [0:15];
+    reg [3:0] rxf_wp, rxf_rp;
+    reg [4:0] rxf_cnt;
+    wire      rxf_full = rxf_cnt[4];
+    wire      rxf_push = uart_rx_raw_valid && uart_rx_raw_ready && !sel_q;
+    wire      rxf_pop  = uart_adp_rx_valid && uart_adp_rx_ready;
+    // FIX C6: the unselected link is drained, so nothing typed on it runs later
+    assign uart_rx_raw_ready = sel_q ? 1'b1 : !rxf_full;
+    assign uart_adp_rx_valid = (rxf_cnt != 5'd0);
+    assign uart_adp_rx_data  = rxf_mem[rxf_rp];
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin rxf_wp <= 4'd0; rxf_rp <= 4'd0; rxf_cnt <= 5'd0; end
+        else if (sel_q) begin rxf_rp <= rxf_wp; rxf_cnt <= 5'd0; end      // flush while FT1248 is selected
+        else begin
+            if (rxf_push) begin rxf_mem[rxf_wp] <= uart_rx_raw_data; rxf_wp <= rxf_wp + 4'd1; end
+            if (rxf_pop)  rxf_rp <= rxf_rp + 4'd1;
+            rxf_cnt <= rxf_cnt + {4'd0, rxf_push} - {4'd0, rxf_pop};
+        end
+    end
+
+    assign adp_rxd_data      = (sel_q) ? ft_adp_rx_data  : uart_adp_rx_data;
+    assign adp_rxd_valid     = (sel_q) ? ft_adp_rx_valid : uart_adp_rx_valid;
+
+    // Backpressure routing: only the active link feeds the ADP; the other is drained (FIX C6)
+    assign uart_adp_rx_ready = (!sel_q) ? adp_rxd_ready : 1'b0;
+    assign ft_adp_rx_ready   = ( sel_q) ? adp_rxd_ready : 1'b1;
 
     // Tx Stream (ADP Controller -> Host)
     assign uart_adp_tx_data  = adp_txd_data;
     assign ft_adp_tx_data    = adp_txd_data;
 
     // Valid routing: Only the active transceiver receives valid from ADP
-    assign uart_adp_tx_valid = (!dbg_sel) ? adp_txd_valid : 1'b0;
-    assign ft_adp_tx_valid   = ( dbg_sel) ? adp_txd_valid : 1'b0;
+    assign uart_adp_tx_valid = (!sel_q) ? adp_txd_valid : 1'b0;
+    assign ft_adp_tx_valid   = ( sel_q) ? adp_txd_valid : 1'b0;
 
-    assign adp_txd_ready     = (dbg_sel) ? ft_adp_tx_ready : uart_adp_tx_ready;
+    assign adp_txd_ready     = (sel_q) ? ft_adp_tx_ready : uart_adp_tx_ready;
 
     //-------------------------------------------------------------------------
     // 4. Instantiate SoCDebug AHB Master Controller

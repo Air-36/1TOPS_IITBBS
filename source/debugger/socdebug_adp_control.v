@@ -387,7 +387,7 @@ assign byteaddr =  (adp_size[1]) ? 2'b00 :  (adp_size[0]) ? {adp_addr[1], 1'b0} 
 
 assign HADDR32_o[31:2] =  adp_addr[31:2];
 assign HADDR32_o[ 1:0] =  byteaddr[1:0];
-assign HBURST3_o     =  3'b001; // "INCR" burst signalled whenever transfer;
+assign HBURST3_o     =  3'b000; // FIX A7: SINGLE (every debugger transfer is a single NONSEQ)
 assign HMASTLOCK_o   =  1'b0;
 assign HPROT4_o[3:0] = {1'b0, 1'b0, 1'b1, 1'b1};
 assign HSIZE3_o[2:0] = {1'b0, adp_size};
@@ -426,6 +426,24 @@ begin
   else
     adp_state <= adp_next_state;
 end
+
+// FIX C12: B sub-command. A 6-digit value (B 02hhhh) puts the sub-command in
+// param[23:16]; an 8-digit value (B 03uuuuff) puts it in param[31:24].
+wire [7:0]  b_sub      = (adp_param[31:24] != 8'h00) ? adp_param[31:24] : adp_param[23:16];
+wire        b_has_uart = (b_sub != 8'h02);
+wire        b_has_ft   = (b_sub == 8'h02) || (b_sub == 8'h03);
+wire [15:0] b_uart_req = (b_sub == 8'h03) ? adp_param[23:8] : adp_param[15:0];
+// FIX C15: the UART cannot run below 4 clocks/bit, so never store such a value
+wire [15:0] b_uart_new = (b_has_uart && (b_uart_req >= 16'd4)) ? b_uart_req : uart_clkdiv_o;
+wire [7:0]  b_ft_new   = b_has_ft ? adp_param[7:0] : ft_clkdiv_o;
+
+// FIX C7: remember that the last line ended with CR so the LF of a CRLF pair is ignored
+reg last_cr;
+always @(posedge HCLK or negedge HRESETn)
+  if (!HRESETn) last_cr <= 1'b0;
+  else if (com_rx_done && ((adp_state == ADP_RXCMD) || (adp_state == ADP_RXPARAM)))
+    last_cr <= (com_rx_byte == 8'h0D);
+wire lf_after_cr = (com_rx_byte == 8'h0A) && last_cr;
 
 // Combinational next-state logic
 always @(*) begin
@@ -482,7 +500,7 @@ always @(*) begin
     ADP_RXCMD:  // read and save ADP command
       if (com_rx_done) begin
         if (FNexit(com_rx_byte)) adp_next_state = STD_IOCHK;
-        else if (FNvalid_space(com_rx_byte)) adp_next_state = ADP_RXCMD;
+        else if (FNvalid_space(com_rx_byte) || lf_after_cr) adp_next_state = ADP_RXCMD;  // FIX C7
         else if (FNvalid_EOL(com_rx_byte)) adp_next_state = ADP_LINEACK;
         else adp_next_state = ADP_RXPARAM;
       end else adp_next_state = ADP_RXCMD;
@@ -494,9 +512,9 @@ always @(*) begin
       end else adp_next_state = ADP_RXPARAM;
 
     ADP_ACTION:  // parse command and action with parameter
-      if (FNexit(com_rx_byte))
-        adp_next_state = STD_IOCHK;
-      else if (FNvalid_cmd(adp_cmd) == CMD_A)
+      // FIX C16 support: the line already ended with CR/LF here, so the old re-check of the
+      // live RX byte for Ctrl-D is removed (with an RX FIFO that byte is the NEXT queued one)
+      if (FNvalid_cmd(adp_cmd) == CMD_A)
         adp_next_state = ADP_ECHOCMD;
       else if (FNvalid_cmd(adp_cmd) == CMD_C)
         adp_next_state = ADP_SYSCTL;
@@ -514,15 +532,15 @@ always @(*) begin
         adp_next_state = ADP_ECHOBUS;
 `ifndef ADPBASIC
       else if (FNvalid_cmd(adp_cmd) == CMD_U)
-        adp_next_state = (FNcount_down_zero_next(adp_param[31:0])) ? ADP_ECHOCMD : ADP_UCTRL;
+        adp_next_state = (adp_param[31:0] == 32'h0) ? ADP_ECHOCMD : ADP_UCTRL;  // FIX C2
       else if (FNvalid_cmd(adp_cmd) == CMD_M)
         adp_next_state = ADP_ECHOCMD;
       else if (FNvalid_cmd(adp_cmd) == CMD_P)
-        adp_next_state = (FNcount_down_zero_next(adp_param[31:0])) ? ADP_ECHOCMD : ADP_POLL0;
+        adp_next_state = (adp_param[31:0] == 32'h0) ? ADP_ECHOCMD : ADP_POLL0;  // FIX C2
       else if (FNvalid_cmd(adp_cmd) == CMD_V)
         adp_next_state = ADP_ECHOCMD;
       else if (FNvalid_cmd(adp_cmd) == CMD_F)
-        adp_next_state = (FNcount_down_zero_next(adp_param[31:0])) ? ADP_ECHOCMD : ADP_FCTRL;
+        adp_next_state = (adp_param[31:0] == 32'h0) ? ADP_ECHOCMD : ADP_FCTRL;  // FIX C2
 `endif
       else
         adp_next_state = ADP_UNKNOWN;
@@ -555,9 +573,9 @@ always @(*) begin
     ADP_POLL1:  // wait for read data, no addr++
       if (adp_bus_done) adp_next_state = ADP_POLL2;
       else adp_next_state = ADP_POLL1;
-    ADP_POLL2:
-      if (FNcount_down_zero_next(adp_count)) adp_next_state = ADP_ECHOCMD;
-      else if (((adp_bus_data & adp_mask) ^ adp_val[31:0]) == 0) adp_next_state = ADP_ECHOCMD;
+    ADP_POLL2:  // FIX C3: check the match first, time out only when all t reads are done
+      if (((adp_bus_data & adp_mask) ^ adp_val[31:0]) == 0) adp_next_state = ADP_ECHOCMD;
+      else if (adp_count == 32'h00000000) adp_next_state = ADP_ECHOCMD;
       else adp_next_state = ADP_POLL0;
 
 // >>>>>>>>>>>>>>>> ADP (ZERO) FILL MEMORY >>>>>>>>>>>>>>>>>>>>>>
@@ -703,7 +721,7 @@ begin
       adp_bus_req  <= 1'b0; // default no bus transaction
       if (adp_addr_inc && adp_bus_done) begin
         adp_addr <= adp_addr + (1 << adp_size); // address++
-      end else if (adp_state == ADP_ACTION && !FNexit(com_rx_byte) && (FNvalid_cmd(adp_cmd) == CMD_A) && (|adp_param[34:32])) begin
+      end else if (adp_state == ADP_ACTION && (FNvalid_cmd(adp_cmd) == CMD_A)  /* FIX C16 support: no live-byte check */ && (|adp_param[34:32])) begin
         adp_addr <= adp_param[31:0];
       end
       adp_addr_inc <= 1'b0;
@@ -765,8 +783,8 @@ begin
        ADP_RXCMD:  // read and save ADP command
          if (com_rx_done) begin
            if (FNexit(com_rx_byte)) begin end // immediate exit
-           else if (FNvalid_space(com_rx_byte)) begin com_rx_ack <= 1'b1; end // retry for a command
-           else if (FNvalid_EOL(com_rx_byte)) begin adp_cmd <= "?"; end // no command, skip param
+           else if (FNvalid_space(com_rx_byte) || lf_after_cr) begin com_rx_ack <= 1'b1; end // retry for a command (FIX C7: LF of CRLF ignored)
+           else if (FNvalid_EOL(com_rx_byte)) begin adp_cmd <= "?"; com_tx_byte <= 8'h0A; com_tx_req <= 1'b1; end // FIX C7: empty line -> clean new prompt
            else begin adp_cmd <= com_rx_byte; adp_param <= 35'h0_00000000; com_rx_ack <= 1'b1; end // get optional parameter
          end
          else begin com_rx_ack <= 1'b1; end // extend stream request if not ready
@@ -784,10 +802,8 @@ begin
            end
          else begin com_rx_ack <= 1'b1; end
 
-       ADP_ACTION:  // parse command and action with parameter
-         if (FNexit(com_rx_byte))
-           begin end
-         else if (FNvalid_cmd(adp_cmd) == CMD_A)
+       ADP_ACTION:  // parse command and action with parameter (live-byte Ctrl-D re-check removed, see above)
+         if (FNvalid_cmd(adp_cmd) == CMD_A)
            begin if (!(|adp_param[34:32])) begin adp_param <= {3'b111, adp_addr}; end end
          else if (FNvalid_cmd(adp_cmd) == CMD_C) begin
            if (|adp_param[34:32] == 1'b0) // report GPO
@@ -819,23 +835,8 @@ begin
              adp_size     <= 2'b10;
              com_tx_req   <= 1'b1;
              com_tx_byte  <= "B";
-           end else if (adp_param[31:24] == 8'h01) begin
-             adp_bus_data  <= {8'h00, ft_clkdiv_o, adp_param[15:0]};
-             adp_size      <= 2'b10;
-             com_tx_req    <= 1'b1;
-             com_tx_byte   <= "B";
-           end else if (adp_param[31:24] == 8'h02) begin
-             adp_bus_data <= {8'h00, adp_param[7:0], uart_clkdiv_o};
-             adp_size     <= 2'b10;
-             com_tx_req   <= 1'b1;
-             com_tx_byte  <= "B";
-           end else if (adp_param[31:24] == 8'h03) begin
-             adp_bus_data  <= {8'h00, adp_param[7:0], adp_param[23:8]};
-             adp_size      <= 2'b10;
-             com_tx_req    <= 1'b1;
-             com_tx_byte   <= "B";
-           end else begin
-             adp_bus_data  <= {8'h00, ft_clkdiv_o, adp_param[15:0]};
+           end else begin  // FIX C12/C15: decoded sub-command, reply = values actually stored
+             adp_bus_data  <= {8'h00, b_ft_new, b_uart_new};
              adp_size      <= 2'b10;
              com_tx_req    <= 1'b1;
              com_tx_byte   <= "B";
@@ -903,26 +904,27 @@ begin
          else begin com_rx_ack <= 1'b1; end // extend stream request if not ready
        ADP_UWRITE:  // Write word to Addr++
          if (adp_bus_done) begin // auto address++, count--
-           if (FNcount_down_zero_next(adp_count)) begin adp_size <= 2'b10; end else begin adp_bus_err <= adp_bus_err | HRESP_i; end
+           adp_bus_err <= adp_bus_err | HRESP_i;  // FIX C5: every beat
+           if (FNcount_down_zero_next(adp_count)) begin adp_size <= 2'b10; end
          end else begin  adp_bus_req <= 1'b1; adp_bus_write <= 1'b1; adp_addr_inc <= 1'b1; adp_count_dec <= 1'b1; end // extend request
 
 // >>>>>>>>>>>>>>>> ADP BUS READ LOOP >>>>>>>>>>>>>>>>>>>>>>
        ADP_POLL0:  // set poll value
-         begin adp_bus_req <= 1'b1; adp_bus_write <= 1'b0; end
+         begin adp_bus_req <= 1'b1; adp_bus_write <= 1'b0; adp_size <= 2'b10; end  // FIX C13: word reads
        ADP_POLL1:  // wait for read data, no addr++
          if (adp_bus_done) begin adp_bus_data <= HRDATA32_i; adp_count_dec <= 1'b1; adp_bus_err <= adp_bus_err | HRESP_i; end
          else begin adp_bus_req <= 1'b1; adp_count_dec <= 1'b1; end
-       ADP_POLL2:
-         if (FNcount_down_zero_next(adp_count)) begin adp_bus_err <= 1'b1; end // timeout
-         else if (((adp_bus_data  & adp_mask) ^ adp_val[31:0]) == 0)
+       ADP_POLL2:  // FIX C3: match first
+         if (((adp_bus_data  & adp_mask) ^ adp_val[31:0]) == 0)
            begin adp_param[34:32] <= 3'b000; adp_param[31:0] <= adp_param_diff[31:0]; end // exact match
+         else if (adp_count == 32'h00000000) begin adp_bus_err <= 1'b1; end // timeout after t reads
 
 // >>>>>>>>>>>>>>>> ADP (ZERO) FILL MEMORY >>>>>>>>>>>>>>>>>>>>>>
        ADP_FCTRL:  // set control value
            begin adp_size <= FNparam2size(adp_val[34:33]); adp_bus_data <= adp_val[31:0]; adp_bus_req <= 1'b1; adp_bus_write <= 1'b1; adp_addr_inc <= 1'b1; adp_count_dec <= 1'b1; end
        ADP_FWRITE:  // Write word to Addr++
          if (adp_bus_done) begin // auto address++, count--
-           if (!FNcount_down_zero_next(adp_count)) begin adp_bus_err <= adp_bus_err | HRESP_i; end
+           adp_bus_err <= adp_bus_err | HRESP_i;  // FIX C5: every beat
          end else begin  adp_bus_req <= 1'b1; adp_bus_write <= 1'b1; adp_addr_inc <= 1'b1; adp_count_dec <= 1'b1; end // extend request
 `endif
 
@@ -1021,13 +1023,9 @@ always @(posedge HCLK or negedge HRESETn) begin
     if (!HRESETn) begin
         uart_clkdiv_o <= DEFAULT_UART_DIV;
     end else if (ahb_uart_clkdiv_we_i) begin
-        uart_clkdiv_o <= ahb_uart_clkdiv_i;
+        if (ahb_uart_clkdiv_i >= 16'd4) uart_clkdiv_o <= ahb_uart_clkdiv_i;  // FIX C15
     end else if ((adp_state == ADP_ACTION) && (FNvalid_cmd(adp_cmd) == CMD_B) && (|adp_param[34:32] != 1'b0)) begin
-        if (adp_param[31:24] == 8'h03) begin
-            uart_clkdiv_o <= adp_param[23:8];
-        end else if (adp_param[31:24] != 8'h02) begin
-            uart_clkdiv_o <= adp_param[15:0];
-        end
+        uart_clkdiv_o <= b_uart_new;  // FIX C12/C15
     end
 end
 
@@ -1038,9 +1036,7 @@ always @(posedge HCLK or negedge HRESETn) begin
     end else if (ahb_ft_clkdiv_we_i) begin
         ft_clkdiv_o <= ahb_ft_clkdiv_i;
     end else if ((adp_state == ADP_ACTION) && (FNvalid_cmd(adp_cmd) == CMD_B) && (|adp_param[34:32] != 1'b0)) begin
-        if (adp_param[31:24] == 8'h02 || adp_param[31:24] == 8'h03) begin
-            ft_clkdiv_o <= adp_param[7:0];
-        end
+        ft_clkdiv_o <= b_ft_new;  // FIX C12
     end else if ((adp_state == ADP_ACTION) && (FNvalid_cmd(adp_cmd) == CMD_D) && (|adp_param[34:32] != 1'b0)) begin
         ft_clkdiv_o <= adp_param[7:0];
     end

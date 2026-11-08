@@ -51,6 +51,7 @@ module riscv_cpu #(parameter RESET_PC = 32'h0000_0000) (
     output     [31:0] dbg_PCE,
     output     [31:0] dbg_PCM,
     output     [31:0] dbg_InstrM,
+    output     [31:0] dbg_InstrD,   // FIX C9: decode-stage instruction for the debugger
     output     [31:0] dbg_TrapCauseM,
     output     [31:0] dbg_TrapValM,
     output     [31:0] dbg_mstatus,
@@ -165,4 +166,5 @@ datapath #(RESET_PC) dp (
     .dbg_flush_flags(dbg_flush_flags)
 );
 
+assign dbg_InstrD = InstrD;  // FIX C9
 endmodule

@@ -418,10 +418,15 @@ module tb_debugger;
         end
     end
 
-    assign s_hready = accel_hsel ? accel_hreadyout :
+    // Data-phase select for the accelerator (AHB: response belongs to the data phase,
+    // decoded from the address that was accepted in the previous cycle) - same as uncore.sv
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) accel_active_d <= 1'b0;
+        else if (s_hready) accel_active_d <= accel_hsel && s_htrans[1];
+    assign s_hready = accel_active_d ? accel_hreadyout :
                       apb_wait_stall ? 1'b0 : 1'b1;
 
-    assign s_hresp  = accel_hsel   ? accel_hresp :
+    assign s_hresp  = accel_active_d ? accel_hresp :
                       error_active_d ? 1'b1 : 1'b0;
 
     assign s_hrdata = accel_active_d ? accel_hrdata : mem_hrdata;

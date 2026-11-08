@@ -80,6 +80,7 @@ module socdebug_ft1248_control #(
 
   wire [7:0] ft_rdmasked;
 
+
   generate 
     if (FT1248_WIDTH == 8) begin
       assign ft_rdmasked[7:1] =  ft_miosio_i[7:1];
@@ -227,8 +228,10 @@ module socdebug_ft1248_control #(
       ft_miosio_z <= {FT1248_WIDTH{1'b1}};
     end else begin
       ft_state    <= ft_next_state;
-      ft_miosio_e <= {FT1248_WIDTH{ft_next_state[1]}};
-      ft_miosio_z <= ~{FT1248_WIDTH{ft_next_state[1]}};
+      // FIX C4: keep driving MIOSIO through FT_ZWD_CLKLO so the last data bit is still
+      // valid on the edge where the FTDI device samples it (all lanes, _e and _z)
+      ft_miosio_e <= {FT1248_WIDTH{ft_next_state[1] | (ft_next_state == FT_ZWD_CLKLO)}};
+      ft_miosio_z <= ~{FT1248_WIDTH{ft_next_state[1] | (ft_next_state == FT_ZWD_CLKLO)}};
     end
   end
 
