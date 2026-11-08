@@ -71,7 +71,7 @@ module ahbapbbridge #(
         logic [SEL_WIDTH-1:0] idx;
         idx = '0;
         for (int i = 0; i < PERIPHS; i++) begin
-            if (sel[i]) idx = i[SEL_WIDTH-1:0];
+            if (sel[i]) idx = SEL_WIDTH'(i);
         end
         return idx;
     endfunction
