@@ -89,12 +89,16 @@ module ram_ahb #(
   (* ramstyle = "M9K" *) logic [7:0] mem2 [0:MEM_DEPTH-1];
   (* ramstyle = "M9K" *) logic [7:0] mem3 [0:MEM_DEPTH-1];
 
+  // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+  // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
+  // SJ: RAM storage arrays are unreset to enable Block RAM / SRAM macro inference and avoid routing congestion
   always_ff @(posedge HCLK) begin
     if (memwriteD && HWSTRB[0]) mem0[ram_word_addr] <= HWDATA[ 7: 0];
     if (memwriteD && HWSTRB[1]) mem1[ram_word_addr] <= HWDATA[15: 8];
     if (memwriteD && HWSTRB[2]) mem2[ram_word_addr] <= HWDATA[23:16];
     if (memwriteD && HWSTRB[3]) mem3[ram_word_addr] <= HWDATA[31:24];
   end
+  // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
 
   always_ff @(posedge HCLK or negedge HRESETn) begin
     if (!HRESETn) begin
@@ -116,6 +120,9 @@ module ram_ahb #(
   end
 // synthesis translate_on
 
+  // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+  // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
+  // SJ: RAM storage arrays are unreset to enable Block RAM / SRAM macro inference and avoid routing congestion
   // Byte-lane masked synchronous write
   always @(posedge HCLK) begin
     if (memwriteD) begin
@@ -125,6 +132,7 @@ module ram_ahb #(
       if (HWSTRB[3]) mem[ram_word_addr][31:24] <= HWDATA[31:24];
     end
   end
+  // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
 
   // Synchronous read
   always_ff @(posedge HCLK or negedge HRESETn) begin
