@@ -57,6 +57,10 @@ module tb_debugger;
     reg        ft_bfm_rx_valid = 1'b0;
     wire       ft_bfm_rx_ready;
 
+    wire dbg_miosio_o;
+    wire dbg_miosio_oe;
+    assign ft1248_miosio = dbg_miosio_oe ? dbg_miosio_o : 1'bz;
+
     assign ft1248_miosio = (!ft_bfm_miosio_z) ? ft_bfm_miosio_o : 1'bz;
     assign ft1248_miso   = ft_bfm_miso;
 
@@ -198,7 +202,9 @@ module tb_debugger;
         .ft1248_clk      (ft1248_clk),
         .ft1248_ss_n     (ft1248_ss_n),
         .ft1248_miso     (ft1248_miso),
-        .ft1248_miosio   (ft1248_miosio),
+        .ft1248_miosio_o (dbg_miosio_o),
+        .ft1248_miosio_oe(dbg_miosio_oe),
+        .ft1248_miosio_i (ft1248_miosio),
 
         // Core Control & Status
         .core_halt_o      (core_halt_o),
@@ -301,9 +307,6 @@ module tb_debugger;
         .HADDR     (s_haddr),
         .HWDATA    (s_hwdata),
         .HWRITE    (s_hwrite),
-        .HSIZE     (s_hsize),
-        .HBURST    (s_hburst),
-        .HPROT     (s_hprot),
         .HTRANS    (s_htrans),
         .HREADY    (s_hready),
         .HREADYOUT (accel_hreadyout),
