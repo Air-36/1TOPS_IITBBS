@@ -1,7 +1,7 @@
 ################################################################################
 #                    DO NOT MANUALLY EDIT THIS FILE!                           #
 ################################################################################
-# This file contains the automatically generated build configuration (2026/11/07 23:32:51)
+# This file contains the automatically generated build configuration (2026/11/08 12:19:25)
 # requested at line 3 in /home/23EC01009/1TOPS_IITBBS/.dvt/default.build
 
 
@@ -27,6 +27,7 @@ fpga/top/tops_soc_fpga_top.sv
 source/final_tests/05_peripherals/sim/tb.sv
 source/main/soc/multiplier_ahb.v
 source/main/soc/riscv_soc_ahb.v
+source/uncore/rom_ahb.sv
 source/uncore/uart_apb.sv
 source/debugger/socdebug_adp_control.v
 source/main/ahb_ram.v
@@ -81,6 +82,7 @@ source/final_tests/04_bus_fabric/assertions/apb_protocol_checker.sv
 source/final_tests/04_bus_fabric/tb/tb_ahb_apb_bridge_crv.sv
 source/final_tests/04_bus_fabric/tb/tb_ahb_mux_crv.sv
 source/final_tests/05_peripherals/tb/tb_multiplier_ahb.sv
+source/final_tests/05_peripherals/tb/tb_sysctrl_boot.sv
 source/final_tests/06_debugger_subsystem/assertions/ahb_protocol_checker.sv
 source/final_tests/06_debugger_subsystem/assertions/apb_protocol_checker.sv
 source/final_tests/06_debugger_subsystem/assertions/core_invariants_checker.sv
@@ -108,10 +110,10 @@ source/uncore/ahbapbbridge.sv
 source/uncore/clint_apb.sv
 source/uncore/gpio_apb.sv
 source/uncore/plic_apb.sv
-source/uncore/rom_ahb.sv
 source/uncore/spi_apb.sv
 source/uncore/spi_controller.sv
 source/uncore/spi_fifo.sv
+source/uncore/sysctrl_apb.sv
 source/uncore/uartPC16550D.sv
 source/uncore/uncore.sv
 source/debugger/accelerator_debug_def.vh
