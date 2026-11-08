@@ -28,6 +28,9 @@ module core_debug_ahb #(
         input  wire [31:0]            HADDR,
         input  wire [31:0]            HWDATA,
         input  wire                   HWRITE,
+        input  wire [ 2:0]            HSIZE,
+        input  wire [ 2:0]            HBURST,
+        input  wire [ 3:0]            HPROT,
         input  wire [ 1:0]            HTRANS,
         input  wire                   HREADY,
         output wire                   HREADYOUT,
@@ -128,7 +131,7 @@ module core_debug_ahb #(
     always @(posedge HCLK or negedge HRESETn) begin
         if (!HRESETn) begin
             halt_on_trap_en    <= 1'b0; // FIX C1: off by default; the debugger arms it via DBG_CTRL (0x0D0)
-            halt_on_ebreak_en  <= 1'b1;
+            halt_on_ebreak_en  <= 1'b0;  // FIX C10: off at reset, like halt_on_trap_en
             trap_latched       <= 1'b0;
             trap_cause_latched <= 32'd0;
             trap_val_latched   <= 32'd0;
@@ -171,7 +174,8 @@ module core_debug_ahb #(
         end
     end
 
-    wire auto_halt_active   = trap_latched && halt_on_trap_en;
+    // FIX C10: halt_on_ebreak_en halts on an EBREAK (cause 3) even when halt_on_trap_en is 0
+    wire auto_halt_active   = trap_latched && (halt_on_trap_en || (halt_on_ebreak_en && (trap_cause_latched == 32'd3)));
     assign auto_halt_trap_o = auto_halt_active;
     assign trap_latched_o   = trap_latched;
 
@@ -208,7 +212,7 @@ module core_debug_ahb #(
                     trace_buf[i] <= 32'd0;
                 end
             end else if (InstrRetired && !ExternalStall && !trap_latched) begin
-                trace_buf[trace_ptr] <= PCW;
+                trace_buf[trace_ptr] <= PCM;  // FIX C19: PC of the instruction that retires (M stage)
                 trace_ptr            <= trace_ptr + 4'd1;
                 if (trace_count < 5'd16) begin
                     trace_count <= trace_count + 5'd1;
@@ -221,7 +225,7 @@ module core_debug_ahb #(
     // 4. Read Data Multiplexer (Data Phase)
     // =========================================================================
     wire is_gpr_access   = (addr_d[11:7] == 5'b00000); // 0x000 - 0x07C (x0 - x31)
-    wire is_trace_access = (addr_d[11:6] == 6'b000001); // 0x100 - 0x13C (Trace buffer)
+    wire is_trace_access = (addr_d[11:6] == 6'b000100);  // FIX C21: 0x100-0x13F // 0x100 - 0x13C (Trace buffer)
 
     always @(*) begin
         if (is_gpr_access) begin
