@@ -113,7 +113,13 @@ module spi_apb #(
   // -- Note SPI registers are 32 bits no matter what; access them with LW SW.
 
   assign Din = PWDATA[31:0];
-  assign PRDATA = (XLEN == 64) ? {Dout, Dout} : Dout;
+  generate
+    if (XLEN == 64) begin : gen_prdata_64
+      assign PRDATA = {Dout, Dout};
+    end else begin : gen_prdata_32
+      assign PRDATA = Dout;
+    end
+  endgenerate
 
   // Register access
   always_ff @(posedge PCLK or negedge PRESETn)

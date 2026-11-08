@@ -129,12 +129,15 @@ end else begin : gen_fast_model
     end
 
     // Replicate byte across all byte lanes of PRDATA
-    always_ff @(posedge PCLK or negedge PRESETn) begin
-        if (!PRESETn) begin
-            PRDATA <= '0;
-        end else begin
-            if (XLEN == 64) PRDATA <= {8{dout}};
-            else            PRDATA <= {4{dout}};
+    if (XLEN == 64) begin : gen_prdata_64
+        always_ff @(posedge PCLK or negedge PRESETn) begin
+            if (!PRESETn) PRDATA <= '0;
+            else          PRDATA <= {8{dout}};
+        end
+    end else begin : gen_prdata_32
+        always_ff @(posedge PCLK or negedge PRESETn) begin
+            if (!PRESETn) PRDATA <= '0;
+            else          PRDATA <= {4{dout}};
         end
     end
 

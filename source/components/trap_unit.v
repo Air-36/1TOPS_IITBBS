@@ -83,7 +83,8 @@ module trap_unit #(parameter WIDTH = 32) (
     // mtvec[1:0] == 2'b01 : Vectored mode (exceptions to base, interrupts to base + 4 * Cause)
     wire [WIDTH-1:0] BaseVec = {mtvec[WIDTH-1:2], 2'b00};
     wire Vectored = InterruptM & (mtvec[1:0] == 2'b01);
-    wire [WIDTH-1:0] VectoredVec = BaseVec + {25'b0, CauseCode, 2'b00};
+    wire [WIDTH:0]   VectoredVec_full = BaseVec + {25'b0, CauseCode, 2'b00};
+    wire [WIDTH-1:0] VectoredVec      = VectoredVec_full[WIDTH-1:0];
 
     assign TrapVectorM = Vectored ? VectoredVec : BaseVec;
 

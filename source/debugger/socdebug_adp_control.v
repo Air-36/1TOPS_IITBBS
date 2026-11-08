@@ -403,6 +403,7 @@ reg  [34:0] adp_val;
 reg  [31:0] adp_mask;
 reg  [31:0] adp_count;
 reg         adp_count_dec ;
+wire [32:0] adp_param_diff = adp_param[31:0] - adp_count;
 `endif
 
 // commnon interface handshake terms
@@ -914,7 +915,7 @@ begin
        ADP_POLL2:
          if (FNcount_down_zero_next(adp_count)) begin adp_bus_err <= 1'b1; end // timeout
          else if (((adp_bus_data  & adp_mask) ^ adp_val[31:0]) == 0)
-           begin adp_param[34:32] <= 3'b000; adp_param[31:0] <= (adp_param[31:0] - adp_count); end // exact match
+           begin adp_param[34:32] <= 3'b000; adp_param[31:0] <= adp_param_diff[31:0]; end // exact match
 
 // >>>>>>>>>>>>>>>> ADP (ZERO) FILL MEMORY >>>>>>>>>>>>>>>>>>>>>>
        ADP_FCTRL:  // set control value
