@@ -17,7 +17,7 @@ module rom_ahb #(
     parameter PA_BITS     = 32,
     parameter RANGE       = 4095,      // 4 KB aperture (1024 words)
     parameter PRELOAD     = 0,
-    parameter string MEMFILE = ""
+    parameter        MEMFILE = ""
 )(
     input  logic                 HCLK,
     input  logic                 HRESETn,
