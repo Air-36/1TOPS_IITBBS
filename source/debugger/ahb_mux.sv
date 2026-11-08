@@ -87,7 +87,11 @@ module ahb_mux #(
     wire [CW-1:0] m1_ctrl = {M1_HADDR, M1_HWRITE, M1_HSIZE, M1_HPROT, M1_HMASTLOCK};
     // Not needed: every transfer is forwarded as a single NONSEQ (HTRANS[0] only
     // separates SEQ from NONSEQ, HBURST only describes bursts)
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Dummy reduction operator used to consume unused AHB burst and transfer subtype bits
     wire unused_ok = &{1'b0, M0_HBURST, M1_HBURST, M0_HTRANS[0], M1_HTRANS[0]};
+    // spyglass enable_block W528
 
     // hold buffers
     reg          h0_vld, h1_vld;

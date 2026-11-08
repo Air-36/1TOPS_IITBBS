@@ -250,8 +250,6 @@ module riscv_soc_ahb #(
 
     // 1.1 Step Debugging FSM Controller Instance
     wire core_instr_retired;
-    wire boot_mode_latched;
-    wire remap_en;
     wire soft_core_rst_n;
     wire core_HRESETn = HRESETn & ~dbg_core_reset & soft_core_rst_n;
 
@@ -503,16 +501,16 @@ module riscv_soc_ahb #(
         .SPICLK(SPICLK),
         // spyglass disable_block W287b
         // SMD: Instance output port is not connected
-        // SJ: SDC peripheral ports and programmable reset vector are unused at SoC boundary
+        // SJ: SDC peripheral ports, boot status, remap flag, and reset vector are unused at SoC top boundary
         .SDCCmd(),
         .SDCCS(),
         .SDCCLK(),
         .reset_vector(),
+        .boot_mode_latched(),
+        .remap_en(),
         // spyglass enable_block W287b
         .boot_mode_pin(boot_mode_safe),
         .dbg_core_reset_i(dbg_core_reset),
-        .boot_mode_latched(boot_mode_latched),
-        .remap_en(remap_en),
         .soft_core_rst_n(soft_core_rst_n)
     );
 
