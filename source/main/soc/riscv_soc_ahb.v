@@ -253,7 +253,6 @@ module riscv_soc_ahb #(
     wire boot_mode_latched;
     wire remap_en;
     wire soft_core_rst_n;
-    wire [31:0] sysctrl_reset_vector;
     wire core_HRESETn = HRESETn & ~dbg_core_reset & soft_core_rst_n;
 
     core_step_controller #(
@@ -504,17 +503,17 @@ module riscv_soc_ahb #(
         .SPICLK(SPICLK),
         // spyglass disable_block W287b
         // SMD: Instance output port is not connected
-        // SJ: SDC peripheral ports are unused at SoC boundary
+        // SJ: SDC peripheral ports and programmable reset vector are unused at SoC boundary
         .SDCCmd(),
         .SDCCS(),
         .SDCCLK(),
+        .reset_vector(),
         // spyglass enable_block W287b
         .boot_mode_pin(boot_mode_safe),
         .dbg_core_reset_i(dbg_core_reset),
         .boot_mode_latched(boot_mode_latched),
         .remap_en(remap_en),
-        .soft_core_rst_n(soft_core_rst_n),
-        .reset_vector(sysctrl_reset_vector)
+        .soft_core_rst_n(soft_core_rst_n)
     );
 
     // =========================================================================
