@@ -64,17 +64,19 @@ module ahbapbbridge #(
     assign PWDATA = HWDATA;
     assign PSTRB  = HWSTRB;
 
+    localparam int SEL_WIDTH = (PERIPHS > 1) ? $clog2(PERIPHS) : 1;
+
     // Multiplex read data and ready signals from selected APB peripheral
-    function automatic int get_sel_idx(input logic [PERIPHS-1:0] sel);
-        int idx = 0;
+    function automatic logic [SEL_WIDTH-1:0] get_sel_idx(input logic [PERIPHS-1:0] sel);
+        logic [SEL_WIDTH-1:0] idx;
+        idx = '0;
         for (int i = 0; i < PERIPHS; i++) begin
-            if (sel[i]) idx = i;
+            if (sel[i]) idx = i[SEL_WIDTH-1:0];
         end
         return idx;
     endfunction
 
-    localparam int SEL_WIDTH = (PERIPHS > 1) ? $clog2(PERIPHS) : 1;
-    wire [SEL_WIDTH-1:0] sel_idx = get_sel_idx(PSEL)[SEL_WIDTH-1:0];
+    wire [SEL_WIDTH-1:0] sel_idx = get_sel_idx(PSEL);
     assign HRDATA    = (|PSEL) ? PRDATA[sel_idx*XLEN +: XLEN] : '0;
     assign PREADYOUT = (|PSEL) ? PREADY[sel_idx] : 1'b1;
 
