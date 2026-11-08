@@ -9,7 +9,7 @@
 //          5. System Identification & Diagnostics Scratchpad
 // =============================================================================
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module sysctrl_apb #(
     parameter XLEN = 32

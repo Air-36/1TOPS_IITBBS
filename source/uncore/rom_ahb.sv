@@ -10,7 +10,7 @@
 //                         instructions into IMEM (0x80000000), and jumps to IMEM.
 // =============================================================================
 
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module rom_ahb #(
     parameter XLEN        = 32,
