@@ -172,9 +172,10 @@ ahbinterface #(1'b0) ifu_bus (
 );
 
 wire ValidD, ValidE, ValidM;
+wire [31:0] PCPlus4F = PC_IFU + 32'd4;
 
 // Pipeline Register: F -> D
-pl_reg_fd plfd(clk, reset, StallD, FlushD, IFU_DataPhase, IFU_Instr, PC_IFU, PC_IFU + 32'd4, InstrD, PCD, PCPlus4D, ValidD);
+pl_reg_fd plfd(clk, reset, StallD, FlushD, IFU_DataPhase, IFU_Instr, PC_IFU, PCPlus4F, InstrD, PCD, PCPlus4D, ValidD);
 
 adder #(32) pcaddbranch(PCE, ImmExtE, PCTargetE);
 
@@ -297,6 +298,8 @@ subword_unit subword_inst (
     .read_data_out(ReadDataM)
 );
 
+wire [2:0] LSU_Size = {1'b0, funct3M[1:0]};
+
 ahbinterface #(1'b1) lsu_bus (
     .HCLK(clk),
     .HRESETn(~reset),
@@ -305,7 +308,7 @@ ahbinterface #(1'b1) lsu_bus (
     .Req(MemWriteM_gated | MemReadM),
     .Write(MemWriteM_gated),
     .Addr(ALUResultM),
-    .Size({1'b0, funct3M[1:0]}),
+    .Size(LSU_Size),
     .ByteMask(LSUHWSTRB_gen),
     .WriteData(LSUWriteDataM),
     .FetchBuffer(LSU_RawReadData),

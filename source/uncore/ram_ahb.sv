@@ -4,7 +4,7 @@
 module ram_ahb #(
   parameter XLEN        = 32,
   parameter PA_BITS     = 32,
-  parameter RANGE       = 65535,
+  parameter ADDR_RANGE   = 65535,
   parameter BASE_ADDR   = 32'h8000_0000,
   parameter PRELOAD     = 0,
   parameter        MEMFILE = "test.mem",
@@ -24,7 +24,7 @@ module ram_ahb #(
   output logic                 HREADYRam
 );
 
-  localparam WORDS      = (RANGE + 1) / (XLEN / 8);
+  localparam WORDS      = (ADDR_RANGE + 1) / (XLEN / 8);
   localparam ADDR_WIDTH = (WORDS > 1) ? $clog2(WORDS) : 1;
   localparam OFFSET     = $clog2(XLEN / 8);
 

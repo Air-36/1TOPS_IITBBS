@@ -113,7 +113,7 @@ module plic_apb #(
                 PLIC_PRIORITY_SRC4: priority_src4 <= PWDATA[2:0];
                 PLIC_ENABLE:        enables       <= PWDATA[4:0];
                 PLIC_THRESHOLD:     threshold     <= PWDATA[2:0];
-                default: ;
+                default: begin end
             endcase
         end
     end

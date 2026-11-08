@@ -170,7 +170,7 @@ end else begin : gen_fast_model
                 UART_LCR: lcr <= din;
                 UART_MCR: mcr <= din;
                 UART_SCR: scr <= din;
-                default: ;
+                default: begin end
             endcase
         end
     end

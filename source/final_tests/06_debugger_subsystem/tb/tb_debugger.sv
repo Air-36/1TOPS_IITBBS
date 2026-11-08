@@ -324,7 +324,7 @@ module tb_debugger;
     reg [31:0] apb_gpio_dir;
     localparam APB_PERIPH_ID = 32'hCAFE_2026;
 
-    reg        iram_active_d, dram_active_d, bootrom_active_d, apb_active_d, error_active_d;
+    reg        iram_active_d, dram_active_d, bootrom_active_d, apb_active_d, error_active_d, accel_active_d;
     reg [31:0] s_haddr_d;
     reg [ 2:0] s_hsize_d;
     reg        s_hwrite_d;
@@ -339,6 +339,7 @@ module tb_debugger;
             bootrom_active_d <= 1'b0;
             apb_active_d     <= 1'b0;
             error_active_d   <= 1'b0;
+            accel_active_d   <= 1'b0;
             s_haddr_d        <= 32'h0;
             s_hsize_d        <= 3'b010;
             s_hwrite_d       <= 1'b0;
@@ -349,6 +350,7 @@ module tb_debugger;
             bootrom_active_d <= bootrom_hsel && s_htrans[1];
             apb_active_d     <= apb_hsel     && s_htrans[1];
             error_active_d   <= error_hsel   && s_htrans[1];
+            accel_active_d   <= accel_hsel   && s_htrans[1];
             s_haddr_d        <= s_haddr;
             s_hsize_d        <= s_hsize;
             s_hwrite_d       <= s_hwrite;
@@ -422,7 +424,7 @@ module tb_debugger;
     assign s_hresp  = accel_hsel   ? accel_hresp :
                       error_active_d ? 1'b1 : 1'b0;
 
-    assign s_hrdata = accel_hsel   ? accel_hrdata : mem_hrdata;
+    assign s_hrdata = accel_active_d ? accel_hrdata : mem_hrdata;
 
     // Track AHB read transfers
     reg        ahb_read_addr_phase;

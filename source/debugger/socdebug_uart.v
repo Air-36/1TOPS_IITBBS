@@ -41,7 +41,7 @@ module socdebug_uart #(
     reg [15:0] clks_per_bit_reg;
 
     wire [15:0] clks_per_bit = clks_per_bit_reg;
-    wire [15:0] half_bit     = clks_per_bit[15:1]; // clks_per_bit / 2
+    wire [15:0] half_bit     = {1'b0, clks_per_bit[15:1]}; // clks_per_bit / 2
     wire [15:0] bit_limit    = (clks_per_bit > 16'd1) ? (clks_per_bit - 16'd1) : 16'd0;
 
     //-------------------------------------------------------------------------

@@ -318,9 +318,9 @@ module socdebug_ft1248_control #(
             ft_wcyc <= 1'b1;
             end
           end
-        FT_1_IDLE: ;
-        FT_ZCMD_CLKLO: ;
-        FT_CMD_CLKHI: ;
+        FT_1_IDLE: begin end
+        FT_ZCMD_CLKLO: begin end
+        FT_CMD_CLKHI: begin end
         FT_CMD_CLKLO: // 2, 4 or 7 shifts
           if (bwid8) begin
             end 
@@ -333,7 +333,7 @@ module socdebug_ft1248_control #(
           else begin
             ft_reg <= {   1'b0,ft_reg[8:1]};
             end 
-        FT_ZBT_CLKHI: ;
+        FT_ZBT_CLKHI: begin end
         FT_ZBT_CLKLO:
           if    (ft_wcyc) begin
             ft_reg <= {1'b1,rxd_tdata};
@@ -388,7 +388,7 @@ module socdebug_ft1248_control #(
             end // loop until all 8 bits shifted in (or 8-bit read repeated)
           else begin
             end
-        default: ;
+        default: begin end
         endcase
         end
       end

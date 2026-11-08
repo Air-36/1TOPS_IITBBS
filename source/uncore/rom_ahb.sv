@@ -15,7 +15,7 @@
 module rom_ahb #(
     parameter XLEN        = 32,
     parameter PA_BITS     = 32,
-    parameter RANGE       = 4095,      // 4 KB aperture (1024 words)
+    parameter ADDR_RANGE  = 4095,      // 4 KB aperture (1024 words)
     parameter PRELOAD     = 0,
     parameter        MEMFILE = ""
 )(
@@ -30,7 +30,7 @@ module rom_ahb #(
     output logic                 HREADYRom
 );
 
-    localparam WORDS      = (RANGE + 1) / (XLEN / 8);
+    localparam WORDS      = (ADDR_RANGE + 1) / (XLEN / 8);
     localparam ADDR_WIDTH = (WORDS > 1) ? $clog2(WORDS) : 1;
     localparam OFFSET     = $clog2(XLEN / 8);
 

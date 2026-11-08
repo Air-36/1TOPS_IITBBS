@@ -169,7 +169,7 @@ module sysctrl_apb #(
                     if (PSTRB[3]) reg_scratchpad[31:24] <= PWDATA[31:24];
                 end
 
-                default: ;
+                default: begin end
             endcase
         end
     end

@@ -73,7 +73,8 @@ module ahbapbbridge #(
         return idx;
     endfunction
 
-    wire [31:0] sel_idx = get_sel_idx(PSEL);
+    localparam int SEL_WIDTH = (PERIPHS > 1) ? $clog2(PERIPHS) : 1;
+    wire [SEL_WIDTH-1:0] sel_idx = get_sel_idx(PSEL)[SEL_WIDTH-1:0];
     assign HRDATA    = (|PSEL) ? PRDATA[sel_idx*XLEN +: XLEN] : '0;
     assign PREADYOUT = (|PSEL) ? PREADY[sel_idx] : 1'b1;
 

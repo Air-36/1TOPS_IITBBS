@@ -85,12 +85,12 @@ localparam CMD_V   = 4'b1100;  // match Value
 `endif
 
 
-function FNvalid_adp_entry; // Escape char
+function automatic FNvalid_adp_entry; // Escape char
 input [7:0] char8;
   FNvalid_adp_entry = (char8[7:0] ==  8'h1b);
 endfunction
 
-function [3:0] FNvalid_cmd;
+function automatic [3:0] FNvalid_cmd;
 input [7:0] char8;
 case (char8[7:0])
 "A": FNvalid_cmd = CMD_A;
@@ -126,7 +126,7 @@ default:
 endcase
 endfunction
 
-function FNvalid_space; // space or tab char
+function automatic FNvalid_space; // space or tab char
 input [7:0] char8;
   FNvalid_space = ((char8[7:0] == 8'h20) || (char8[7:0] == 8'h09));
 endfunction
@@ -136,20 +136,20 @@ endfunction
 //  FNnull = (char8[7:0] == 8'h00);
 //endfunction
 
-function FNexit; // EOF
+function automatic FNexit; // EOF
 input [7:0] char8;
   // FNexit = ((char8[7:0] == 8'h04) || (char8[7:0] == 8'h00));
   // Optional: uncomment below (and comment line above) to ignore null bytes (0x00) and exit only on Ctrl+D (0x04):
   FNexit = (char8[7:0] == 8'h04);
 endfunction
 
-function FNvalid_EOL; // CR or LF
+function automatic FNvalid_EOL; // CR or LF
 input [7:0] char8;
   FNvalid_EOL = ((char8[7:0] == 8'h0a) || (char8[7:0] == 8'h0d));
 endfunction
 
 
-function [2:0] FNsize_inc;
+function automatic [2:0] FNsize_inc;
 // top 2 bits encode 01 (byte), 10 (halfword), 11 (word) 00 - no parameter
 input [2:0] cnt8;
 case (cnt8[2:0])
@@ -162,7 +162,7 @@ default:
 endcase
 endfunction
 
-function [1:0] FNparam2size;
+function automatic [1:0] FNparam2size;
 // top 2 bits encode 01 (byte), 10 (halfword), 11 (word) 00 - no parameter
 input [1:0] parm2;
 case (parm2[1:0])
@@ -174,7 +174,7 @@ default:
 endcase
 endfunction
 
-function [34:0] FNBuild_size3_param32_hexdigit;
+function automatic [34:0] FNBuild_size3_param32_hexdigit;
 input [34:0] param32;
 input [7:0] char8;
 case (char8[7:0])
@@ -209,7 +209,7 @@ endcase
 endfunction
 
 
-function [7:0] FNmap_hex_digit;
+function automatic [7:0] FNmap_hex_digit;
 input [3:0] nibble;
 case (nibble[3:0])
 4'b0000: FNmap_hex_digit = "0" & 8'hff;
@@ -412,7 +412,7 @@ wire std_rx_done   = STDRX_TVALID_i & STDRX_TREADY_o;
 wire std_tx_done   = STDTX_TVALID_o & STDTX_TREADY_i;
 wire adp_bus_done  = (adp_bus_req & adp_bus_ack);
 
-function FNcount_down_zero_next; // param about to be zero
+function automatic FNcount_down_zero_next; // param about to be zero
 input [31:0] counter;
   FNcount_down_zero_next = (counter[31:0] >> 1) == 32'h00000000;
 endfunction

@@ -173,7 +173,7 @@ module csr_file #(parameter WIDTH = 32) (
                     12'h341: mepc          <= {CSRWriteValM[31:2], 2'b00};  // Word-aligned
                     12'h342: mcause        <= CSRWriteValM;
                     12'h343: mtval         <= CSRWriteValM;
-                    default: ; // Read-only registers ignore writes
+                    default: begin end // Read-only registers ignore writes
                 endcase
             end
         end

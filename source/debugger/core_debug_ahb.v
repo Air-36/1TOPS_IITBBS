@@ -240,7 +240,7 @@ module core_debug_ahb #(
                 // Pipeline Instructions & Flags
                 12'h094: HRDATA = InstrD;
                 12'h098: HRDATA = InstrM;
-                12'h09C: HRDATA = {16'b0, TrapM, mretM, ExternalStall, InstrRetired, FlushFlags, 1'b0, StallFlags};
+                12'h09C: HRDATA = {19'b0, TrapM, mretM, ExternalStall, InstrRetired, FlushFlags, 1'b0, StallFlags};
 
                 // Privileged CSRs
                 12'h0A0: HRDATA = mstatus;
