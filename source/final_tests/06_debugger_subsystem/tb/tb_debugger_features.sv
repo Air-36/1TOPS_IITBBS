@@ -115,9 +115,9 @@ module tb_debugger_features;
         // ---------------------------------------------------------------------
         // TEST 1: Power-on Reset & Free Run
         // ---------------------------------------------------------------------
-        repeat (5) @(posedge clk);
+        repeat (5) @(posedge clk); #1;
         reset = 1'b0;
-        repeat (2) @(posedge clk);
+        repeat (2) @(posedge clk); #1;
 
         $display("[TEST 1] Power-on reset released. Checking active-low core_HRESETn...");
         if (soc.core_HRESETn !== 1'b1) begin
@@ -132,8 +132,8 @@ module tb_debugger_features;
         $display("\n[TEST 2] Testing ExternalStall in CPU Core & Hazard Unit...");
         // Assert halt through step controller halt_req_i
         force soc.dbg_core_halt = 1'b1;
-        @(posedge clk);
-        @(posedge clk);
+        @(posedge clk); #1;
+        @(posedge clk); #1;
 
         // Verify step controller asserted core_stall_effective
         if (soc.core_stall_effective !== 1'b1) begin
@@ -158,7 +158,7 @@ module tb_debugger_features;
         // Verify PC remains completely frozen over 10 clock cycles
         frozen_pc = soc.cpu.PC;
         repeat (10) begin
-            @(posedge clk);
+            @(posedge clk); #1;
             if (soc.cpu.PC !== frozen_pc) begin
                 $display("[FAIL] PC moved while ExternalStall was active! (PC: 0x%08x -> 0x%08x)",
                          frozen_pc, soc.cpu.PC);
@@ -174,20 +174,20 @@ module tb_debugger_features;
         
         // Trigger Instruction Step mode (step_mode_i = 0)
         force soc.dbg_core_step_mode = 1'b0;
-        @(posedge clk);
+        @(posedge clk); #1;
         
         // Pulse step_req_i for 1 cycle
         force soc.dbg_core_step = 1'b1;
-        @(posedge clk);
+        @(posedge clk); #1;
         force soc.dbg_core_step = 1'b0;
 
         // Wait for step completion (step_done_o = 1)
         while (!soc.u_step_controller.step_done_o) begin
-            @(posedge clk);
+            @(posedge clk); #1;
         end
 
         // Verify core is frozen again
-        @(posedge clk);
+        @(posedge clk); #1;
         if (soc.core_stall_effective !== 1'b1) begin
             $display("[FAIL] Core did not re-freeze after single step!");
             $finish;
@@ -207,17 +207,17 @@ module tb_debugger_features;
         
         // Step 2
         force soc.dbg_core_step = 1'b1;
-        @(posedge clk);
+        @(posedge clk); #1;
         force soc.dbg_core_step = 1'b0;
-        while (!soc.u_step_controller.step_done_o) @(posedge clk);
-        @(posedge clk);
+        while (!soc.u_step_controller.step_done_o) begin @(posedge clk); #1; end
+        @(posedge clk); #1;
 
         // Step 3
         force soc.dbg_core_step = 1'b1;
-        @(posedge clk);
+        @(posedge clk); #1;
         force soc.dbg_core_step = 1'b0;
-        while (!soc.u_step_controller.step_done_o) @(posedge clk);
-        @(posedge clk);
+        while (!soc.u_step_controller.step_done_o) begin @(posedge clk); #1; end
+        @(posedge clk); #1;
 
         $display("[TEST 4] PASSED: Multiple single steps completed successfully.");
 
@@ -231,8 +231,8 @@ module tb_debugger_features;
 
         // Assert core-only reset from debugger
         force soc.dbg_core_reset = 1'b1;
-        @(posedge clk);
-        @(posedge clk);
+        @(posedge clk); #1;
+        @(posedge clk); #1;
 
         // Verify core_HRESETn goes low while system reset remains high
         if (soc.core_HRESETn !== 1'b0) begin
@@ -251,7 +251,7 @@ module tb_debugger_features;
         release soc.dbg_core_step;
         release soc.dbg_core_step_mode;
         release soc.dbg_core_reset;
-        repeat (2) @(posedge clk);
+        repeat (1) @(posedge clk); #1;   // race-free equivalent of sampling at the 2nd edge
 
         // Verify PC has been reset back to RESET_PC (0x8000_0000)
         if (soc.cpu.PC !== 32'h8000_0000) begin
@@ -275,11 +275,11 @@ module tb_debugger_features;
         
         // Let core run a few cycles to execute:
         // x1 = 10 (0x0A), x2 = 20 (0x14), x3 = 30 (0x1E)
-        repeat (10) @(posedge clk);
+        repeat (10) @(posedge clk); #1;
         
         // Halt core for post-mortem inspection
         force soc.dbg_core_halt = 1'b1;
-        repeat (3) @(posedge clk);
+        repeat (3) @(posedge clk); #1;
         
         if (!soc.dbg_core_halt_status) begin
             $display("[FAIL] Core failed to enter halted state for post-mortem inspection!");
@@ -323,19 +323,20 @@ module tb_debugger_features;
         // TEST 7: Hardware Auto-Halt on Trap & Post-Mortem Crash Diagnosis
         // ---------------------------------------------------------------------
         $display("\n[TEST 7] Testing Hardware Auto-Halt on Trap & Crash Diagnosis...");
+        ahb_dbg_write(32'h0B00_00D0, 32'h0000_0003);   // DBG_CTRL: halt_on_trap_en=1, halt_on_ebreak_en=1 (debugger arms it)
         
         // Release manual halt
         release soc.dbg_core_halt;
-        @(posedge clk);
+        @(posedge clk); #1;
 
         // Inject an illegal instruction (0x0020_0073) into IRAM at PC=0x8000_0014
         soc.uncore.ram_i.mem[5] = 32'h0020_0073; // Illegal opcode (CauseCode = 2)
 
         // Wait for trap occurrence and automatic hardware freeze
         while (!soc.dbg_trap_latched) begin
-            @(posedge clk);
+            @(posedge clk); #1;
         end
-        repeat (3) @(posedge clk);
+        repeat (3) @(posedge clk); #1;
 
         // Verify core is automatically frozen (Auto-Halt active)
         if (!soc.core_stall_effective) begin
@@ -394,11 +395,30 @@ module tb_debugger_features;
     end
 
     // AHB Master Read Helper Task
+    task ahb_dbg_write;
+        input [31:0] addr;
+        input [31:0] wdata;
+        begin
+            @(posedge clk); #1;
+            force soc.dbg_HADDR = addr;  force soc.dbg_HTRANS = 2'b10; force soc.dbg_HWRITE = 1'b1;
+            force soc.dbg_HSIZE = 3'b010; force soc.dbg_HBURST = 3'b000; force soc.dbg_HPROT = 4'b0011; force soc.dbg_HMASTLOCK = 1'b0;
+            @(posedge clk);
+            while (!soc.dbg_HREADY) @(posedge clk);
+            #1 force soc.dbg_HTRANS = 2'b00; force soc.dbg_HWDATA = wdata;   // data phase
+            @(posedge clk);
+            while (!soc.dbg_HREADY) @(posedge clk);
+            #1;
+            release soc.dbg_HADDR; release soc.dbg_HTRANS; release soc.dbg_HWRITE; release soc.dbg_HSIZE;
+            release soc.dbg_HBURST; release soc.dbg_HPROT; release soc.dbg_HMASTLOCK; release soc.dbg_HWDATA;
+        end
+    endtask
+
     task ahb_dbg_read;
         input  [31:0] addr;
         output [31:0] data;
         begin
-            @(posedge clk);
+            // drive 1ns after an edge, sample AT the edge (AHB: data valid when HREADY=1 at the edge)
+            @(posedge clk); #1;
             force soc.dbg_HADDR     = addr;
             force soc.dbg_HTRANS    = 2'b10; // NONSEQ
             force soc.dbg_HWRITE    = 1'b0;
@@ -406,12 +426,13 @@ module tb_debugger_features;
             force soc.dbg_HBURST    = 3'b000;
             force soc.dbg_HPROT     = 4'b0011;
             force soc.dbg_HMASTLOCK = 1'b0;
-            @(posedge clk);
+            @(posedge clk);                                  // address phase ends when HREADY=1 here
             while (!soc.dbg_HREADY) @(posedge clk);
-            force soc.dbg_HTRANS    = 2'b00; // IDLE
-            @(posedge clk);
+            #1 force soc.dbg_HTRANS = 2'b00;                 // IDLE
+            @(posedge clk);                                  // data phase ends when HREADY=1 here
             while (!soc.dbg_HREADY) @(posedge clk);
-            data = soc.dbg_HRDATA;
+            data = soc.dbg_HRDATA;                           // sampled at the completing edge
+            #1;
             release soc.dbg_HADDR;
             release soc.dbg_HTRANS;
             release soc.dbg_HWRITE;
