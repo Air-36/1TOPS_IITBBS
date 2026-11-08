@@ -103,6 +103,7 @@ module riscv_soc_ahb #(
     wire [ 3:0] HWSTRB;
     wire        HWRITE;
     wire [ 1:0] HTRANS;
+    wire [ 2:0] bus_HSIZE;  // FIX A2
     wire [31:0] HRDATA;
     wire        HREADY;
     wire        HRESP;
@@ -172,6 +173,7 @@ module riscv_soc_ahb #(
     wire        dbg_core_step_mode;
     wire        dbg_step_busy;
     wire        dbg_step_done;
+    wire        dbg_step_done_flag;  // FIX C8
     wire        core_stall_effective;
     wire        dbg_core_halt_status;
     wire        auto_halt_trap;
@@ -239,7 +241,7 @@ module riscv_soc_ahb #(
         // SJ: GPO8 is an optional general-purpose output from debugger CLI
         .GPO8(),
         // spyglass enable_block W287b
-        .GPI8({dbg_fault_flags, dbg_trap_latched, dbg_step_done, dbg_step_busy, dbg_core_halt_status}),
+        .GPI8({dbg_fault_flags, dbg_trap_latched, dbg_step_done_flag, dbg_step_busy, dbg_core_halt_status}),  // FIX C8
         .ahb_uart_clkdiv_we_i (ahb_uart_clkdiv_we),
         .ahb_uart_clkdiv_i    (ahb_uart_clkdiv_val),
         .ahb_ft_clkdiv_we_i   (ahb_ft_clkdiv_we),
@@ -267,6 +269,7 @@ module riscv_soc_ahb #(
         .core_stall_o(core_stall_effective),
         .step_busy_o(dbg_step_busy),
         .step_done_o(dbg_step_done),
+        .step_done_flag_o(dbg_step_done_flag),  // FIX C8
         // spyglass disable_block W287b
         // SMD: Instance output port is not connected
         // SJ: Step counter is optional debug telemetry unused at SoC top
@@ -323,7 +326,7 @@ module riscv_soc_ahb #(
         // spyglass disable_block W287b
         // SMD: Instance output port is not connected
         // SJ: Shared interconnect burst/size/prot signals unused by downstream uncore
-        .S_HSIZE(),
+        .S_HSIZE(bus_HSIZE),  // FIX A2: used for the debugger byte strobes
         .S_HBURST(),
         .S_HPROT(),
         .S_HMASTLOCK(),
@@ -346,8 +349,10 @@ module riscv_soc_ahb #(
             dbg_haddr_d <= 2'b00;
             dbg_hsize_d <= 2'b10;
         end else if (HREADY) begin
-            dbg_haddr_d <= dbg_HADDR[1:0];
-            dbg_hsize_d <= dbg_HSIZE[1:0];
+            if (HTRANS[1]) begin   // FIX A2: the transfer the slave actually accepted
+                dbg_haddr_d <= HADDR[1:0];
+                dbg_hsize_d <= bus_HSIZE[1:0];
+            end
         end
     end
 
@@ -373,6 +378,7 @@ module riscv_soc_ahb #(
     wire [31:0] core_PCE;
     wire [31:0] core_PCM;
     wire [31:0] core_InstrM;
+    wire [31:0] core_InstrD;  // FIX C9
     wire [31:0] core_TrapCauseM;
     wire [31:0] core_TrapValM;
     wire [31:0] core_mstatus;
@@ -435,6 +441,7 @@ module riscv_soc_ahb #(
         .dbg_PCE(core_PCE),
         .dbg_PCM(core_PCM),
         .dbg_InstrM(core_InstrM),
+        .dbg_InstrD(core_InstrD),  // FIX C9
         .dbg_TrapCauseM(core_TrapCauseM),
         .dbg_TrapValM(core_TrapValM),
         .dbg_mstatus(core_mstatus),
@@ -539,7 +546,7 @@ module riscv_soc_ahb #(
         .PCE(core_PCE),
         .PCM(core_PCM),
         .PCW(PCW),
-        .InstrD(32'd0),
+        .InstrD(core_InstrD),  // FIX C9
         .InstrM(core_InstrM),
         .StallFlags(core_stall_flags),
         .FlushFlags(core_flush_flags),
