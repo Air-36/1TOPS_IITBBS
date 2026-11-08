@@ -61,16 +61,6 @@ module socdebug_adp_control #(
   output reg  [ 7:0] ft_clkdiv_o
 );
 
-wire COM_RXE_i = !COMRX_TVALID_i;
-wire COM_TXF_i = !COMTX_TREADY_i;
-
-//wire adp_rx_req = COMRX_TVALID_i & COMRX_TREADY_o;
-//wire std_rx_req = STDRX_TVALID_i & STDRX_TREADY_o;
-
-
-wire STD_TXF_i = !STDTX_TREADY_i;
-wire STD_RXE_i = !STDRX_TVALID_i;
-
 `ifdef ADPBASIC
   localparam BANNERHEX = 32'h50c1ab01;
 `else
@@ -367,7 +357,6 @@ wire        com_rx_req = COMRX_TVALID_i;
 wire [ 7:0] com_rx_byte = COMRX_TDATA_i;
 assign      COMRX_TREADY_o = com_rx_ack;
 // ADP TX stream
-wire        com_tx_ack = COMTX_TREADY_i;
 assign      COMTX_TDATA_o = com_tx_byte;
 assign      COMTX_TVALID_o = com_tx_req;
 // STD RX stream (from STDOUT)
@@ -729,10 +718,18 @@ begin
       std_tx_req   <= 1'b0; // default no TX req
       std_rx_ack   <= 1'b0; // default no RX ack
       adp_bus_req  <= 1'b0; // default no bus transaction
-      adp_addr     <= (adp_addr_inc && adp_bus_done) ? adp_addr + (1 << adp_size) : adp_addr; // address++
+      if (adp_addr_inc && adp_bus_done) begin
+        adp_addr <= adp_addr + (1 << adp_size); // address++
+      end else if (adp_state == ADP_ACTION && (FNvalid_cmd(adp_cmd) == CMD_A)  /* FIX C16 support: no live-byte check */ && (|adp_param[34:32])) begin
+        adp_addr <= adp_param[31:0];
+      end
       adp_addr_inc <= 1'b0;
 `ifndef ADPBASIC
-      adp_count    <= (adp_count_dec && adp_bus_done && (adp_count[31:0] != 32'h00000000)) ? (adp_count - 32'h00000001) : adp_count; // param--
+      if (adp_count_dec && adp_bus_done && (adp_count[31:0] != 32'h00000000)) begin
+        adp_count <= adp_count - 32'h00000001; // param--
+      end else if (adp_state == ADP_RXPARAM && com_rx_done && !FNexit(com_rx_byte) && FNvalid_EOL(com_rx_byte)) begin
+        adp_count <= adp_param[31:0];
+      end
       adp_count_dec<= 1'b0;
 `endif
     case (adp_state)
@@ -795,8 +792,7 @@ begin
            if (FNexit(com_rx_byte)) begin end // exit
            else if (FNvalid_EOL(com_rx_byte))
 `ifndef ADPBASIC
-            begin adp_count <= adp_param[31:0];
-                  adp_size  <= FNparam2size(adp_param[34:33]); end // parameter complete on EOL
+            begin adp_size  <= FNparam2size(adp_param[34:33]); end // parameter complete on EOL
 `else
             begin adp_size  <= FNparam2size(adp_param[34:33]); end // parameter complete on EOL
 `endif
@@ -807,7 +803,7 @@ begin
 
        ADP_ACTION:  // parse command and action with parameter (live-byte Ctrl-D re-check removed, see above)
          if (FNvalid_cmd(adp_cmd) == CMD_A)
-           begin if (|adp_param[34:32]) begin adp_addr <= adp_param[31:0]; end else begin adp_param <= {3'b111, adp_addr}; end end
+           begin if (!(|adp_param[34:32])) begin adp_param <= {3'b111, adp_addr}; end end
          else if (FNvalid_cmd(adp_cmd) == CMD_C) begin
            if (|adp_param[34:32] == 1'b0) // report GPO
              begin end
