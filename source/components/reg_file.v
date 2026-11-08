@@ -19,13 +19,13 @@ module reg_file #(parameter DATA_WIDTH = 32) (
 // // synthesis translate_on
 
 // register file write logic (synchronous)
-    // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
-    // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
-    // SJ: RISC-V architectural register file (x0-x31) is unreset to prevent 1024-bit reset routing congestion
+    // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Clock_check04 ClockEdgeinfo Ar_resetcross01
+    // SMD: Flip-flop has neither async reset / Recommended edge of clock not used / Unsynchronized reset crossing to unreset storage
+    // SJ: RISC-V architectural register file is an unreset array written on negedge clk; wr_en is cleanly suppressed during reset
     always @(negedge clk) begin
         if (wr_en) reg_file_arr[wr_addr] <= wr_data;
     end
-    // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+    // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Clock_check04 ClockEdgeinfo Ar_resetcross01
 
 // register file read logic (combinational)
     assign rd_data1 = ( rd_addr1 != 0 ) ? reg_file_arr[rd_addr1] : 0;

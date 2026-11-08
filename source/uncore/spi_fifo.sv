@@ -16,12 +16,12 @@ module spi_fifo #(parameter M=3, N=8)(                 // 2^M entries of N bits 
     wire read_en  = ren & rinc & ~rempty;
 
     assign rdata = mem[raddr];
-    // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
-    // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
-    // SJ: FIFO payload storage memory is unreset; valid entries are guarded by reset pointers
+    // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Ar_resetcross01
+    // SMD: Flip-flop has neither asynchronous set nor asynchronous reset / Unsynchronized reset crossing to unreset memory
+    // SJ: FIFO payload storage memory is unreset; write_en and pointers are cleanly reset
     always_ff @(posedge PCLK)
         if (write_en) mem[waddr] <= wdata;
-    // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+    // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Ar_resetcross01
 
     wire [M:0] wptr_eff = write_en ? (wptr + 1'b1) : wptr;
     wire [M:0] rptr_eff = read_en  ? (rptr + 1'b1) : rptr;

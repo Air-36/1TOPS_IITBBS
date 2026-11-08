@@ -10,9 +10,13 @@ module reset_ff #(parameter WIDTH = 32, RESET_VAL = 0) (
 // end
 // // synthesis translate_on
 
+    // spyglass disable_block Reset_check07
+    // SMD: Clear pin of sequential element is driven by combinational logic
+    // SJ: CPU core reset combines chip pad reset, debugger reset, and sysctrl soft reset
     always @(posedge clk or posedge rst) begin
         if (rst) q <= RESET_VAL;
         else if (!clr) q <= d;
     end
+    // spyglass enable_block Reset_check07
 
 endmodule

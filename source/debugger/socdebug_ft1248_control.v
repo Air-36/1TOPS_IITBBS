@@ -149,6 +149,9 @@ module socdebug_ft1248_control #(
   reg ft_miso_i_sync_1;
   reg ft_miosio_i0_sync_1;
 
+  // spyglass disable_block Reset_sync04
+  // SMD: Asynchronous reset signal is synchronized at least twice
+  // SJ: Independent 2-FF data synchronizers for external FT1248 MISO and MIOSIO input lines
   always @(posedge clk or negedge resetn )
   begin
     if (!resetn) begin
@@ -164,6 +167,7 @@ module socdebug_ft1248_control #(
       ft_miosio_i0_sync   <= ft_miosio_i0_sync_1;
       end
   end
+  // spyglass enable_block Reset_sync04
 
   //----------------------------------------------
   //-- AXI Stream interface handshakes

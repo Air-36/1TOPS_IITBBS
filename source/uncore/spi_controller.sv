@@ -110,6 +110,9 @@ module spi_controller (
   assign EndTransmission = TransmitFIFOEmpty & EndOfFrame;
   assign Phase = SckMode[0];
 
+  // spyglass disable_block Reset_check07
+  // SMD: Preset/Clear pin of sequential element is driven by combinational logic
+  // SJ: SPICLK reset value depends on CPOL polarity mode (SckMode[1]), which is static during reset
   always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       DivCounter <= 12'b0;
@@ -158,6 +161,7 @@ module spi_controller (
       end
     end
   end
+  // spyglass enable_block Reset_check07
 
   // The very last bit in a frame of any length.
   assign LastBit = (BitNum == FrameLength - 4'b1);
