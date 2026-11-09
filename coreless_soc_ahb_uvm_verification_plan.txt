@@ -1,0 +1,531 @@
+SOC VERIFICATION WITHOUT A CPU CORE AHB-Lite-Based UVM Verification Plan
+Simulator recommendation: QuestaSim (primary), VCS (alternative)
+
+============================================================ 1.
+OBJECTIVE ============================================================
+
+Build a UVM testbench that verifies the SoC integration without
+instantiating a processor core.
+
+The UVM testbench will act as the bus master. It will generate
+AHB/AHB-Lite transactions to access the SoC address map, just as
+software running on a CPU would do. The actual SoC RTL, including its
+interconnect, bridges, peripherals, interrupt controller, reset logic
+and system controller, must remain in the DUT.
+
+The purpose is to verify: - AHB bus protocol behaviour and address
+decoding. - Correct register access to every memory-mapped peripheral. -
+Correct operation of peripheral functions and external interfaces. -
+Interrupt generation, routing, masking and prioritization. - Reset,
+clock and boot-mode control behaviour. - Interactions between
+peripherals, memory and the bus fabric. - Integration corner cases and
+long-duration traffic.
+
+This is SoC-level integration verification. It does not replace
+standalone IP verification.
+
+============================================================ 2.
+RECOMMENDED VERIFICATION STRATEGY
+============================================================
+
+Use three verification levels.
+
+LEVEL 1 - INDIVIDUAL IP VERIFICATION
+
+Verify each peripheral independently before integrating all of them: -
+GPIO - UART - SPI master - I2C - Timer - CLINT - PLIC - Boot ROM -
+System controller (SysCtrl) - SRAM or other memory blocks - AHB
+interconnect, decoder and any bus bridges
+
+For each IP, verify reset values, supported register accesses,
+functional behaviour, error cases and relevant protocol timing.
+
+Reuse existing IP-level testbenches and VIPs wherever possible. Do not
+recreate tests that already exist and are suitable.
+
+LEVEL 2 - SUBSYSTEM VERIFICATION
+
+Verify groups of connected blocks: - AHB master interface -> AHB
+interconnect/decoder -> selected slave. - AHB interconnect -> peripheral
+register interfaces. - Peripheral interrupt outputs -> PLIC inputs. -
+PLIC output/claim-complete path -> observable interrupt interface. -
+Timer and CLINT -> their interrupt outputs. - SPI master -> SPI Flash
+model. - UART -> UART transmitter/receiver model or UART pin agent. -
+Boot ROM -> its memory interface and boot selection/remap logic. -
+SysCtrl -> reset, clock and boot-mode control signals.
+
+LEVEL 3 - FULL SOC INTEGRATION VERIFICATION
+
+Instantiate the complete coreless SoC RTL and connect one AHB master UVM
+agent to the SoC’s real AHB master-facing test interface.
+
+All memory-mapped peripherals should be connected through the actual SoC
+interconnect and address decoder. Do not bypass the interconnect by
+connecting the master VIP directly to each peripheral.
+
+Run directed tests first, followed by constrained-random and stress
+tests.
+
+============================================================ 3.
+SIMULATOR SELECTION
+============================================================
+
+Recommended primary simulator: QuestaSim.
+
+Reasons: - The mBits-Mirafra VIP repositories provide Questa-oriented
+simulation examples/flows for at least some VIPs. - QuestaSim has
+established SystemVerilog and UVM support. - Its GUI, waveform debugging
+and transaction-level inspection are useful during initial testbench
+integration. - It is suitable for incremental bring-up and debugging of
+interface connections, sequences and scoreboards.
+
+VCS is also a suitable simulator if it is already available in the
+project environment or is the team’s standard regression simulator. It
+provides strong SystemVerilog/UVM support and is suitable for large
+regressions.
+
+Practical decision: 1. Start with QuestaSim because it is the
+recommended first bring-up target for this plan. 2. First compile and
+run the selected AHB VIP’s own example without modifying it. 3. If the
+VIP repository provides a better-supported VCS flow in the checked-out
+revision, or the project already has a stable VCS environment, use VCS
+instead. 4. Keep the testbench simulator-portable: avoid
+simulator-specific constructs unless necessary. 5. Do not assume that a
+repository supports a simulator just because the simulator supports UVM.
+Check the repository’s current README, scripts, compile file lists and
+supported simulator versions.
+
+============================================================ 4.
+REPOSITORIES AND VERIFICATION COLLATERAL
+============================================================
+
+Start from the mBits-Mirafra projects page:
+https://mbits-mirafra.github.io/projects/
+
+Potentially relevant repositories:
+
+AHB VIP: https://github.com/mbits-mirafra/ahb_avip
+
+SPI VIP: https://github.com/mbits-mirafra/spi_avip
+
+UART VIP: https://github.com/mbits-mirafra/uart_avip
+
+Use the AHB VIP as the starting point for the SoC’s bus master. Check
+its current documentation to confirm: - Whether master mode is
+supported. - Whether it supports the exact AHB or AHB-Lite variant used
+by the SoC. - Address and data widths. - Burst types and transfer
+sizes. - Wait-state handling. - ERROR response handling. -
+Byte-lane/strobe behaviour, if applicable. - UVM version and simulator
+flow. - How the virtual interface is configured. - How sequences and
+tests are started.
+
+Do not assume that every repository contains a complete drop-in UVM
+agent or supports every role. Inspect its README, source hierarchy,
+examples and license before integration.
+
+For UART and SPI, select VIP/model roles according to the SoC pin
+direction: - A UART device model/agent should drive RX into the SoC and
+monitor TX from the SoC, as appropriate. - An SPI Flash model should
+respond to the SoC SPI master. Do not connect two SPI masters
+together. - For I2C, use a suitable I2C target/device model or a simple
+protocol-compliant target model. - GPIO inputs should be driven by the
+testbench and GPIO outputs should be monitored and checked.
+
+============================================================ 5. FIRST
+TASK: DOCUMENT THE REAL SOC INTERFACES
+============================================================
+
+Before writing the integration testbench, inspect the SoC RTL and
+prepare an interface inventory.
+
+Record:
+
+A. AHB interface - AHB or AHB-Lite? - Master-facing signals and their
+directions. - HADDR width. - HWDATA width. - HRDATA width. - HTRANS
+width. - HSIZE width. - HBURST width. - HWRITE. - HREADY/HREADYOUT
+arrangement. - HRESP encoding and width. - HPROT, HMASTLOCK, HSEL and
+any other signals actually used. - Clock and reset names/polarity. -
+Whether the SoC exposes an AHB slave port for an external test master.
+
+B. Address map For every slave, record: - Peripheral name. - Base
+address. - Address range/size. - Read/write permissions. - Register
+offsets. - Reserved address behaviour. - Expected error response for
+unmapped addresses, if defined.
+
+C. Interrupts Record: - Every peripheral interrupt output. - The
+corresponding PLIC input/source ID. - Interrupt polarity and active
+level. - Enable/mask controls. - Priority configuration. - PLIC output
+connection. - Any interrupt output observable at the SoC boundary.
+
+D. Clocks and resets Record: - All clock domains and frequencies used in
+simulation. - Reset signals and polarity. - Synchronous/asynchronous
+reset behaviour. - Reset sequencing dependencies. - Any clock gating or
+clock-enable controls.
+
+E. External interfaces and memories Record: - UART pins. - SPI pins and
+flash connection. - I2C pins. - GPIO pins. - SRAM interfaces. - Boot ROM
+interface. - Any external memory or device model requirements.
+
+Do not guess signal names or address values. Obtain them from the RTL,
+register specifications and SoC memory map.
+
+============================================================ 6.
+TESTBENCH ARCHITECTURE
+============================================================
+
+Create a separate SoC-level testbench. Keep the standalone VIP testbench
+intact.
+
+Suggested logical hierarchy:
+
+soc_uvm_tb | +– clock_reset_generator | +– soc_dut | +– AHB interconnect
+/ decoder | +– AHB bridges, if present | +– GPIO | +– UART | +– I2C | +–
+Timer | +– SPI master | +– CLINT | +– PLIC | +– Boot ROM | +– SysCtrl |
++– SRAM / memory blocks | +– interface instances | +– AHB interface | +–
+UART pin interface | +– SPI interface | +– I2C interface | +– GPIO
+interface | +– interrupt observation interface | +– UVM environment | +–
+AHB master agent | +– UART device agent/model | +– SPI Flash model | +–
+I2C target model | +– GPIO driver/monitor | +– interrupt monitor | +–
+register model (RAL) | +– scoreboard/reference model | +– functional
+coverage | +– tests and sequences
+
+The exact components depend on the VIP and SoC RTL. This is a logical
+organization, not a requirement to create one agent for every block.
+
+IMPORTANT: - The AHB master VIP must connect to the actual AHB-facing
+port of the SoC. - The real interconnect and address decoder must be
+exercised. - Peripheral pin agents/models connect to external pins, not
+to the AHB bus. - Interrupt monitors observe real interrupt nets. -
+Memory models must match the actual memory interface. - If the SoC has
+multiple AHB masters internally, understand the arbitration topology. A
+testbench master may need to connect through a dedicated external master
+port or a test access path.
+
+============================================================ 7.
+INTEGRATING THE AHB VIP
+============================================================
+
+1.  Clone the AHB VIP repository.
+2.  Read its README and inspect the complete source and simulation
+    directory structure.
+3.  Run its standalone example with the supported simulator.
+4.  Identify the AHB interface definition and master-agent
+    configuration.
+5.  Confirm that the VIP protocol variant matches the SoC.
+6.  Identify the top-level interface signals and compare them with the
+    SoC port list.
+7.  Create or adapt a SystemVerilog interface for the SoC-facing AHB
+    connection.
+8.  Connect the VIP master to the SoC’s AHB slave-facing test port.
+9.  Configure the VIP virtual interface through the UVM configuration
+    mechanism used by that VIP.
+10. Add the VIP packages, interface files, source files and required UVM
+    files to the SoC simulation file list.
+11. Compile the SoC RTL and VIP together.
+12. Run a single simple read and write transaction before adding more
+    complex sequences.
+
+Check signal directions carefully. AHB master outputs include
+address/control and write data; response and read data are returned by
+the slave side. Use the actual protocol and VIP interface definition
+rather than relying only on this summary.
+
+If the SoC has no externally accessible AHB slave-facing test port,
+decide how the testbench will access the bus: - Expose a dedicated
+verification/test master port, if architecturally allowed. - Use an
+existing debug/test access path if it genuinely reaches the bus. - Or
+use a subsystem-level testbench around the interconnect.
+
+Do not force signals onto an internal bus without understanding
+arbitration and ownership.
+
+============================================================ 8. REGISTER
+TESTING AND UVM RAL
+============================================================
+
+Create a register model for the memory-mapped peripherals.
+
+For each register and field, document: - Address offset. - Width. -
+Reset value. - Access type: RW, RO, WO, W1C, W1S, etc. - Reserved
+bits. - Side effects. - Volatile fields. - Write masks and byte-enable
+behaviour, if supported.
+
+Implement tests for: - Reading reset values. - Writing and reading back
+RW registers. - Confirming RO registers cannot be modified. - Confirming
+W1C fields clear only when written with one. - Confirming reserved bits
+behave according to specification. - Checking write-only and read-only
+access restrictions. - Checking FIFO status and level changes. -
+Checking interrupt enable/status/clear registers. - Checking invalid or
+unmapped addresses and expected error responses.
+
+Use a UVM Register Abstraction Layer (RAL) model where practical. A bus
+adapter translates RAL operations into AHB VIP transactions. A predictor
+or monitor updates the mirror based on observed bus traffic. Use
+backdoor access only where justified; frontdoor bus accesses are
+necessary to verify the actual interconnect and bus path.
+
+Coverage goals: - Every addressable register is accessed. - Every
+defined field is exercised. - Important legal combinations of
+mode/enable/configuration fields are covered. - Read/write and error
+paths are covered. - Side effects are checked.
+
+Do not claim 100% functional coverage merely because every register
+address was touched.
+
+============================================================ 9.
+PERIPHERAL FUNCTIONAL TESTS
+============================================================
+
+GPIO: - Configure direction. - Drive input values from the testbench. -
+Read input state. - Check output values. - Check output enable and
+interrupt behaviour, if implemented.
+
+UART: - Configure baud rate and frame format. - Transmit data and
+monitor TX. - Drive RX data into the SoC. - Check received data, parity
+and framing errors if supported. - Test FIFO behaviour and interrupts if
+present.
+
+SPI: - Configure clock polarity, phase, divider and transfer length. -
+Use an SPI Flash/device model. - Check MOSI, MISO, SCLK and chip-select
+behaviour. - Test command, address and data phases supported by the
+design.
+
+I2C: - Use an I2C target/device model. - Check START, repeated START,
+address, ACK/NACK, data and STOP. - Check clock stretching and error
+cases only if supported by the design.
+
+Timer: - Program load/compare values. - Check counter progression and
+timeout. - Check interrupt generation and clearing.
+
+CLINT: - Check timer and software-interrupt registers supported by the
+implementation. - Verify interrupt timing and clear/update behaviour. -
+Check address and access restrictions.
+
+PLIC: - Generate peripheral interrupt events. - Configure priorities and
+enable bits. - Check pending state and interrupt output. - Exercise
+claim and completion operations if implemented. - Verify masking,
+priority and simultaneous-source behaviour.
+
+Boot ROM: - Check ROM contents against the expected image. - Check read
+access and address decoding. - Verify boot selection/remapping if
+supported. - Verify reset/boot sequencing with SysCtrl.
+
+SysCtrl: - Check reset control registers and reset outputs. - Check
+clock control or clock-enable behaviour. - Check boot-mode strap
+sampling. - Check ROM remapping or boot selection. - Verify reserved
+register and reset behaviour.
+
+SRAM: - Check read/write operations. - Check byte/size accesses
+supported by the bus and memory. - Check address boundaries. - Check
+data integrity under repeated and interleaved accesses.
+
+============================================================ 10.
+INTERRUPT VERIFICATION
+============================================================
+
+Interrupt testing must be end-to-end.
+
+For each interrupt source: 1. Configure the peripheral to enable the
+event/interrupt. 2. Generate the event. 3. Observe the peripheral
+interrupt output. 4. Confirm the correct PLIC input/source is asserted.
+5. Configure PLIC priority and enable state. 6. Confirm pending and
+output behaviour. 7. Verify masking and priority effects. 8. Perform
+claim/complete operations if supported. 9. Clear the original peripheral
+event. 10. Confirm the interrupt deasserts as specified.
+
+Include: - One interrupt source at a time. - Multiple simultaneous
+sources. - Different priority levels. - Disabled and masked sources. -
+Pending interrupt while masked, where applicable. - Clear/complete
+corner cases.
+
+For a coreless testbench, observe the PLIC outputs directly. A CPU trap
+handler is not needed to verify the peripheral-to-PLIC path, but
+CPU-specific trap behaviour remains outside the scope of this stage.
+
+============================================================ 11. BUS,
+BRIDGE AND INTEGRATION TESTS
+============================================================
+
+AHB protocol tests: - IDLE, BUSY, NONSEQ and SEQ transfers as
+supported. - Single transfers. - Supported burst types and lengths. -
+Byte, halfword and word transfers where supported. - Wait-state
+insertion. - HREADY behaviour. - OKAY and ERROR responses. -
+Back-to-back transfers. - Address alignment. - Read-after-write and
+write-after-read. - Reset during or between transactions, according to
+the design’s reset specification.
+
+Address decoding: - Access every mapped slave. - Access the first and
+last valid addresses. - Access addresses around slave boundaries. -
+Access unmapped/reserved regions. - Confirm that only the intended slave
+responds. - Confirm response routing back to the master.
+
+Concurrency and stress: - Perform accesses to different peripherals in
+succession. - Run memory traffic while peripheral accesses continue. -
+Generate interrupts during bus traffic. - Mix reads and writes to
+different slaves. - Exercise wait states and peripheral backpressure. -
+Run constrained-random traffic with reproducible seeds. - Check for
+hangs, lost responses, data corruption and unexpected X values.
+
+If the SoC has an AHB-to-APB bridge, verify the bridge’s actual protocol
+conversion, wait-state handling, transfer completion, error propagation,
+address/control mapping and supported access sizes.
+
+============================================================ 12. TEST
+AND SEQUENCE ORGANIZATION
+============================================================
+
+Suggested initial tests:
+
+1.  soc_reset_test
+2.  ahb_single_read_write_test
+3.  ahb_address_decode_test
+4.  ahb_invalid_address_test
+5.  peripheral_reset_register_test
+6.  gpio_functional_test
+7.  uart_tx_rx_test
+8.  spi_flash_basic_test
+9.  i2c_basic_test
+10. timer_interrupt_test
+11. clint_interrupt_test
+12. plic_single_interrupt_test
+13. plic_multiple_interrupt_priority_test
+14. boot_rom_test
+15. sysctrl_boot_mode_test
+16. ahb_wait_state_test
+17. ahb_back_to_back_test
+18. concurrent_peripheral_memory_test
+19. random_ahb_traffic_test
+20. soc_long_duration_stress_test
+
+Start with a few directed tests. Do not start with a large random
+regression before basic connectivity and checking work.
+
+============================================================ 13.
+SCOREBOARD, ASSERTIONS AND COVERAGE
+============================================================
+
+Scoreboard: - Compare expected register values with observed read
+data. - Check peripheral output behaviour. - Check UART/SPI/I2C
+transactions against expected data. - Check interrupt events and their
+expected routing. - Check memory contents. - Check response and error
+behaviour.
+
+Assertions: - AHB protocol stability and transfer rules. - Valid
+response timing. - No illegal simultaneous slave selections. - Reset
+behaviour. - Interrupt assertion/clearing rules. - Peripheral protocol
+rules where appropriate.
+
+Coverage: - All mapped slaves accessed. - All addressable registers
+accessed. - Register field values and important combinations. - Transfer
+types, sizes and burst types supported. - Wait-state counts. - OKAY and
+ERROR responses. - Address boundary and unmapped access. - Peripheral
+TX/RX cases. - Interrupt source, priority, enable and mask
+combinations. - Cross coverage of traffic type with target slave and
+interrupt activity.
+
+Define coverage goals based on the actual specification. Review
+uncovered bins and justify exclusions.
+
+============================================================ 14.
+RECOMMENDED IMPLEMENTATION ORDER
+============================================================
+
+PHASE 0 - RTL UNDERSTANDING [ ] Obtain the current SoC RTL and top
+module. [ ] Obtain the address map and register specifications. [ ]
+Identify the AHB protocol variant and exact port list. [ ] Identify
+clocks, resets, interrupt wiring and external interfaces. [ ] Draw the
+actual bus topology.
+
+PHASE 1 - TOOL AND VIP BRING-UP [ ] Select QuestaSim as the initial
+simulator, subject to VIP support. [ ] Check QuestaSim UVM version and
+compile settings. [ ] Clone the AHB VIP repository. [ ] Read its README,
+license and supported simulator information. [ ] Compile and run its
+standalone example. [ ] Understand its master agent, interface,
+configuration and sequences.
+
+PHASE 2 - MINIMUM SOC TESTBENCH [ ] Create a separate SoC-level
+testbench. [ ] Instantiate the complete coreless SoC DUT. [ ] Generate
+clocks and resets. [ ] Connect one AHB master VIP to the real SoC AHB
+test interface. [ ] Add required memory models. [ ] Compile the SoC and
+VIP together. [ ] Run one AHB write and one AHB read. [ ] Check returned
+data and response. [ ] Confirm the actual interconnect and address
+decoder are exercised.
+
+PHASE 3 - REGISTER AND ADDRESS TESTS [ ] Create the address map. [ ]
+Build the UVM RAL register model. [ ] Add the AHB-to-RAL adapter and
+predictor as appropriate. [ ] Test reset values and RW/RO/WO/W1C
+behaviour. [ ] Test all mapped peripherals. [ ] Test address boundaries
+and unmapped addresses.
+
+PHASE 4 - PERIPHERAL MODELS AND FUNCTIONAL TESTS [ ] Add GPIO
+driver/monitor. [ ] Add UART device model/agent. [ ] Add SPI Flash
+model. [ ] Add I2C target model. [ ] Add timer and memory checking. [ ]
+Add peripheral functional sequences and scoreboards.
+
+PHASE 5 - INTERRUPTS AND CONTROL [ ] Add interrupt monitors. [ ] Verify
+each peripheral interrupt source. [ ] Verify PLIC priority, enable,
+pending and claim/complete behaviour. [ ] Verify CLINT interrupts. [ ]
+Verify SysCtrl reset and boot-mode behaviour. [ ] Verify Boot ROM access
+and remapping.
+
+PHASE 6 - STRESS AND SIGNOFF [ ] Add AHB wait-state and back-to-back
+tests. [ ] Add concurrent memory and peripheral traffic. [ ] Add
+interrupt activity during bus traffic. [ ] Add constrained-random
+traffic. [ ] Add assertions and functional coverage. [ ] Run regressions
+with multiple reproducible seeds. [ ] Review failures, assertions and
+uncovered bins. [ ] Produce a verification summary and signoff report.
+
+============================================================ 15.
+IMPORTANT SCOPE LIMITATIONS
+============================================================
+
+This plan verifies the SoC without a CPU core. The AHB VIP substitutes
+for the CPU as a bus transaction initiator, not as an
+instruction-executing processor.
+
+The following are not fully verified in this phase: - RISC-V instruction
+execution. - Firmware execution and boot from the CPU’s reset vector. -
+CPU exception and trap handling. - CPU-specific interrupt acceptance and
+context handling. - Software ordering and timing that depend on actual
+instruction execution.
+
+Those should be addressed later by integrating the real core and running
+firmware/software tests.
+
+Also, a UVM testbench cannot prove a design correct simply by accessing
+every register. Functional checking, protocol assertions, interrupt
+end-to-end tests, meaningful coverage and stress testing are all
+required.
+
+============================================================ 16.
+INFORMATION REQUIRED BEFORE IMPLEMENTATION
+============================================================
+
+Collect these design inputs:
+
+1.  SoC top-level RTL module and source file list.
+2.  AHB interface port list and protocol variant.
+3.  Address map with base addresses and sizes.
+4.  Register specifications for every peripheral.
+5.  Clock and reset architecture.
+6.  Peripheral interrupt-to-PLIC source mapping.
+7.  PLIC configuration and number of sources.
+8.  Memory/ROM interface details and expected initialization files.
+9.  UART, SPI and I2C pin-level interface details.
+10. Existing standalone IP testbenches, assertions and VIPs.
+11. Available QuestaSim and/or VCS version and UVM version.
+12. Build scripts, compile file lists and current simulation results.
+
+FINAL RECOMMENDATION
+
+Use QuestaSim first if the selected AHB VIP’s current repository flow
+supports it cleanly. Begin with one AHB master VIP connected to the
+complete coreless SoC. Verify reset, one read/write, address decoding
+and register access before adding peripheral pin models, interrupts and
+random stress.
+
+Verify peripherals individually where practical, then verify their
+interactions in subsystem tests, and finally run full SoC integration
+tests with all peripherals connected through the real interconnect. Do
+not build a separate full SoC testbench for every peripheral, and do not
+bypass the actual bus fabric in the integration environment.

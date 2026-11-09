@@ -1,0 +1,118 @@
+make: Entering directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/uart'
+rm -rf work transcript vsim.wlf
+vlib work
+vlog -sv -timescale 1ns/1ps +incdir+../../vip/apb_vip +incdir+../../vip/irq_vip +incdir+../../rtl/uncore +incdir+. \
+	../../vip/apb_vip/apb_if.sv \
+	../../vip/apb_vip/apb_pkg.sv \
+	../../vip/irq_vip/irq_if.sv \
+	../../vip/irq_vip/irq_pkg.sv \
+	../../rtl/uncore/uart_apb.sv \
+	tb_uart_unit.sv
+QuestaSim-64 vlog 2023.4_5 Compiler 2025.06 Jun 12 2025
+Start time: 18:37:56 on Nov 09,2026
+vlog -sv -timescale 1ns/1ps "+incdir+../../vip/apb_vip" "+incdir+../../vip/irq_vip" "+incdir+../../rtl/uncore" "+incdir+." ../../vip/apb_vip/apb_if.sv ../../vip/apb_vip/apb_pkg.sv ../../vip/irq_vip/irq_if.sv ../../vip/irq_vip/irq_pkg.sv ../../rtl/uncore/uart_apb.sv tb_uart_unit.sv 
+-- Compiling interface apb_if
+-- Compiling package apb_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) ../../vip/apb_vip/apb_pkg.sv(11): Using implicit +incdir+/cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Compiling interface irq_if
+-- Compiling package irq_pkg
+-- Compiling module uart_apb
+-- Compiling package tb_uart_unit_sv_unit
+-- Importing package apb_pkg
+-- Importing package irq_pkg
+-- Compiling module tb_uart_unit
+
+Top level modules:
+	tb_uart_unit
+End time: 18:37:56 on Nov 09,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0
+vsim -c -voptargs="+acc" +UVM_TESTNAME=uart_unit_test +UVM_VERBOSITY=UVM_LOW -do "run -all; quit -f" work.tb_uart_unit
+Reading pref.tcl
+
+# 2023.4_5
+
+# vsim -c -voptargs="+acc" "+UVM_TESTNAME=uart_unit_test" "+UVM_VERBOSITY=UVM_LOW" -do "run -all; quit -f" work.tb_uart_unit 
+# Start time: 18:37:57 on Nov 09,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=1.
+# //  Questa Sim-64
+# //  Version 2023.4_5 linux_x86_64 Jun 12 2025
+# //
+# //  Copyright 1991-2025 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.irq_if(fast)
+# Loading work.apb_if(fast)
+# Loading mtiUvm.uvm_pkg(fast)
+# Loading work.irq_pkg(fast)
+# Loading work.apb_pkg(fast)
+# Loading work.tb_uart_unit_sv_unit(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.tb_uart_unit(fast)
+# Loading work.apb_if(fast__3)
+# Loading work.irq_if(fast__2)
+# Loading work.uart_apb(fast)
+# Loading /cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/linux_x86_64/uvm_dpi.so
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO @ 0: reporter [RNTST] Running test uart_unit_test...
+# UVM_INFO uart_unit_test.sv(38) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO uart_unit_test.sv(39) @ 0: uvm_test_top [TEST]  STARTING UART IP UNIT TESTBENCH                  
+# UVM_INFO uart_unit_test.sv(40) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO uart_unit_test.sv(45) @ 0: uvm_test_top [TEST] --- Phase 1: Checking LSR Status ---
+# UVM_INFO uart_unit_test.sv(49) @ 90000: uvm_test_top [TEST] --- Phase 2: Scratchpad Register R/W ---
+# UVM_INFO uart_unit_test.sv(56) @ 250000: uvm_test_top [TEST] --- Phase 3: Baud Divisor Latches with DLAB ---
+# UVM_INFO uart_unit_test.sv(69) @ 490000: uvm_test_top [TEST] --- Phase 4: UART Transmitter Interrupt Verification ---
+# UVM_INFO uart_unit_test.sv(81) @ 570000: uvm_test_top [TEST] UART INTR successfully ASSERTED on THRE interrupt enable!
+# UVM_INFO uart_unit_test.sv(90) @ 630000: uvm_test_top [TEST] UART INTR successfully DEASSERTED after IER clear!
+# UVM_INFO uart_unit_test.sv(93) @ 630000: uvm_test_top [TEST] ==================================================
+# UVM_INFO uart_unit_test.sv(94) @ 630000: uvm_test_top [TEST]  UART IP UNIT VERIFICATION PASSED SUCCESSFULLY!   
+# UVM_INFO uart_unit_test.sv(95) @ 630000: uvm_test_top [TEST] ==================================================
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 730000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :   14
+# UVM_WARNING :    0
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [RNTST]     1
+# [TEST]    12
+# [TEST_DONE]     1
+# ** Note: $finish    : /cad/mentor/questa_sim-2023.4_5/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 730 ns  Iteration: 54  Instance: /tb_uart_unit
+# End time: 18:38:00 on Nov 09,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 1
+make: Leaving directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/uart'

@@ -1,0 +1,123 @@
+make: Entering directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/plic'
+rm -rf work transcript vsim.wlf
+vlib work
+vlog -sv -timescale 1ns/1ps +incdir+../../vip/apb_vip +incdir+../../vip/irq_vip +incdir+../../rtl/uncore +incdir+. \
+	../../vip/apb_vip/apb_if.sv \
+	../../vip/apb_vip/apb_pkg.sv \
+	../../vip/irq_vip/irq_if.sv \
+	../../vip/irq_vip/irq_pkg.sv \
+	../../rtl/uncore/plic_apb.sv \
+	tb_plic_unit.sv
+QuestaSim-64 vlog 2023.4_5 Compiler 2025.06 Jun 12 2025
+Start time: 18:37:41 on Nov 09,2026
+vlog -sv -timescale 1ns/1ps "+incdir+../../vip/apb_vip" "+incdir+../../vip/irq_vip" "+incdir+../../rtl/uncore" "+incdir+." ../../vip/apb_vip/apb_if.sv ../../vip/apb_vip/apb_pkg.sv ../../vip/irq_vip/irq_if.sv ../../vip/irq_vip/irq_pkg.sv ../../rtl/uncore/plic_apb.sv tb_plic_unit.sv 
+-- Compiling interface apb_if
+-- Compiling package apb_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) ../../vip/apb_vip/apb_pkg.sv(11): Using implicit +incdir+/cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Compiling interface irq_if
+-- Compiling package irq_pkg
+-- Compiling module plic_apb
+-- Compiling package tb_plic_unit_sv_unit
+-- Importing package apb_pkg
+-- Importing package irq_pkg
+-- Compiling module tb_plic_unit
+
+Top level modules:
+	tb_plic_unit
+End time: 18:37:41 on Nov 09,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0
+vsim -c -voptargs="+acc" +UVM_TESTNAME=plic_unit_test +UVM_VERBOSITY=UVM_LOW -do "run -all; quit -f" work.tb_plic_unit
+Reading pref.tcl
+
+# 2023.4_5
+
+# vsim -c -voptargs="+acc" "+UVM_TESTNAME=plic_unit_test" "+UVM_VERBOSITY=UVM_LOW" -do "run -all; quit -f" work.tb_plic_unit 
+# Start time: 18:37:43 on Nov 09,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=1.
+# //  Questa Sim-64
+# //  Version 2023.4_5 linux_x86_64 Jun 12 2025
+# //
+# //  Copyright 1991-2025 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.irq_if(fast)
+# Loading work.apb_if(fast)
+# Loading mtiUvm.uvm_pkg(fast)
+# Loading work.irq_pkg(fast)
+# Loading work.apb_pkg(fast)
+# Loading work.tb_plic_unit_sv_unit(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.tb_plic_unit(fast)
+# Loading work.apb_if(fast__3)
+# Loading work.irq_if(fast__2)
+# Loading work.plic_apb(fast)
+# Loading /cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/linux_x86_64/uvm_dpi.so
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO @ 0: reporter [RNTST] Running test plic_unit_test...
+# UVM_INFO plic_unit_test.sv(40) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO plic_unit_test.sv(41) @ 0: uvm_test_top [TEST]  STARTING PLIC IP UNIT TESTBENCH (IRQ & PRIORITY) 
+# UVM_INFO plic_unit_test.sv(42) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO plic_unit_test.sv(49) @ 0: uvm_test_top [TEST] --- Phase 1: Checking Reset Values ---
+# UVM_INFO plic_unit_test.sv(59) @ 250000: uvm_test_top [TEST] MExtInt is 0 at reset as expected.
+# UVM_INFO plic_unit_test.sv(65) @ 250000: uvm_test_top [TEST] --- Phase 2: Interrupt Masking Test ---
+# UVM_INFO plic_unit_test.sv(72) @ 290000: uvm_test_top [TEST] MExtInt correctly stayed 0 when source was disabled.
+# UVM_INFO plic_unit_test.sv(81) @ 310000: uvm_test_top [TEST] --- Phase 3: Single Interrupt Enable & Claim Test ---
+# UVM_INFO plic_unit_test.sv(88) @ 390000: uvm_test_top [TEST] MExtInt successfully ASSERTED for GPIO interrupt!
+# UVM_INFO plic_unit_test.sv(100) @ 450000: uvm_test_top [TEST] MExtInt successfully DEASSERTED after peripheral event cleared!
+# UVM_INFO plic_unit_test.sv(106) @ 450000: uvm_test_top [TEST] --- Phase 4: Priority Arbitration Test ---
+# UVM_INFO plic_unit_test.sv(135) @ 710000: uvm_test_top [TEST] --- Phase 5: Threshold Filtering Test ---
+# UVM_INFO plic_unit_test.sv(142) @ 790000: uvm_test_top [TEST] MExtInt correctly MASKED by PLIC threshold = 6!
+# UVM_INFO plic_unit_test.sv(151) @ 850000: uvm_test_top [TEST] MExtInt correctly UNMASKED when threshold lowered below priority!
+# UVM_INFO plic_unit_test.sv(159) @ 890000: uvm_test_top [TEST] ==================================================
+# UVM_INFO plic_unit_test.sv(160) @ 890000: uvm_test_top [TEST]  PLIC IP UNIT VERIFICATION PASSED SUCCESSFULLY!   
+# UVM_INFO plic_unit_test.sv(161) @ 890000: uvm_test_top [TEST] ==================================================
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 990000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :   19
+# UVM_WARNING :    0
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [RNTST]     1
+# [TEST]    17
+# [TEST_DONE]     1
+# ** Note: $finish    : /cad/mentor/questa_sim-2023.4_5/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 990 ns  Iteration: 54  Instance: /tb_plic_unit
+# End time: 18:37:46 on Nov 09,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 1
+make: Leaving directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/plic'

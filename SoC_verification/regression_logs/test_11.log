@@ -1,0 +1,232 @@
+make: Entering directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/soc_coreless'
+rm -rf work transcript vsim.wlf
+vlib work
+vlog -sv -timescale 1ns/1ps +incdir+../vip/ahb_lite_vip +incdir+../vip/apb_vip +incdir+../vip/gpio_vip +incdir+../vip/irq_vip +incdir+../rtl/components +incdir+../rtl/main +incdir+../rtl/main/soc +incdir+../rtl/uncore +incdir+../rtl/debugger +incdir+dut +incdir+env +incdir+tests +incdir+tb \
+	../vip/ahb_lite_vip/ahb_lite_if.sv \
+	../vip/ahb_lite_vip/ahb_lite_pkg.sv \
+	../vip/apb_vip/apb_if.sv \
+	../vip/apb_vip/apb_pkg.sv \
+	../vip/gpio_vip/gpio_if.sv \
+	../vip/gpio_vip/gpio_pkg.sv \
+	../vip/irq_vip/irq_if.sv \
+	../vip/irq_vip/irq_pkg.sv \
+	../rtl/components/*.v \
+	../rtl/main/*.v \
+	../rtl/main/soc/*.v \
+	../rtl/uncore/*.sv \
+	../rtl/debugger/*.v \
+	../rtl/debugger/*.sv \
+	tb/ahb_protocol_checker.sv \
+	tb/spi_flash_model.sv \
+	dut/riscv_soc_ahb_coreless.sv \
+	env/soc_coreless_env_pkg.sv \
+	tests/soc_test_pkg.sv \
+	tb/tb_soc_coreless_top.sv
+QuestaSim-64 vlog 2023.4_5 Compiler 2025.06 Jun 12 2025
+Start time: 18:38:20 on Nov 09,2026
+vlog -sv -timescale 1ns/1ps "+incdir+../vip/ahb_lite_vip" "+incdir+../vip/apb_vip" "+incdir+../vip/gpio_vip" "+incdir+../vip/irq_vip" "+incdir+../rtl/components" "+incdir+../rtl/main" "+incdir+../rtl/main/soc" "+incdir+../rtl/uncore" "+incdir+../rtl/debugger" "+incdir+dut" "+incdir+env" "+incdir+tests" "+incdir+tb" ../vip/ahb_lite_vip/ahb_lite_if.sv ../vip/ahb_lite_vip/ahb_lite_pkg.sv ../vip/apb_vip/apb_if.sv ../vip/apb_vip/apb_pkg.sv ../vip/gpio_vip/gpio_if.sv ../vip/gpio_vip/gpio_pkg.sv ../vip/irq_vip/irq_if.sv ../vip/irq_vip/irq_pkg.sv ../rtl/components/adder.v ../rtl/components/ahbinterface.v ../rtl/components/alu_decoder.v ../rtl/components/alu.v ../rtl/components/branching_unit.v ../rtl/components/controller.v ../rtl/components/csr_file.v ../rtl/components/datapath.v ../rtl/components/ebu.v ../rtl/components/hazard.v ../rtl/components/imm_extend.v ../rtl/components/main_decoder.v ../rtl/components/mux2.v ../rtl/components/mux3.v ../rtl/components/mux4.v ../rtl/components/mux5.v ../rtl/components/pl_reg_de.v ../rtl/components/pl_reg_em.v ../rtl/components/pl_reg_fd.v ../rtl/components/pl_reg_mw.v ../rtl/components/priv_decoder.v ../rtl/components/reg_file.v ../rtl/components/reset_ff.v ../rtl/components/subword_unit.v ../rtl/components/trap_unit.v ../rtl/main/ahb_ram.v ../rtl/main/riscv_cpu.v ../rtl/main/soc/multiplier_ahb.v ../rtl/main/soc/riscv_soc_ahb.v ../rtl/uncore/ahbapbbridge.sv ../rtl/uncore/clint_apb.sv ../rtl/uncore/gpio_apb.sv ../rtl/uncore/plic_apb.sv ../rtl/uncore/ram_ahb.sv ../rtl/uncore/rom_ahb.sv ../rtl/uncore/spi_apb.sv ../rtl/uncore/spi_controller.sv ../rtl/uncore/spi_fifo.sv ../rtl/uncore/sysctrl_apb.sv ../rtl/uncore/uart_apb.sv ../rtl/uncore/uartPC16550D.sv ../rtl/uncore/uncore.sv ../rtl/debugger/core_debug_ahb.v ../rtl/debugger/socdebug_adp_control.v ../rtl/debugger/socdebug_ahb.v ../rtl/debugger/socdebug_ft1248_control.v ../rtl/debugger/socdebug_uart.v ../rtl/debugger/ahb_mux.sv ../rtl/debugger/core_step_controller.sv ../rtl/debugger/riscv_debugger_top.sv tb/ahb_protocol_checker.sv tb/spi_flash_model.sv dut/riscv_soc_ahb_coreless.sv env/soc_coreless_env_pkg.sv tests/soc_test_pkg.sv tb/tb_soc_coreless_top.sv 
+-- Compiling interface ahb_lite_if
+-- Compiling package ahb_lite_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) ../vip/ahb_lite_vip/ahb_lite_pkg.sv(11): Using implicit +incdir+/cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Compiling interface apb_if
+-- Compiling package apb_pkg
+-- Compiling interface gpio_if
+-- Compiling package gpio_pkg
+-- Compiling interface irq_if
+-- Compiling package irq_pkg
+-- Compiling module adder
+-- Compiling module ahbinterface
+-- Compiling module alu_decoder
+-- Compiling module alu
+-- Compiling module branching_unit
+-- Compiling module controller
+-- Compiling module csr_file
+-- Compiling module datapath
+-- Compiling module ebu
+-- Compiling module hazard
+-- Compiling module imm_extend
+-- Compiling module main_decoder
+-- Compiling module mux2
+-- Compiling module mux3
+-- Compiling module mux4
+-- Compiling module mux5
+-- Compiling module pl_reg_de
+-- Compiling module pl_reg_em
+-- Compiling module pl_reg_fd
+-- Compiling module pl_reg_mw
+-- Compiling module priv_decoder
+-- Compiling module reg_file
+-- Compiling module reset_ff
+-- Compiling module subword_unit
+-- Compiling module trap_unit
+-- Compiling module ahb_ram
+-- Compiling module riscv_cpu
+-- Compiling module multiplier_ahb
+-- Compiling module riscv_soc_ahb
+-- Compiling module ahbapbbridge
+-- Compiling module clint_apb
+-- Compiling module gpio_apb
+-- Compiling module plic_apb
+-- Compiling module ram_ahb
+-- Compiling module rom_ahb
+-- Compiling module spi_apb
+-- Compiling module spi_controller
+-- Compiling module spi_fifo
+-- Compiling module sysctrl_apb
+-- Compiling module uart_apb
+-- Compiling module uartPC16550D
+-- Compiling module uncore
+-- Compiling module core_debug_ahb
+-- Compiling module socdebug_adp_control
+-- Compiling module socdebug_ahb
+-- Compiling module socdebug_ft1248_control
+-- Compiling module socdebug_uart
+-- Compiling module ahb_mux
+-- Compiling module core_step_controller
+-- Compiling module riscv_debugger_top
+-- Compiling module ahb_protocol_checker
+-- Compiling module spi_flash_model
+-- Compiling module riscv_soc_ahb_coreless
+-- Compiling package soc_coreless_env_pkg
+-- Importing package ahb_lite_pkg
+-- Importing package apb_pkg
+-- Importing package gpio_pkg
+-- Importing package irq_pkg
+-- Compiling package soc_test_pkg
+-- Importing package soc_coreless_env_pkg
+-- Compiling package tb_soc_coreless_top_sv_unit
+-- Importing package soc_test_pkg
+-- Compiling module tb_soc_coreless_top
+
+Top level modules:
+	mux4
+	ahb_ram
+	riscv_soc_ahb
+	tb_soc_coreless_top
+End time: 18:38:20 on Nov 09,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0
+vsim -c -voptargs="+acc" +UVM_TESTNAME=soc_gpio_vip_test +UVM_VERBOSITY=UVM_LOW -do "run -all; quit -f" work.tb_soc_coreless_top
+Reading pref.tcl
+
+# 2023.4_5
+
+# vsim -c -voptargs="+acc" "+UVM_TESTNAME=soc_gpio_vip_test" "+UVM_VERBOSITY=UVM_LOW" -do "run -all; quit -f" work.tb_soc_coreless_top 
+# Start time: 18:38:21 on Nov 09,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
+# ** Note: (vopt-143) Recognized 1 FSM in module "spi_apb(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "spi_controller(fast)".
+# ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=1.
+# //  Questa Sim-64
+# //  Version 2023.4_5 linux_x86_64 Jun 12 2025
+# //
+# //  Copyright 1991-2025 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.ahb_lite_if(fast)
+# Loading work.gpio_if(fast)
+# Loading work.irq_if(fast)
+# Loading work.apb_if(fast)
+# Loading mtiUvm.uvm_pkg(fast)
+# Loading work.irq_pkg(fast)
+# Loading work.gpio_pkg(fast)
+# Loading work.apb_pkg(fast)
+# Loading work.ahb_lite_pkg(fast)
+# Loading work.soc_coreless_env_pkg(fast)
+# Loading work.soc_test_pkg(fast)
+# Loading work.tb_soc_coreless_top_sv_unit(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.tb_soc_coreless_top(fast)
+# Loading work.ahb_lite_if(fast__3)
+# Loading work.gpio_if(fast__2)
+# Loading work.irq_if(fast__2)
+# Loading work.riscv_soc_ahb_coreless(fast)
+# Loading work.uncore(fast)
+# Loading work.ram_ahb(fast)
+# Loading work.ram_ahb(fast__1)
+# Loading work.rom_ahb(fast)
+# Loading work.ahbapbbridge(fast)
+# Loading work.clint_apb(fast)
+# Loading work.plic_apb(fast)
+# Loading work.uart_apb(fast)
+# Loading work.spi_apb(fast)
+# Loading work.spi_controller(fast)
+# Loading work.spi_fifo(fast)
+# Loading work.gpio_apb(fast)
+# Loading work.sysctrl_apb(fast)
+# Loading work.multiplier_ahb(fast)
+# Loading work.core_debug_ahb(fast)
+# Loading work.spi_flash_model(fast)
+# Loading work.ahb_protocol_checker(fast)
+# Loading /cad/mentor/questa_sim-2023.4_5/questasim/uvm-1.1d/linux_x86_64/uvm_dpi.so
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO @ 0: reporter [RNTST] Running test soc_gpio_vip_test...
+# UVM_INFO tests/soc_gpio_vip_test.sv(34) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO tests/soc_gpio_vip_test.sv(35) @ 0: uvm_test_top [TEST]  STARTING WHOLE SOC GPIO VERIFICATION WITH VIPs    
+# UVM_INFO tests/soc_gpio_vip_test.sv(36) @ 0: uvm_test_top [TEST] ==================================================
+# UVM_INFO tests/soc_gpio_vip_test.sv(42) @ 0: uvm_test_top [TEST] --- Phase 1: AHB Configures GPIO Outputs, Verified at Pins ---
+# UVM_INFO tests/soc_gpio_vip_test.sv(50) @ 270000: uvm_test_top [TEST] GPIO Output pins successfully matched 0x00001234 via AHB bus write!
+# UVM_INFO tests/soc_gpio_vip_test.sv(54) @ 270000: uvm_test_top [TEST] --- Phase 2: GPIO VIP Drives Pins, Verified via AHB Read ---
+# UVM_INFO tests/soc_gpio_vip_test.sv(62) @ 510000: uvm_test_top [TEST] --- Phase 3: GPIO Edge Interrupt & Clear via AHB Bus ---
+# UVM_INFO tests/soc_gpio_vip_test.sv(75) @ 990000: uvm_test_top [TEST] GPIOIntr successfully ASSERTED at SoC boundary via pin 3 transition!
+# UVM_INFO tests/soc_gpio_vip_test.sv(88) @ 1190000: uvm_test_top [TEST] GPIOIntr successfully DEASSERTED after AHB W1C clear!
+# UVM_INFO tests/soc_gpio_vip_test.sv(91) @ 1190000: uvm_test_top [TEST] ==================================================
+# UVM_INFO tests/soc_gpio_vip_test.sv(92) @ 1190000: uvm_test_top [TEST]  WHOLE SOC GPIO VERIFICATION PASSED SUCCESSFULLY! 
+# UVM_INFO tests/soc_gpio_vip_test.sv(93) @ 1190000: uvm_test_top [TEST] ==================================================
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 1290000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# UVM_INFO env/soc_coverage.sv(60) @ 1290000: uvm_test_top.env.cov [SOC_COV] Overall SoC Bus Functional Coverage: 37.88%
+# UVM_INFO env/soc_scoreboard.sv(68) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT] ==================================================
+# UVM_INFO env/soc_scoreboard.sv(69) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT]  Total AHB Bus Transfers Monitored: 9
+# UVM_INFO env/soc_scoreboard.sv(70) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT]  Total GPIO Pin Events Monitored:   6
+# UVM_INFO env/soc_scoreboard.sv(71) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT]  Total Interrupt Events Monitored:  2
+# UVM_INFO env/soc_scoreboard.sv(72) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT]  Total Scoreboard Errors:           0
+# UVM_INFO env/soc_scoreboard.sv(73) @ 1290000: uvm_test_top.env.scb [SOC_SCB_REPORT] ==================================================
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :   21
+# UVM_WARNING :    0
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [RNTST]     1
+# [SOC_COV]     1
+# [SOC_SCB_REPORT]     6
+# [TEST]    12
+# [TEST_DONE]     1
+# ** Note: $finish    : /cad/mentor/questa_sim-2023.4_5/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 1290 ns  Iteration: 54  Instance: /tb_soc_coreless_top
+# End time: 18:38:24 on Nov 09,2026, Elapsed time: 0:00:03
+# Errors: 0, Warnings: 1
+make: Leaving directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/soc_coreless'
