@@ -31,6 +31,9 @@ module spi_flash_model (
         miso = 1'b0;
         state = ST_CMD;
         bit_cnt = 0;
+        addr = 24'd0;
+        shift_in = 8'd0;
+        shift_out = 8'd0;
         // Pre-populate first words with test pattern
         memory[0] = 8'h13;
         memory[1] = 8'h05;
@@ -41,6 +44,7 @@ module spi_flash_model (
     always @(negedge cs_n) begin
         state   <= ST_CMD;
         bit_cnt <= 0;
+        addr    <= 24'd0;
         miso    <= 1'b0;
     end
 
@@ -49,18 +53,25 @@ module spi_flash_model (
             shift_in <= {shift_in[6:0], mosi};
             bit_cnt  <= bit_cnt + 1;
 
-            if (state == ST_CMD && bit_cnt == 7) begin
-                cmd <= {shift_in[6:0], mosi};
-                state <= ST_ADDR;
-                bit_cnt <= 0;
-            end else if (state == ST_ADDR && bit_cnt == 23) begin
-                addr <= {addr[15:0], shift_in[6:0], mosi};
-                state <= ST_DATA;
-                bit_cnt <= 0;
-                shift_out <= memory[{addr[15:0], shift_in[6:0], mosi} % 4096];
-            end else if (state == ST_DATA && bit_cnt % 8 == 7) begin
-                addr <= (addr + 1) % 4096;
-                shift_out <= memory[(addr + 1) % 4096];
+            if (state == ST_CMD) begin
+                if (bit_cnt == 7) begin
+                    cmd     <= {shift_in[6:0], mosi};
+                    state   <= ST_ADDR;
+                    bit_cnt <= 0;
+                    addr    <= 24'd0;
+                end
+            end else if (state == ST_ADDR) begin
+                addr <= {addr[22:0], mosi};
+                if (bit_cnt == 23) begin
+                    state     <= ST_DATA;
+                    bit_cnt   <= 0;
+                    shift_out <= memory[{addr[22:0], mosi} % 4096];
+                end
+            end else if (state == ST_DATA) begin
+                if (bit_cnt % 8 == 7) begin
+                    addr      <= (addr + 1) % 4096;
+                    shift_out <= memory[(addr + 1) % 4096];
+                end
             end
         end
     end
