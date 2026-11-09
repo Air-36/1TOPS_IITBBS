@@ -2,6 +2,8 @@
 # 1TOPS RISC-V SoC .gitignore
 # =============================================================================
 
+./*.txt 
+
 # 1. Debugger Folder Documents, Presentations & Diagram Renders
 **/debugger/*.pdf
 **/debugger/*.png
