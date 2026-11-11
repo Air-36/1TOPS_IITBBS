@@ -33,6 +33,7 @@ RTL_SRCS      := $(RTL_DIR)/components/*.v \
                  $(RTL_DIR)/debugger/*.sv \
                  $(RTL_DIR)/main/pipelined/riscv_pipelined.v \
                  $(RTL_DIR)/main/riscv_cpu.v \
+                 $(RTL_DIR)/main/soc/multiplier_ahb.v \
                  $(RTL_DIR)/main/soc/riscv_soc_ahb.v
 
 VIP_SRCS      := $(VIP_DIR)/gpio_vip/gpio_if.sv \
@@ -42,7 +43,8 @@ VIP_SRCS      := $(VIP_DIR)/gpio_vip/gpio_if.sv \
                  $(VIP_DIR)/uart_vip/uart_if.sv \
                  $(VIP_DIR)/uart_vip/uart_pkg.sv
 
-TB_SRCS       := $(TB_DIR)/spi_flash_model.sv \
+TB_SRCS       := $(TB_DIR)/soc_ctrl_if.sv \
+                 $(TB_DIR)/spi_flash_model.sv \
                  $(TB_DIR)/cpu_exec_monitor.sv \
                  $(TB_DIR)/ahb_protocol_checker.sv \
                  $(TB_DIR)/apb_protocol_checker.sv \

@@ -1,5 +1,8 @@
 #!/bin/bash
 # Block-level debugger regression on Icarus Verilog
+if ! command -v iverilog >/dev/null 2>&1; then
+  export PATH=/tools/iverilog/bin:$PATH
+fi
 R=${1:-$(cd $(dirname $0)/../../../debugger && pwd)}
 cd $(dirname $0)
 iverilog -g2012 -o sim_block -s tb_dbg_block -I$R \

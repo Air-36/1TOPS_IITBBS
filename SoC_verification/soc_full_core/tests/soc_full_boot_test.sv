@@ -17,7 +17,7 @@ class soc_full_boot_test extends soc_full_base_test;
         phase.raise_objection(this);
         `uvm_info(get_name(), "Starting Full SoC Boot ROM Bring-Up Test...", UVM_LOW)
 
-        if ($root.tb_soc_full_top.boot_mode_pin) begin
+        if (ctrl_vif.boot_mode_pin) begin
             env.cov.sample_boot(2'd1); // SPI Flash Boot
             `uvm_info(get_name(), "Testing Boot Mode 1: SPI Flash Bootloader -> IMEM Jump", UVM_LOW)
         end else begin

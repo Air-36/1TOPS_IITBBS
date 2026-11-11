@@ -21,6 +21,7 @@ import gpio_pkg::*;
 import irq_pkg::*;
 import uart_pkg::*;
 import soc_full_env_pkg::*;
+import soc_full_tests_pkg::*;
 
 module tb_soc_full_top #(
     parameter bit        USE_BOOTROM = 0,
@@ -62,17 +63,28 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // VIP Interfaces
     // -------------------------------------------------------------------------
-    gpio_if gpio_vif (.clk(clk), .rst_n(~reset));
-    irq_if  irq_vif  (.clk(clk), .rst_n(~reset));
-    uart_if uart_vif (.clk(clk), .rst_n(~reset));
+    gpio_if     gpio_vif (.clk(clk), .rst_n(~reset));
+    irq_if      irq_vif  (.clk(clk), .rst_n(~reset));
+    uart_if     uart_vif (.clk(clk), .rst_n(~reset));
+    soc_ctrl_if ctrl_vif (.clk(clk), .reset(reset));
+
+    wire test_passed, test_failed, plic_armed;
+    wire [31:0] error_code;
+
+    assign ctrl_vif.test_passed   = test_passed;
+    assign ctrl_vif.test_failed   = test_failed;
+    assign ctrl_vif.plic_armed    = plic_armed;
+    assign ctrl_vif.error_code    = error_code;
+    assign ctrl_vif.boot_mode_pin = boot_mode_pin;
 
     // -------------------------------------------------------------------------
     // SoC Peripheral Wires
     // -------------------------------------------------------------------------
     wire [31:0] GPIOOUT, GPIOEN;
     wire [31:0] GPIOIN = gpio_vif.gpio_in;
-    assign gpio_vif.gpio_out = GPIOOUT;
-    assign gpio_vif.gpio_oe  = GPIOEN;
+    assign gpio_vif.gpio_out  = GPIOOUT;
+    assign gpio_vif.gpio_en   = GPIOEN;
+    assign gpio_vif.gpio_intr = u_dut.uncore.GPIOIntr;
 
     wire UARTSout;
     wire UARTSin = uart_vif.sin;
@@ -131,19 +143,14 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // Connect IRQ VIP Interface to Uncore Interrupt Lines
     // -------------------------------------------------------------------------
-    // Bit 0: MTimerInt (CLINT)
-    // Bit 1: MSwInt (CLINT)
-    // Bit 2: MExtInt (PLIC Core line)
-    // Bit 3: GPIOIntr (GPIO peripheral line)
-    // Bit 4: UARTIntr (UART peripheral line)
-    // Bit 5: SPIIntr (SPI peripheral line)
-    assign irq_vif.irq_lines[0] = u_dut.MTimerInt;
-    assign irq_vif.irq_lines[1] = u_dut.MSwInt;
-    assign irq_vif.irq_lines[2] = u_dut.core_MExtInt;
-    assign irq_vif.irq_lines[3] = u_dut.uncore.GPIOIntr;
-    assign irq_vif.irq_lines[4] = u_dut.uncore.UARTIntr;
-    assign irq_vif.irq_lines[5] = u_dut.uncore.SPIIntr;
-    assign irq_vif.irq_lines[15:6] = '0;
+    assign irq_vif.mtimer_int = u_dut.MTimerInt;
+    assign irq_vif.msw_int    = u_dut.MSwInt;
+    assign irq_vif.mext_int   = u_dut.core_MExtInt;
+    assign irq_vif.sext_int   = 1'b0;
+    assign irq_vif.uart_intr  = u_dut.uncore.UARTIntr;
+    assign irq_vif.gpio_intr  = u_dut.uncore.GPIOIntr;
+    assign irq_vif.spi_intr   = u_dut.uncore.SPIIntr;
+    assign irq_vif.sdc_intr   = 1'b0;
 
     // -------------------------------------------------------------------------
     // SPI Flash Behavioral Model
@@ -158,9 +165,6 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // CPU Execution & Verification Mailbox Monitor
     // -------------------------------------------------------------------------
-    wire test_passed, test_failed, plic_armed;
-    wire [31:0] error_code;
-
     cpu_exec_monitor u_cpu_mon (
         .clk(clk),
         .reset(reset),
@@ -207,12 +211,11 @@ module tb_soc_full_top #(
     soc_full_env env_h;
 
     always @(posedge clk) begin
-        if (!reset && u_dut.uncore.gen_uart.uart.memwrite) begin
-            if (u_dut.uncore.gen_uart.uart.PADDR == 3'b000 && !u_dut.uncore.gen_uart.uart.lcr[7]) begin
-                // Character sent
+        if (!reset && u_dut.uncore.PSEL[2] && u_dut.uncore.PENABLE && u_dut.uncore.PWRITE && (u_dut.uncore.PADDR[2:0] == 3'b000)) begin
+            if (!u_dut.uncore.gen_uart.uart.gen_fast_model.lcr[7]) begin
                 root_h = uvm_root::get();
                 if ($cast(env_h, root_h.find("uvm_test_top.env"))) begin
-                    env_h.uart_agt.monitor.record_char(u_dut.uncore.gen_uart.uart.din);
+                    env_h.uart_agt.monitor.record_char(u_dut.uncore.PWDATA[7:0]);
                 end
             end
         end
@@ -236,12 +239,13 @@ module tb_soc_full_top #(
     apb_protocol_checker u_apb_chk (
         .PCLK(clk),
         .PRESETn(~reset),
-        .PSEL(u_dut.uncore.PSEL),
+        .PSEL(|u_dut.uncore.PSEL),
         .PENABLE(u_dut.uncore.PENABLE),
-        .PWRITE(u_dut.uncore.PWRITE),
         .PADDR(u_dut.uncore.PADDR),
-        .PREADY(u_dut.uncore.PREADY),
-        .PSLVERR(1'b0)
+        .PWRITE(u_dut.uncore.PWRITE),
+        .PWDATA(u_dut.uncore.PWDATA),
+        .PREADY(&u_dut.uncore.PREADY_PERIPHS),
+        .PSEL_PERIPHERALS(u_dut.uncore.PSEL[3:0])
     );
 
     // -------------------------------------------------------------------------
@@ -249,9 +253,16 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     initial begin
         // Set virtual interfaces
+        uvm_config_db#(virtual gpio_if)::set(null, "*gpio_agt*", "vif", gpio_vif);
         uvm_config_db#(virtual gpio_if)::set(null, "*", "gpio_vif", gpio_vif);
+
+        uvm_config_db#(virtual irq_if)::set(null, "*irq_agt*", "vif", irq_vif);
         uvm_config_db#(virtual irq_if)::set(null, "*", "irq_vif", irq_vif);
+
+        uvm_config_db#(virtual uart_if)::set(null, "*uart_agt*", "vif", uart_vif);
         uvm_config_db#(virtual uart_if)::set(null, "*", "uart_vif", uart_vif);
+
+        uvm_config_db#(virtual soc_ctrl_if)::set(null, "*", "ctrl_vif", ctrl_vif);
 
         // Run selected UVM test
         run_test();

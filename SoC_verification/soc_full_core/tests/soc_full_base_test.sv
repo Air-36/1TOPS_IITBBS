@@ -9,7 +9,8 @@
 class soc_full_base_test extends uvm_test;
     `uvm_component_utils(soc_full_base_test)
 
-    soc_full_env env;
+    soc_full_env       env;
+    virtual soc_ctrl_if ctrl_vif;
 
     function new(string name = "soc_full_base_test", uvm_component parent = null);
         super.new(name, parent);
@@ -18,24 +19,27 @@ class soc_full_base_test extends uvm_test;
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         env = soc_full_env::type_id::create("env", this);
+        if (!uvm_config_db#(virtual soc_ctrl_if)::get(this, "", "ctrl_vif", ctrl_vif)) begin
+            `uvm_fatal(get_name(), "ctrl_vif not found in uvm_config_db")
+        end
     endfunction
 
     // Helper task to wait for CPU PASS / FAIL or timeout
     virtual task wait_for_completion(int max_cycles = 150000);
         int cycle_count = 0;
         forever begin
-            @(posedge $root.tb_soc_full_top.clk);
+            @(posedge ctrl_vif.clk);
             cycle_count++;
 
-            if ($root.tb_soc_full_top.test_passed) begin
+            if (ctrl_vif.test_passed) begin
                 `uvm_info(get_name(), "Test Execution PASSED! Mailbox signature confirmed.", UVM_LOW)
-                repeat (20) @(posedge $root.tb_soc_full_top.clk);
+                repeat (20) @(posedge ctrl_vif.clk);
                 return;
             end
 
-            if ($root.tb_soc_full_top.test_failed) begin
+            if (ctrl_vif.test_failed) begin
                 `uvm_error(get_name(), $sformatf("Test Execution FAILED! Error Code: 0x%08h", 
-                           $root.tb_soc_full_top.error_code))
+                           ctrl_vif.error_code))
                 return;
             end
 

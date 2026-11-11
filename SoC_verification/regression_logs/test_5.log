@@ -7,7 +7,7 @@ vlog -sv -timescale 1ns/1ps +incdir+../../vip/ahb_lite_vip +incdir+../../rtl/mai
 	../../rtl/main/soc/multiplier_ahb.v \
 	tb_multiplier_unit.sv
 QuestaSim-64 vlog 2023.4_5 Compiler 2025.06 Jun 12 2025
-Start time: 18:37:51 on Nov 09,2026
+Start time: 21:20:10 on Nov 09,2026
 vlog -sv -timescale 1ns/1ps "+incdir+../../vip/ahb_lite_vip" "+incdir+../../rtl/main/soc" "+incdir+." ../../vip/ahb_lite_vip/ahb_lite_if.sv ../../vip/ahb_lite_vip/ahb_lite_pkg.sv ../../rtl/main/soc/multiplier_ahb.v tb_multiplier_unit.sv 
 -- Compiling interface ahb_lite_if
 -- Compiling package ahb_lite_pkg
@@ -20,7 +20,7 @@ vlog -sv -timescale 1ns/1ps "+incdir+../../vip/ahb_lite_vip" "+incdir+../../rtl/
 
 Top level modules:
 	tb_multiplier_unit
-End time: 18:37:51 on Nov 09,2026, Elapsed time: 0:00:00
+End time: 21:20:10 on Nov 09,2026, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
 vsim -c -voptargs="+acc" +UVM_TESTNAME=multiplier_unit_test +UVM_VERBOSITY=UVM_LOW -do "run -all; quit -f" work.tb_multiplier_unit
 Reading pref.tcl
@@ -28,7 +28,7 @@ Reading pref.tcl
 # 2023.4_5
 
 # vsim -c -voptargs="+acc" "+UVM_TESTNAME=multiplier_unit_test" "+UVM_VERBOSITY=UVM_LOW" -do "run -all; quit -f" work.tb_multiplier_unit 
-# Start time: 18:37:52 on Nov 09,2026
+# Start time: 21:20:11 on Nov 09,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
 # ** Note: (vsim-12126) Error and warning message counts have been restored: Errors=0, Warnings=1.
@@ -102,6 +102,6 @@ Reading pref.tcl
 # [TEST_DONE]     1
 # ** Note: $finish    : /cad/mentor/questa_sim-2023.4_5/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
 #    Time: 4650 ns  Iteration: 54  Instance: /tb_multiplier_unit
-# End time: 18:37:55 on Nov 09,2026, Elapsed time: 0:00:03
+# End time: 21:20:15 on Nov 09,2026, Elapsed time: 0:00:04
 # Errors: 0, Warnings: 1
 make: Leaving directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/multiplier'

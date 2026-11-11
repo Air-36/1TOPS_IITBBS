@@ -1,0 +1,528 @@
+G0 reset|G0.1|GPO8 / halt / reset / step outputs are 0 during reset|PASS||
+G0 reset|G0.2|debugger HTRANS is IDLE during reset|PASS||
+G0 reset|G0.3|UART TX idles high during reset|PASS||
+G0 reset|G0.4|banner ' 0x50c1ab04\n\r]' after reset|PASS||banner got ' 0x50c1ab04\n\r]'
+G0 reset|G0.5|default dividers (UART = CLK/BAUD, FT = FT_CLKDIV)  [B\n]|PASS||
+G0 reset|G0.6|uart_clkdiv_o / ft_clkdiv_o ports show the defaults|PASS||16 2
+G0 reset|G0.7|reset in the middle of a reply -> clean banner again|PASS||banner got ' 0x50c1ab04\n\r]'
+G0 reset|G0.8|address register cleared by reset  [A\n]|PASS||
+G1 parser|G1.1|lowercase command  [a 80000010\n]|PASS||
+G1 parser|G1.2|leading spaces  [   A 80000020\n]|PASS||
+G1 parser|G1.3|tabs as separators  [\x09A\x0980000030\n]|PASS||
+G1 parser|G1.4|no space between command and value  [A80000040\n]|PASS||
+G1 parser|G1.5|0x prefix  [A 0x80000050\n]|PASS||
+G1 parser|G1.6|0X prefix  [A 0X80000060\n]|PASS||
+G1 parser|G1.7|9 digits keep the last 8  [A 180000070\n]|PASS||
+G1 parser|G1.8|non-hex characters ignored  [A 8000g0080\n]|PASS||
+G1 parser|G1.9|second value replaces the first  [A 11 80000090\n]|PASS||
+G1 parser|G1.10|CR terminates a command  [A 800000a0\r]|PASS||
+G1 parser|G1.11|CRLF line ending (terminal default) gives no extra output  [A 800000b0\r\n]|PASS||
+G1 parser|G1.12|empty line gives just a new prompt  [\n]|PASS||
+G1 parser|G1.13|line with only spaces gives just a new prompt  [   \n]|PASS||
+G1 parser|G1.14|unknown command -> '?'  [Z\n]|PASS||
+G1 parser|G1.15|unknown command with a value -> '?'  [Z 1234\n]|PASS||
+G1 parser|G1.16|unknown lowercase command -> '?'  [q\n]|PASS||
+G1 parser|G1.17|ESC as a command character -> '?'  [\x1b 12\n]|PASS||
+G1 parser|G1.18|very long line (40 spaces)  [A                                        800000c0\n]|PASS||
+G1 parser|G1.19|letters that are hex digits are values (A AAAAAAAAA)  [AAAAAAAAAA\n]|PASS||
+G1 parser|G1.20|address query after G1.19  [A\n]|PASS||
+G2 address|G2.1|1 digit: echo 2 digits  [A 8\n]|PASS||
+G2 address|G2.2|2 digits  [A 12\n]|PASS||
+G2 address|G2.3|3 digits: echo 4  [A 123\n]|PASS||
+G2 address|G2.4|4 digits  [A 1234\n]|PASS||
+G2 address|G2.5|5 digits: echo 8  [A 12345\n]|PASS||
+G2 address|G2.6|8 digits  [A 80000100\n]|PASS||
+G2 address|G2.7|query shows the full address  [A\n]|PASS||
+G2 address|G2.8|all-ones address  [A ffffffff\n]|PASS||
+G2 address|G2.9|zero address  [A 0\n]|PASS||
+G3 read|G3.1|set address  [A 80000200\n]|PASS||
+G3 read|G3.2|plain R = one word, address += 4  [R\n]|PASS||
+G3 read|G3.3|address advanced by 4  [A\n]|PASS||
+G3 read|G3.4|  [A 80000200\n]|PASS||
+G3 read|G3.5|R 4 = 4 byte reads, one line each  [R 4\n]|PASS||
+G3 read|G3.6|R 0004 = 4 halfword reads  [R 0004\n]|PASS||
+G3 read|G3.7|  [A 80000200\n]|PASS||
+G3 read|G3.8|R 00000004 = 4 word reads  [R 00000004\n]|PASS||
+G3 read|G3.9|  [A 80000201\n]|PASS||
+G3 read|G3.10|byte reads at offsets 1,2,3 (lane rotation)  [R 3\n]|PASS||
+G3 read|G3.11|  [A 80000202\n]|PASS||
+G3 read|G3.12|halfword at offset 2  [R 0001\n]|PASS||
+G3 read|G3.13|  [A 80000201\n]|PASS||
+G3 read|G3.14|halfword at odd address (aligned down on the bus)  [R 0002\n]|PASS||
+G3 read|G3.15|  [A 80000203\n]|PASS||
+G3 read|G3.16|word at unaligned address (aligned down on the bus)  [R\n]|PASS||
+G3 read|G3.17|  [A 80000200\n]|PASS||
+G3 read|G3.18|3-digit count = halfword reads  [R 004\n]|PASS||
+G3 read|G3.19|R 0 (one read)  [R 0\n]|PASS||
+G3 read|G3.20|16-word burst  [R 00000010\n]|PASS||
+G3 read|G3.21|  [A dffffffc\n]|PASS||
+G3 read|G3.22|reads crossing into an ERROR region: R! on the failing ones  [R 00000003\n]|PASS||
+G3 read|G3.23|  [A e0000000\n]|PASS||
+G3 read|G3.24|single read with ERROR -> 'R!0x...'  [R\n]|PASS||
+G3 read|G3.25|next read after an error is clean again? (still error region)  [R 01\n]|PASS||
+G3 read|G3.26|  [A 80000200\n]|PASS||
+G3 read|G3.27|error flag cleared for the next command  [R\n]|PASS||
+G4 write|G4.1|  [A 80000300\n]|PASS||
+G4 write|G4.2|word write, address += 4  [W 11223344\n]|PASS||
+G4 write|G4.3|byte write lane 0  [W aa\n]|PASS||
+G4 write|G4.4|byte write lane 1  [W bb\n]|PASS||
+G4 write|G4.5|halfword write lanes 2-3  [W cccc\n]|PASS||
+G4 write|G4.6|memory holds exactly the written lanes|PASS||11223344 ccccbbaa
+G4 write|G4.7|  [A 80000304\n]|PASS||
+G4 write|G4.8|read back merged word  [R\n]|PASS||
+G4 write|G4.9|  [A e0000010\n]|PASS||
+G4 write|G4.10|write with ERROR -> 'W!0x...'  [W 12345678\n]|PASS||
+G4 write|G4.11|  [A 80000308\n]|PASS||
+G4 write|G4.12|W with no value writes 0  [W\n]|PASS||
+G4 write|G4.13|  [A fffffffc\n]|PASS||
+G4 write|G4.14|write at top of the address space  [W 5555aaaa\n]|PASS||
+G4 write|G4.15|address wraps to 0x00000000  [W 6666bbbb\n]|PASS||
+G4 write|G4.16|  [A 80000311\n]|PASS||
+G4 write|G4.17|halfword write at odd address (aligned down on the bus)  [W 1234\n]|PASS||
+G4 write|G4.18|'x' inside a value restarts it (byte write of 09)  [W 0x0000x9\n]|PASS||
+G5 control/status|G5.1|status query = {GPI8, GPO8, 0000}  [C\n]|PASS||
+G5 control/status|G5.2|set bit0 (core reset)  [C 00000201\n]|PASS||
+G5 control/status|G5.3|core_reset_o = 1|PASS||
+G5 control/status|G5.4|clear bit0  [C 00000101\n]|PASS||
+G5 control/status|G5.5|core_reset_o = 0|PASS||
+G5 control/status|G5.6|overwrite GPO8 = a5  [C 000003a5\n]|PASS||
+G5 control/status|G5.7|GPO8 port = a5|PASS||a5
+G5 control/status|G5.8|clear all  [C 000001ff\n]|PASS||
+G5 control/status|G5.9|unknown sub-command changes nothing  [C 00000402\n]|PASS||
+G5 control/status|G5.10|GPO8 unchanged by unknown sub-command|PASS||
+G5 control/status|G5.11|GPI8 inputs reported (fault flags, trap latched)  [C\n]|PASS||
+G5 control/status|G5.12|4-digit form (doc example) still reports GPI/GPO  [C 0202\n]|XFAIL|C11|reply got 'C 0x0202\n\r]' expected 'C 0x??020202\n\r]'  
+G5 control/status|G5.13|4-digit resume (doc example)  [C 0102\n]|XFAIL|C11|reply got 'C 0x0102\n\r]' expected 'C 0x??000102\n\r]'  
+G5 control/status|G5.14|lowercase status query  [c\n]|PASS||
+G6 dividers|G6.1|FT divider query  [D\n]|PASS||
+G6 dividers|G6.2|set FT divider  [D 05\n]|PASS||
+G6 dividers|G6.3|ft_clkdiv_o = 5|PASS||
+G6 dividers|G6.4|restore FT divider (1 digit)  [D 2\n]|PASS||
+G6 dividers|G6.5|B <hex16>: UART divider 16 -> 20, reply at old baud  [B 0014\n]|PASS||
+G6 dividers|G6.6|next command works at the new baud  [A 80000400\n]|PASS||
+G6 dividers|G6.7|uart_clkdiv_o = 20|PASS||
+G6 dividers|G6.8|B 01<hex16> back to 16  [B 010010\n]|PASS||
+G6 dividers|G6.9|B 02<hex8> sets only the FT divider (doc: B 020008)  [B 020007\n]|PASS||
+G6 dividers|G6.10|B 03<uart16><ft8> sets both  [B 03001002\n]|PASS||
+G6 dividers|G6.11|UART divider < 4 is not applied (baud stays)  [B 0003\n]|PASS||
+G6 dividers|G6.12|reported UART divider equals the one in use|PASS||register 16, UART uses 16
+G6 dividers|G6.13|restore 16  [B 0010\n]|PASS||
+G6 dividers|G6.14|lowercase query  [b\n]|PASS||
+G6 dividers|G6.15|UART bit time = divider x clock (16 x 10 ns)|PASS||160.000000 ns
+G6 dividers|G6.16.0|FT1248 clock period = 2 x (div+1) clocks for div=0|PASS||20.000000 ns
+G6 dividers|G6.16.1|FT1248 clock period = 2 x (div+1) clocks for div=1|PASS||40.000000 ns
+G6 dividers|G6.16.2|FT1248 clock period = 2 x (div+1) clocks for div=2|PASS||60.000000 ns
+G6 dividers|G6.17|  [A 80000200\n]|PASS||
+G6 dividers|G6.18|core writes UART divider mid-reply: reply finishes at the old baud|PASS||got 'R 0x44332211\n\rR 0x88776655\n\rR 0xccbbaa99\n\rR 0x00ffeedd\n\rR 0x80847f7b\n\rR 0x80857f7a\n\r]'
+G6 dividers|G6.19|core-written divider visible to B, link works at the new baud  [B\n]|PASS||
+G6 dividers|G6.20|core-written FT divider visible to D  [D\n]|PASS||
+G6 dividers|G6.21|restore both  [B 03001002\n]|PASS||
+G7 value/mask/fill|G7.1|set value  [V 12345678\n]|PASS||
+G7 value/mask/fill|G7.2|query value  [V\n]|PASS||
+G7 value/mask/fill|G7.3|set mask  [M 0000ffff\n]|PASS||
+G7 value/mask/fill|G7.4|query mask  [M\n]|PASS||
+G7 value/mask/fill|G7.5|2-digit mask echo  [M 0f\n]|PASS||
+G7 value/mask/fill|G7.6|  [A 80000500\n]|PASS||
+G7 value/mask/fill|G7.7|fill 8 words  [F 8\n]|PASS||
+G7 value/mask/fill|G7.8|address advanced by 8 words  [A\n]|PASS||
+G7 value/mask/fill|G7.9|  [A 80000500\n]|PASS||
+G7 value/mask/fill|G7.10|read back the fill  [R 00000008\n]|PASS||
+G7 value/mask/fill|G7.11|fill 2  [F 2\n]|PASS||
+G7 value/mask/fill|G7.12|fill 1 word  [F 1\n]|PASS||
+G7 value/mask/fill|G7.13|fill 0 = no writes  [F 0\n]|PASS||
+G7 value/mask/fill|G7.14|2-digit value  [V ab\n]|PASS||
+G7 value/mask/fill|G7.15|  [A 80000540\n]|PASS||
+G7 value/mask/fill|G7.16|fill after a byte-sized V (doc says words)  [F 4\n]|XFAIL|C11|reply got 'F 0x04\n\r]' expected 'F 0x00000004\n\r]'  bus #0: got W@80000540 sz0 abababab, expected W@80000540 sz2 000000ab
+G7 value/mask/fill|G7.17|  [V cafef00d\n]|PASS||
+G7 value/mask/fill|G7.18|  [A 80000580\n]|PASS||
+G7 value/mask/fill|G7.19|fill 64 words with core traffic  [F 00000040\n]|PASS||
+G7 value/mask/fill|G7.20|  [A dffffff8\n]|PASS||
+G7 value/mask/fill|G7.21|fill crossing into ERROR region -> F!  [F 4\n]|PASS||
+G7 value/mask/fill|G7.22|  [A dffffff8\n]|PASS||
+G7 value/mask/fill|G7.23|fill where only the LAST beat errors -> F!  [F 3\n]|PASS||
+G7 value/mask/fill|G7.24|  [A 80000500\n]|PASS||
+G8 upload|G8.1|  [A 80000600\n]|PASS||
+G8 upload|G8.2|upload 8 binary bytes incl. 00 0a 0d 04 1b ff (binary safe)  [U 8\n]|PASS||
+G8 upload|G8.3|uploaded bytes landed little-endian|PASS||040d0a00 5d20ff1b
+G8 upload|G8.4|address advanced by 8  [A\n]|PASS||
+G8 upload|G8.5|upload 64 bytes with core traffic  [U 40\n]|PASS||
+G8 upload|G8.6|upload 2 bytes  [U 2\n]|PASS||
+G8 upload|G8.7|upload 1 byte  [U 1\n]|PASS||
+G8 upload|G8.8|upload 0 bytes  [U 0\n]|PASS||
+G8 upload|G8.9|  [A dffffffe\n]|PASS||
+G8 upload|G8.10|upload crossing into ERROR region -> U!  [U 4\n]|PASS||
+G8 upload|G8.11|  [A dffffffe\n]|PASS||
+G8 upload|G8.12|upload where only the LAST byte errors -> U!  [U 3\n]|PASS||
+G9 poll|G9.1|poll counter register (read returns n, n+1, ...)  [A c0000000\n]|PASS||
+G9 poll|G9.2|counter = 0  [W 00000000\n]|PASS||
+G9 poll|G9.3|  [A c0000000\n]|PASS||
+G9 poll|G9.4|  [M ffffffff\n]|PASS||
+G9 poll|G9.5|  [V 00000000\n]|PASS||
+G9 poll|G9.6|match on the first read -> P 0x1  [P 00000010\n]|PASS||
+G9 poll|G9.7|P does not move the address  [A\n]|PASS||
+G9 poll|G9.8|  [W 00000000\n]|PASS||
+G9 poll|G9.8a|  [A c0000000\n]|PASS||
+G9 poll|G9.9|  [V 00000005\n]|PASS||
+G9 poll|G9.10|match on the 6th read -> P 0x6  [P 00000010\n]|PASS||
+G9 poll|G9.11|  [W 00000000\n]|PASS||
+G9 poll|G9.11a|  [A c0000000\n]|PASS||
+G9 poll|G9.12|  [V 00000003\n]|PASS||
+G9 poll|G9.13|match on read t-1 (4th of 5) must still count  [P 00000005\n]|PASS||
+G9 poll|G9.14|  [W 00000000\n]|PASS||
+G9 poll|G9.14a|  [A c0000000\n]|PASS||
+G9 poll|G9.15|never matches  [V 00000100\n]|PASS||
+G9 poll|G9.16|timeout after t reads -> P!  [P 00000005\n]|PASS||
+G9 poll|G9.17|  [W 00000000\n]|PASS||
+G9 poll|G9.17a|  [A c0000000\n]|PASS||
+G9 poll|G9.18|  [V 00000000\n]|PASS||
+G9 poll|G9.19|P 2 with immediate match  [P 00000002\n]|PASS||
+G9 poll|G9.20|P 1 polls once  [P 00000001\n]|PASS||
+G9 poll|G9.21|  [W 00000000\n]|PASS||
+G9 poll|G9.21a|  [A c0000000\n]|PASS||
+G9 poll|G9.22|mask: only bit 1  [M 00000002\n]|PASS||
+G9 poll|G9.23|  [V 00000002\n]|PASS||
+G9 poll|G9.24|masked compare matches at counter=2 -> P 0x3  [P 00000010\n]|PASS||
+G9 poll|G9.25|  [W 00000000\n]|PASS||
+G9 poll|G9.25a|  [A c0000000\n]|PASS||
+G9 poll|G9.26|2-digit timeout: poll reads must still be word reads  [P 40\n]|PASS||
+G9 poll|G9.27|  [A e0000000\n]|PASS||
+G9 poll|G9.28|  [M ffffffff\n]|PASS||
+G9 poll|G9.29|  [V 00000000\n]|PASS||
+G9 poll|G9.30|poll an ERROR address -> P!  [P 00000010\n]|PASS||
+G10 stdin|G10.1|S <hex8> reply  [S 41\n]|PASS||
+G10 stdin|G10.2|S without value  [S\n]|PASS||
+G11 exit/passthrough|G11.1|X prints a newline and leaves command mode  [X\n]|PASS||
+G11 exit/passthrough|G11.2|commands ignored in passthrough (no output, no bus)  [R\nA 1\n]|PASS||reply got '' expected '', 0 bus transfers
+G11 exit/passthrough|G11.3|ESC re-enters command mode  [\x1b]|PASS||reply got '\n\r]' expected '\n\r]', 0 bus transfers
+G11 exit/passthrough|G11.4|commands work again  [A 80000700\n]|PASS||
+G11 exit/passthrough|G11.5|Ctrl-D in a value exits silently  [A 12\x04]|PASS||reply got '' expected '', 0 bus transfers
+G11 exit/passthrough|G11.6|ESC back  [\x1b]|PASS||reply got '\n\r]' expected '\n\r]', 0 bus transfers
+G11 exit/passthrough|G11.7|Ctrl-D as first character exits silently  [\x04]|PASS||reply got '' expected '', 0 bus transfers
+G11 exit/passthrough|G11.8|ESC back  [\x1b]|PASS||reply got '\n\r]' expected '\n\r]', 0 bus transfers
+G11 exit/passthrough|G11.9|address untouched by the aborted 'A 12'  [A\n]|PASS||
+G12 interfaces|G12.1|FT1248: set address  [A 80000800\n]|PASS||
+G12 interfaces|G12.2|FT1248: write  [W 0badf00d\n]|PASS||
+G12 interfaces|G12.3|  [A 80000800\n]|PASS||
+G12 interfaces|G12.4|FT1248: read back  [R\n]|PASS||
+G12 interfaces|G12.5|FT1248: status  [C\n]|PASS||
+G12 interfaces|G12.6|FT1248: dividers  [B\n]|PASS||
+G12 interfaces|G12.7|FT1248: binary upload  [U 4\n]|PASS||
+G12 interfaces|G12.8|FT1248: fast FT clock (div 1 = 25 MHz, FT232H max is 30 MHz)  [D 01\n]|PASS||
+G12 interfaces|G12.9|FT1248: works at div 1  [R 00000004\n]|PASS||
+G12 interfaces|G12.10|FT1248: slow FT clock (div 7)  [D 07\n]|PASS||
+G12 interfaces|G12.11|FT1248: works at div 7  [R 00000002\n]|PASS||
+G12 interfaces|G12.12|  [D 02\n]|PASS||
+G12 interfaces|G12.13|UART TX stays idle while FT1248 is selected|PASS||0 edges
+G12 interfaces|G12.13b|every byte sent over FT1248 is fully defined at the FTDI model (bit 7 not Z)|PASS||0 of 218 bytes had an undefined bit
+G12 interfaces|G12.14|FT session unaffected by UART input  [A\n]|PASS||
+G12 interfaces|G12.15|switching back to UART: nothing typed on the UART earlier is executed|PASS||spurious output ''
+G12 interfaces|G12.16|UART works again  [A\n]|PASS||
+G13 halt/step|G13.1|halt  [C 00000202\n]|PASS||
+G13 halt/step|G13.2|core_halt_o = 1 and ExternalStall = 1|PASS||
+G13 halt/step|G13.3|no core progress while halted (300 cycles)|PASS||
+G13 halt/step|G13.4|status bit0 = halted  [C\n]|PASS||
+G13 halt/step|G13.5.0|instruction step  [C 00000204\n]|PASS||
+G13 halt/step|G13.6.0|exactly one instruction retired, core frozen again|PASS||retired 1, step_count +1, stall 1
+G13 halt/step|G13.7.0|clear step bit  [C 00000104\n]|PASS||
+G13 halt/step|G13.5.1|instruction step  [C 00000204\n]|PASS||
+G13 halt/step|G13.6.1|exactly one instruction retired, core frozen again|PASS||retired 1, step_count +1, stall 1
+G13 halt/step|G13.7.1|clear step bit  [C 00000104\n]|PASS||
+G13 halt/step|G13.5.2|instruction step  [C 00000204\n]|PASS||
+G13 halt/step|G13.6.2|exactly one instruction retired, core frozen again|PASS||retired 1, step_count +1, stall 1
+G13 halt/step|G13.7.2|clear step bit  [C 00000104\n]|PASS||
+G13 halt/step|G13.5.3|instruction step  [C 00000204\n]|PASS||
+G13 halt/step|G13.6.3|exactly one instruction retired, core frozen again|PASS||retired 1, step_count +1, stall 1
+G13 halt/step|G13.7.3|clear step bit  [C 00000104\n]|PASS||
+G13 halt/step|G13.8|  [C 00000204\n]|PASS||
+G13 halt/step|G13.9|step bit held high -> still only one step (edge triggered)|PASS||1
+G13 halt/step|G13.10|status after step: step_done visible to the host  [C\n]|PASS||
+G13 halt/step|G13.11|  [C 00000104\n]|PASS||
+G13 halt/step|G13.12|step mode = cycle  [C 00000208\n]|PASS||
+G13 halt/step|G13.13.0|cycle step  [C 00000204\n]|PASS||
+G13 halt/step|G13.14.0|cycle step releases the core for exactly 1 clock|PASS||1 clocks
+G13 halt/step|G13.15.0|  [C 00000104\n]|PASS||
+G13 halt/step|G13.13.1|cycle step  [C 00000204\n]|PASS||
+G13 halt/step|G13.14.1|cycle step releases the core for exactly 1 clock|PASS||1 clocks
+G13 halt/step|G13.15.1|  [C 00000104\n]|PASS||
+G13 halt/step|G13.13.2|cycle step  [C 00000204\n]|PASS||
+G13 halt/step|G13.14.2|cycle step releases the core for exactly 1 clock|PASS||1 clocks
+G13 halt/step|G13.15.2|  [C 00000104\n]|PASS||
+G13 halt/step|G13.16|back to instruction mode  [C 00000108\n]|PASS||
+G13 halt/step|G13.17|step with a core that never retires  [C 00000204\n]|PASS||
+G13 halt/step|G13.18|watchdog ends the step after WATCHDOG_LIMIT (64) cycles|PASS||ran 64 cycles
+G13 halt/step|G13.19|  [C 00000104\n]|PASS||
+G13 halt/step|G13.20|resume  [C 00000102\n]|PASS||
+G13 halt/step|G13.21|core runs after resume|PASS||
+G13 halt/step|G13.22|step request while running  [C 00000204\n]|PASS||
+G13 halt/step|G13.23|step while running is ignored (stays RUN)|PASS||
+G13 halt/step|G13.24|halt with the step bit already high  [C 00000202\n]|PASS||
+G13 halt/step|G13.25|halting with step bit high does not cause a step|PASS||
+G13 halt/step|G13.26|clear step + resume  [C 00000106\n]|PASS||
+G13 halt/step|G13.27|auto-halt request freezes the core with halt bit = 0|PASS||
+G13 halt/step|G13.28|status shows halted on auto-halt  [C\n]|PASS||
+G13 halt/step|G13.29|core runs again when auto-halt drops|PASS||
+G14 step controller unit|G14.1|RUN -> HALTED one clock after halt|PASS||
+G14 step controller unit|G14.2|HALTED -> STEPPING on step edge, stall released, busy|PASS||
+G14 step controller unit|G14.3|retire -> DONE, stall back on, done pulse|PASS||
+G14 step controller unit|G14.4|DONE -> HALTED next clock|PASS||
+G14 step controller unit|G14.5|second step edge starts a new step|PASS||
+G14 step controller unit|G14.6|releasing halt during a step returns to RUN|PASS||
+G14 step controller unit|G14.7|cycle step: STEPPING for one clock|PASS||
+G14 step controller unit|G14.8|cycle step: DONE on the next clock|PASS||
+G14 step controller unit|G14.9|auto-halt alone halts|PASS||
+G14 step controller unit|G14.10|stepping works under auto-halt|PASS||
+G14 step controller unit|G14.11|back to HALTED under auto-halt|PASS||
+G14 step controller unit|G14.12|auto-halt released -> RUN|PASS||
+G14 step controller unit|G14.13a|in STEPPING before reset|PASS||
+G14 step controller unit|G14.13|async reset in STEPPING -> RUN, step counter cleared, core free|PASS||
+G14 step controller unit|G14.14|system reset recovers the debugger (banner)|PASS||banner got ' 0x50c1ab04\n\r]'
+G14 step controller unit|G14.15|debugger state consistent after reset  [C\n]|PASS||
+G15 contention + wait states|G15.0.1|wait<=0  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.0.2|  [V 5a5a0000\n]|PASS||
+G15 contention + wait states|G15.0.3|fill 32 words vs 100% core traffic  [F 00000020\n]|PASS||
+G15 contention + wait states|G15.0.4|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.0.5|read 32 words back  [R 00000020\n]|PASS||
+G15 contention + wait states|G15.0.6|upload 16 bytes  [U 10\n]|PASS||
+G15 contention + wait states|G15.0.7|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.0.8|16 byte reads  [R 10\n]|PASS||
+G15 contention + wait states|G15.1.1|wait<=1  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.1.2|  [V 5a5a0000\n]|PASS||
+G15 contention + wait states|G15.1.3|fill 32 words vs 100% core traffic  [F 00000020\n]|PASS||
+G15 contention + wait states|G15.1.4|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.1.5|read 32 words back  [R 00000020\n]|PASS||
+G15 contention + wait states|G15.1.6|upload 16 bytes  [U 10\n]|PASS||
+G15 contention + wait states|G15.1.7|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.1.8|16 byte reads  [R 10\n]|PASS||
+G15 contention + wait states|G15.2.1|wait<=3  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.2.2|  [V 5a5a0000\n]|PASS||
+G15 contention + wait states|G15.2.3|fill 32 words vs 100% core traffic  [F 00000020\n]|PASS||
+G15 contention + wait states|G15.2.4|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.2.5|read 32 words back  [R 00000020\n]|PASS||
+G15 contention + wait states|G15.2.6|upload 16 bytes  [U 10\n]|PASS||
+G15 contention + wait states|G15.2.7|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.2.8|16 byte reads  [R 10\n]|PASS||
+G15 contention + wait states|G15.3.1|wait<=7  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.3.2|  [V 5a5a0000\n]|PASS||
+G15 contention + wait states|G15.3.3|fill 32 words vs 100% core traffic  [F 00000020\n]|PASS||
+G15 contention + wait states|G15.3.4|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.3.5|read 32 words back  [R 00000020\n]|PASS||
+G15 contention + wait states|G15.3.6|upload 16 bytes  [U 10\n]|PASS||
+G15 contention + wait states|G15.3.7|  [A 80000900\n]|PASS||
+G15 contention + wait states|G15.3.8|16 byte reads  [R 10\n]|PASS||
+G16 robustness|G16.1|RX glitch (3 clocks) is rejected|PASS||
+G16 robustness|G16.2|link fine after glitch  [A\n]|PASS||
+G16 robustness|G16.3|a framing-error byte ('Z' with stop bit 0) is dropped, next command clean  [A\n]|PASS||
+G16 robustness|G16.4|two commands sent back-to-back (no wait for the prompt) are both executed|PASS||got 'A 0x80000a00\n\r]A 0x80000a00\n\r]' expected 'A 0x80000a00\n\r]A 0x80000a00\n\r]'
+G16 robustness|G16.5|UART RX byte is never overwritten before the ADP takes it (AXI-stream rule)|PASS||0 overwrites
+G16 robustness|G16.4b|three commands typed back-to-back all run (bytes wait in the RX FIFO)|PASS||got 'A 0x80000a40\n\r]A 0x80000a40\n\r]A 0x80000a40\n\r]' expected 'A 0x80000a40\n\r]A 0x80000a40\n\r]A 0x80000a40\n\r]'
+G16 robustness|G16.6|resync  [A 80000a00\n]|PASS||
+G16 robustness|G16.7|upload waits for all bytes; nothing else is executed meanwhile (pinned behaviour)|PASS||got 'U 0x00000004\n\r]'
+G16 robustness|G16.8|link fine after the interrupted upload  [A\n]|PASS||
+G17 random fuzz|G17.0|random command  [a 80000180\r]|PASS||
+G17 random fuzz|G17.1|random command  [d f2\r]|PASS||
+G17 random fuzz|G17.2|random command  [C\n]|PASS||
+G17 random fuzz|G17.3|random command  [s AB\r]|PASS||
+G17 random fuzz|G17.4|random command  [F 2\n]|PASS||
+G17 random fuzz|G17.5|random command  [F 6\n]|PASS||
+G17 random fuzz|G17.6|random command  [C\r]|PASS||
+G17 random fuzz|G17.7|random command  [  r\r]|PASS||
+G17 random fuzz|G17.8|random command  [w d2e\r]|PASS||
+G17 random fuzz|G17.9|random command  [  S 5\n]|PASS||
+G17 random fuzz|G17.10|random command  [  a 800000e4\r]|PASS||
+G17 random fuzz|G17.11|random command  [R\n]|PASS||
+G17 random fuzz|G17.12|random command  [w E32FAB7\r]|PASS||
+G17 random fuzz|G17.13|random command  [W 42acb\r]|PASS||
+G17 random fuzz|G17.14|random command  [R\n]|PASS||
+G17 random fuzz|G17.15|random command  [  r\n]|PASS||
+G17 random fuzz|G17.16|random command  [w 6\r]|PASS||
+G17 random fuzz|G17.17|random command  [F 4\r]|PASS||
+G17 random fuzz|G17.18|random command  [R\r]|PASS||
+G17 random fuzz|G17.19|random command  [  S F5\r]|PASS||
+G17 random fuzz|G17.20|random command  [R\n]|PASS||
+G17 random fuzz|G17.21|random command  [v 5FA45039\n]|PASS||
+G17 random fuzz|G17.22|random command  [  S 31\r]|PASS||
+G17 random fuzz|G17.23|random command  [  m f8\n]|PASS||
+G17 random fuzz|G17.24|random command  [S EA\n]|PASS||
+G17 random fuzz|G17.25|random command  [f 7\r]|PASS||
+G17 random fuzz|G17.26|random command  [R\n]|PASS||
+G17 random fuzz|G17.27|random command  [a 80000173\r]|PASS||
+G17 random fuzz|G17.28|random command  [V 9a5b8f\r]|PASS||
+G17 random fuzz|G17.29|random command  [  d 75\r]|PASS||
+G17 random fuzz|G17.30|random command  [V 9E1F7D3F\r]|PASS||
+G17 random fuzz|G17.31|random command  [m b\r]|PASS||
+G17 random fuzz|G17.32|random command  [  a e0000c00\n]|PASS||
+G17 random fuzz|G17.33|random command  [M f0f7\r]|PASS||
+G17 random fuzz|G17.34|random command  [  A e00009d9\r]|PASS||
+G17 random fuzz|G17.35|random command  [a 80000b00\r]|PASS||
+G17 random fuzz|G17.36|random command  [r 000003\n]|PASS||
+G17 random fuzz|G17.37|random command  [d 33\r]|PASS||
+G17 random fuzz|G17.38|random command  [  f 9\r]|PASS||
+G17 random fuzz|G17.39|random command  [S A\r]|PASS||
+G17 random fuzz|G17.40|random command  [R 0001\n]|PASS||
+G17 random fuzz|G17.41|random command  [  V 723\n]|PASS||
+G17 random fuzz|G17.42|random command  [S fa\r]|PASS||
+G17 random fuzz|G17.43|random command  [d 6E\n]|PASS||
+G17 random fuzz|G17.44|random command  [c\n]|PASS||
+G17 random fuzz|G17.45|random command  [  V FAB\n]|PASS||
+G17 random fuzz|G17.46|random command  [V C9B9047\r]|PASS||
+G17 random fuzz|G17.47|random command  [a 80000d57\r]|PASS||
+G17 random fuzz|G17.48|random command  [F 4\n]|PASS||
+G17 random fuzz|G17.49|random command  [  F 2\n]|PASS||
+G17 random fuzz|G17.50|random command  [a 80000b5d\r]|PASS||
+G17 random fuzz|G17.51|random command  [  a 80000252\r]|PASS||
+G17 random fuzz|G17.52|random command  [R 00005\r]|PASS||
+G17 random fuzz|G17.53|random command  [m 37aebfc0\n]|PASS||
+G17 random fuzz|G17.54|random command  [  F 4\r]|PASS||
+G17 random fuzz|G17.55|random command  [c\r]|PASS||
+G17 random fuzz|G17.56|random command  [  R 00004\n]|PASS||
+G17 random fuzz|G17.57|random command  [M 85FE1D\r]|PASS||
+G17 random fuzz|G17.58|random command  [c\r]|PASS||
+G17 random fuzz|G17.59|random command  [a e0000320\n]|PASS||
+G17 random fuzz|G17.60|random command  [r\r]|PASS||
+G17 random fuzz|G17.61|random command  [D D3\r]|PASS||
+G17 random fuzz|G17.62|random command  [  W d36d\n]|PASS||
+G17 random fuzz|G17.63|random command  [a e00006ae\n]|PASS||
+G17 random fuzz|G17.64|random command  [c\r]|PASS||
+G17 random fuzz|G17.65|random command  [  r\n]|PASS||
+G17 random fuzz|G17.66|random command  [C\r]|PASS||
+G17 random fuzz|G17.67|random command  [r\r]|PASS||
+G17 random fuzz|G17.68|random command  [C\n]|PASS||
+G17 random fuzz|G17.69|random command  [m B\r]|PASS||
+G17 random fuzz|G17.70|random command  [M F7A8D6A1\n]|PASS||
+G17 random fuzz|G17.71|random command  [m 665\r]|PASS||
+G17 random fuzz|G17.72|random command  [  D 60\r]|PASS||
+G17 random fuzz|G17.73|random command  [W E10C3F76\n]|PASS||
+G17 random fuzz|G17.74|random command  [  a 80000b00\r]|PASS||
+G17 random fuzz|G17.75|random command  [A e0000b10\n]|PASS||
+G17 random fuzz|G17.76|random command  [m d1d56\r]|PASS||
+G17 random fuzz|G17.77|random command  [W 4FF1D9BF\n]|PASS||
+G17 random fuzz|G17.78|random command  [c\n]|PASS||
+G17 random fuzz|G17.79|random command  [  r\r]|PASS||
+G17 random fuzz|G17.80|random command  [A 800002b0\n]|PASS||
+G17 random fuzz|G17.81|random command  [R 003\n]|PASS||
+G17 random fuzz|G17.82|random command  [  D FF\r]|PASS||
+G17 random fuzz|G17.83|random command  [S a9\r]|PASS||
+G17 random fuzz|G17.84|random command  [W DD113724\r]|PASS||
+G17 random fuzz|G17.85|random command  [  w 55\n]|PASS||
+G17 random fuzz|G17.86|random command  [a 800003b9\n]|PASS||
+G17 random fuzz|G17.87|random command  [s 87\r]|PASS||
+G17 random fuzz|G17.88|random command  [S 72\r]|PASS||
+G17 random fuzz|G17.89|random command  [a 80000d01\r]|PASS||
+G17 random fuzz|G17.90|random command  [f 4\n]|PASS||
+G17 random fuzz|G17.91|random command  [s c3\n]|PASS||
+G17 random fuzz|G17.92|random command  [R\n]|PASS||
+G17 random fuzz|G17.93|random command  [A 800004f5\r]|PASS||
+G17 random fuzz|G17.94|random command  [A 800004fe\n]|PASS||
+G17 random fuzz|G17.95|random command  [  M 75D9\r]|PASS||
+G17 random fuzz|G17.96|random command  [A 80000fb8\n]|PASS||
+G17 random fuzz|G17.97|random command  [r 00000004\n]|PASS||
+G17 random fuzz|G17.98|random command  [R\r]|PASS||
+G17 random fuzz|G17.99|random command  [w F228\n]|PASS||
+G17 random fuzz|G17.100|random command  [  d 33\n]|PASS||
+G17 random fuzz|G17.101|random command  [r\n]|PASS||
+G17 random fuzz|G17.102|random command  [V 86a8\r]|PASS||
+G17 random fuzz|G17.103|random command  [  a 80000da0\n]|PASS||
+G17 random fuzz|G17.104|random command  [w 7c\n]|PASS||
+G17 random fuzz|G17.105|random command  [  v 6ed7bd69\r]|PASS||
+G17 random fuzz|G17.106|random command  [a 80000f70\n]|PASS||
+G17 random fuzz|G17.107|random command  [s 1a\n]|PASS||
+G17 random fuzz|G17.108|random command  [c\n]|PASS||
+G17 random fuzz|G17.109|random command  [W F3\n]|PASS||
+G17 random fuzz|G17.110|random command  [A 800002e0\r]|PASS||
+G17 random fuzz|G17.111|random command  [  C\r]|PASS||
+G17 random fuzz|G17.112|random command  [a e0000683\r]|PASS||
+G17 random fuzz|G17.113|random command  [C\r]|PASS||
+G17 random fuzz|G17.114|random command  [R 04\n]|PASS||
+G17 random fuzz|G17.115|random command  [W 632B\r]|PASS||
+G17 random fuzz|G17.116|random command  [R 0001\n]|PASS||
+G17 random fuzz|G17.117|random command  [A 80000b00\r]|PASS||
+G17 random fuzz|G17.118|random command  [v F6C\r]|PASS||
+G17 random fuzz|G17.119|random command  [  r 00005\r]|PASS||
+G17 random fuzz|G17.120|random command  [  R\n]|PASS||
+G17 random fuzz|G17.121|random command  [s 7E\r]|PASS||
+G17 random fuzz|G17.122|random command  [M 8717c66\r]|PASS||
+G17 random fuzz|G17.123|random command  [S 9B\r]|PASS||
+G17 random fuzz|G17.124|random command  [A e0000400\n]|PASS||
+G17 random fuzz|G17.125|random command  [D 6\n]|PASS||
+G17 random fuzz|G17.126|random command  [m 01\n]|PASS||
+G17 random fuzz|G17.127|random command  [m 19B07B\n]|PASS||
+G17 random fuzz|G17.128|random command  [  r 00005\n]|PASS||
+G17 random fuzz|G17.129|random command  [M 02cfe\n]|PASS||
+G17 random fuzz|G17.130|random command  [W D\r]|PASS||
+G17 random fuzz|G17.131|random command  [A 80000910\r]|PASS||
+G17 random fuzz|G17.132|random command  [S b1\r]|PASS||
+G17 random fuzz|G17.133|random command  [c\n]|PASS||
+G17 random fuzz|G17.134|random command  [R 0000001\n]|PASS||
+G17 random fuzz|G17.135|random command  [s 88\r]|PASS||
+G17 random fuzz|G17.136|random command  [  c\n]|PASS||
+G17 random fuzz|G17.137|random command  [v FC00\r]|PASS||
+G17 random fuzz|G17.138|random command  [  V A\n]|PASS||
+G17 random fuzz|G17.139|random command  [w 2ddce5a0\r]|PASS||
+G17 random fuzz|G17.140|random command  [s 93\n]|PASS||
+G17 random fuzz|G17.141|random command  [R 000003\n]|PASS||
+G17 random fuzz|G17.142|random command  [S BF\n]|PASS||
+G17 random fuzz|G17.143|random command  [  r\n]|PASS||
+G17 random fuzz|G17.144|random command  [A e0000eeb\n]|PASS||
+G17 random fuzz|G17.145|random command  [c\n]|PASS||
+G17 random fuzz|G17.146|random command  [s C5\n]|PASS||
+G17 random fuzz|G17.147|random command  [c\r]|PASS||
+G17 random fuzz|G17.148|random command  [M 8BF7C\n]|PASS||
+G17 random fuzz|G17.149|random command  [  S D\n]|PASS||
+G17 random fuzz|G17.150|random command  [v 98E078B3\n]|PASS||
+G17 random fuzz|G17.151|random command  [r 00005\n]|PASS||
+G17 random fuzz|G17.152|random command  [M 83956f\n]|PASS||
+G17 random fuzz|G17.153|random command  [S 23\n]|PASS||
+G17 random fuzz|G17.154|random command  [  C\n]|PASS||
+G17 random fuzz|G17.155|random command  [W ade56\r]|PASS||
+G17 random fuzz|G17.156|random command  [C\r]|PASS||
+G17 random fuzz|G17.157|random command  [R 00000001\r]|PASS||
+G17 random fuzz|G17.158|random command  [  C\r]|PASS||
+G17 random fuzz|G17.159|random command  [S 07\n]|PASS||
+G17 random fuzz|G17.160|random command  [  A 80000e19\n]|PASS||
+G17 random fuzz|G17.161|random command  [d 9D\n]|PASS||
+G17 random fuzz|G17.162|random command  [a 80000d80\n]|PASS||
+G17 random fuzz|G17.163|random command  [c\r]|PASS||
+G17 random fuzz|G17.164|random command  [  a 80000620\n]|PASS||
+G17 random fuzz|G17.165|random command  [  S 1b\r]|PASS||
+G17 random fuzz|G17.166|random command  [F 4\r]|PASS||
+G17 random fuzz|G17.167|random command  [C\n]|PASS||
+G17 random fuzz|G17.168|random command  [c\n]|PASS||
+G17 random fuzz|G17.169|random command  [r 00000001\r]|PASS||
+G17 random fuzz|G17.170|random command  [m 9b7740f\r]|PASS||
+G17 random fuzz|G17.171|random command  [a e0000c10\r]|PASS||
+G17 random fuzz|G17.172|random command  [A e0000400\r]|PASS||
+G17 random fuzz|G17.173|random command  [A 80000b00\n]|PASS||
+G17 random fuzz|G17.174|random command  [  a 8000060a\n]|PASS||
+G17 random fuzz|G17.175|random command  [r\n]|PASS||
+G17 random fuzz|G17.176|random command  [  r 000003\r]|PASS||
+G17 random fuzz|G17.177|random command  [  c\r]|PASS||
+G17 random fuzz|G17.178|random command  [M 27\n]|PASS||
+G17 random fuzz|G17.179|random command  [m f0856\n]|PASS||
+G17 random fuzz|G17.180|random command  [r\r]|PASS||
+G17 random fuzz|G17.181|random command  [D 51\n]|PASS||
+G17 random fuzz|G17.182|random command  [  m B\n]|PASS||
+G17 random fuzz|G17.183|random command  [  d d\r]|PASS||
+G17 random fuzz|G17.184|random command  [c\r]|PASS||
+G17 random fuzz|G17.185|random command  [  S 7E\r]|PASS||
+G17 random fuzz|G17.186|random command  [A 800006a4\n]|PASS||
+G17 random fuzz|G17.187|random command  [  v 4896\r]|PASS||
+G17 random fuzz|G17.188|random command  [w EACE2B\n]|PASS||
+G17 random fuzz|G17.189|random command  [V 468\r]|PASS||
+G17 random fuzz|G17.190|random command  [V b2fb0616\r]|PASS||
+G17 random fuzz|G17.191|random command  [  D 07\n]|PASS||
+G17 random fuzz|G17.192|random command  [f 3\n]|PASS||
+G17 random fuzz|G17.193|random command  [c\r]|PASS||
+G17 random fuzz|G17.194|random command  [f 6\r]|PASS||
+G17 random fuzz|G17.195|random command  [f 6\n]|PASS||
+G17 random fuzz|G17.196|random command  [m 47\r]|PASS||
+G17 random fuzz|G17.197|random command  [D a6\r]|PASS||
+G17 random fuzz|G17.198|random command  [w d152\r]|PASS||
+G17 random fuzz|G17.199|random command  [r 0003\r]|PASS||
+G18 global checks|G18.1|core master: 724201 reads checked, 723312 writes, 29355 expected ERRORs - no data or response errors|PASS||0 bad reads, 0 bad responses
+G18 global checks|G18.2|mux: every core and debugger transfer reached the slave exactly once, unchanged (823 debugger xfers)|PASS||0 mismatches, leftovers 0 0 0 0
+G18 global checks|G18.3|debugger master obeys AHB-Lite rules (stable waited request, stable HWDATA, aligned, no BUSY/SEQ)|PASS||0 violations
+G18 global checks|G18.4|mux keeps the core's waited request stable (no core-side rule violations)|PASS||0
+G18 global checks|G18.5|slave bus obeys AHB-Lite rules (stable in wait states, SINGLE, aligned, no X)|PASS||0 violations
+G18 global checks|G18.7|debugger drives HBURST = SINGLE on every transfer|PASS||0 cycles with another HBURST
+G18 global checks|G18.6|every byte from the debugger UART had a valid stop bit|PASS||0
+SUMMARY|524|0|3|0

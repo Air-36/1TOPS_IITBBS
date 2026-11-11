@@ -11,7 +11,7 @@ vlog -sv -timescale 1ns/1ps +incdir+../../vip/apb_vip +incdir+../../vip/irq_vip 
 	../../rtl/uncore/spi_apb.sv \
 	tb_spi_unit.sv
 QuestaSim-64 vlog 2023.4_5 Compiler 2025.06 Jun 12 2025
-Start time: 18:38:00 on Nov 09,2026
+Start time: 21:20:19 on Nov 09,2026
 vlog -sv -timescale 1ns/1ps "+incdir+../../vip/apb_vip" "+incdir+../../vip/irq_vip" "+incdir+../../rtl/uncore" "+incdir+." ../../vip/apb_vip/apb_if.sv ../../vip/apb_vip/apb_pkg.sv ../../vip/irq_vip/irq_if.sv ../../vip/irq_vip/irq_pkg.sv ../../rtl/uncore/spi_fifo.sv ../../rtl/uncore/spi_controller.sv ../../rtl/uncore/spi_apb.sv tb_spi_unit.sv 
 -- Compiling interface apb_if
 -- Compiling package apb_pkg
@@ -29,7 +29,7 @@ vlog -sv -timescale 1ns/1ps "+incdir+../../vip/apb_vip" "+incdir+../../vip/irq_v
 
 Top level modules:
 	tb_spi_unit
-End time: 18:38:00 on Nov 09,2026, Elapsed time: 0:00:00
+End time: 21:20:20 on Nov 09,2026, Elapsed time: 0:00:01
 Errors: 0, Warnings: 0
 vsim -c -voptargs="+acc" +UVM_TESTNAME=spi_unit_test +UVM_VERBOSITY=UVM_LOW -do "run -all; quit -f" work.tb_spi_unit
 Reading pref.tcl
@@ -37,7 +37,7 @@ Reading pref.tcl
 # 2023.4_5
 
 # vsim -c -voptargs="+acc" "+UVM_TESTNAME=spi_unit_test" "+UVM_VERBOSITY=UVM_LOW" -do "run -all; quit -f" work.tb_spi_unit 
-# Start time: 18:38:01 on Nov 09,2026
+# Start time: 21:20:22 on Nov 09,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
 # ** Note: (vopt-143) Recognized 1 FSM in module "spi_apb(fast)".
@@ -118,6 +118,6 @@ Reading pref.tcl
 # [TEST_DONE]     1
 # ** Note: $finish    : /cad/mentor/questa_sim-2023.4_5/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
 #    Time: 750 ns  Iteration: 54  Instance: /tb_spi_unit
-# End time: 18:38:05 on Nov 09,2026, Elapsed time: 0:00:04
+# End time: 21:20:25 on Nov 09,2026, Elapsed time: 0:00:03
 # Errors: 0, Warnings: 1
 make: Leaving directory '/home/23EC01043/Desktop/1TOPS/1TOPS_IITBBS/SoC_verification/unit_tests/spi'

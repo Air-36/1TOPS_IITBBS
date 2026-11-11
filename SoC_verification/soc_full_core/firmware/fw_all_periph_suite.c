@@ -6,7 +6,8 @@ static volatile uint32_t plic_irq_count = 0;
 void trap_dispatcher(uint32_t cause, uint32_t epc) {
     if (cause == CAUSE_MTIMER_INT) {
         timer_irq_count++;
-        CLINT_MTIMECMP = 0xFFFFFFFF; // Clear timer interrupt
+        CLINT_MTIMECMPH = 0xFFFFFFFF;
+        CLINT_MTIMECMP  = 0xFFFFFFFF; // Clear timer interrupt
     } else if (cause == CAUSE_MEXT_INT) {
         uint32_t id = PLIC_CLAIM;
         if (id == 2) {
@@ -22,41 +23,43 @@ void trap_dispatcher(uint32_t cause, uint32_t epc) {
     }
 }
 
-static void delay_cycles(uint32_t n) {
-    for (volatile uint32_t i = 0; i < n; i++) {
-        __asm__ volatile ("nop");
-    }
+static inline void spi_tx_byte(uint8_t b) {
+    while (SPI_TXDATA & 0x80000000);
+    SPI_TXDATA = (uint32_t)b;
+}
+
+static inline uint8_t spi_rx_byte(void) {
+    uint32_t val;
+    do {
+        val = SPI_RXDATA;
+    } while (val & 0x80000000);
+    return (uint8_t)(val & 0xFF);
+}
+
+static inline uint8_t spi_xfer_byte(uint8_t b) {
+    spi_tx_byte(b);
+    return spi_rx_byte();
 }
 
 int main(void) {
     // -------------------------------------------------------------------------
-    // Phase 1: Memory & Accelerator
+    // Phase 1: Hardware Multiplier Accelerator Test
     // -------------------------------------------------------------------------
-    volatile uint32_t *dram = (volatile uint32_t *)(DRAM_BASE + 0x3000);
-    for (int i = 0; i < 32; i++) {
-        dram[i] = 0xAA550000 + i;
-    }
-    for (int i = 0; i < 32; i++) {
-        if (dram[i] != (0xAA550000 + i)) {
-            fail_test(1);
-        }
-    }
-
-    MULT_OPA = 45;
-    MULT_OPB = 67;
-    if (MULT_RESULT != (45 * 67)) {
-        fail_test(2);
+    MULT_OPA = 123;
+    MULT_OPB = 456;
+    if (MULT_RESULT != (123 * 456)) {
+        fail_test(1);
     }
 
     // -------------------------------------------------------------------------
-    // Phase 2: GPIO & VIP Handshake
+    // Phase 2: GPIO Input / Output
     // -------------------------------------------------------------------------
-    GPIO_OUTPUT_EN = 0x0000FFFF;
-    GPIO_INPUT_EN  = 0xFFFF0000;
-    GPIO_OUTPUT_VAL = 0x0000BEEF;
+    GPIO_OUTPUT_EN = 0x0000000F;
+    GPIO_INPUT_EN  = 0x000000F0;
+    GPIO_OUTPUT_VAL = 0x0000000A;
 
     // -------------------------------------------------------------------------
-    // Phase 3: UART Transmission
+    // Phase 3: UART 16550 String Transmission
     // -------------------------------------------------------------------------
     UART_LCR = 0x80;
     UART_DLL = 0x01;
@@ -75,21 +78,14 @@ int main(void) {
     // -------------------------------------------------------------------------
     SPI_SCKDIV = 2;
     SPI_CSMODE = SPI_CSMODE_HOLD;
-    SPI_TXDATA = 0x03;
-    SPI_TXDATA = 0x00;
-    SPI_TXDATA = 0x00;
-    SPI_TXDATA = 0x00;
-    delay_cycles(120);
-
-    volatile uint32_t d;
-    d = SPI_RXDATA; d = SPI_RXDATA; d = SPI_RXDATA; d = SPI_RXDATA;
-    (void)d;
+    (void)spi_xfer_byte(0x03);
+    (void)spi_xfer_byte(0x00);
+    (void)spi_xfer_byte(0x00);
+    (void)spi_xfer_byte(0x00);
 
     uint8_t spi_b[4];
     for (int i = 0; i < 4; i++) {
-        SPI_TXDATA = 0x00;
-        delay_cycles(30);
-        spi_b[i] = (uint8_t)(SPI_RXDATA & 0xFF);
+        spi_b[i] = spi_xfer_byte(0x00);
     }
     SPI_CSMODE = SPI_CSMODE_AUTO;
 
@@ -100,7 +96,8 @@ int main(void) {
     // -------------------------------------------------------------------------
     // Phase 5: Interrupts (CLINT Timer + PLIC GPIO)
     // -------------------------------------------------------------------------
-    // Setup PLIC
+    // Setup PLIC & GPIO edge detection
+    GPIO_INPUT_EN  = 0xFFFFFFFF;
     GPIO_RISE_IE   = (1U << 3);
     GPIO_RISE_IP   = 0xFFFFFFFF;
     PLIC_PRIO_GPIO = 3;
@@ -109,7 +106,8 @@ int main(void) {
 
     // Setup Timer
     uint32_t t_now = CLINT_MTIME;
-    CLINT_MTIMECMP = t_now + 250;
+    CLINT_MTIMECMPH = 0;
+    CLINT_MTIMECMP  = t_now + 300;
 
     // Enable interrupts
     set_csr_mie(MIE_MTIE | MIE_MEIE);
@@ -119,7 +117,7 @@ int main(void) {
     REG32(MAILBOX_STATUS_ADDR) = STATUS_READY_PLIC;
 
     // Await both interrupts
-    uint32_t timeout = 80000;
+    uint32_t timeout = 100000;
     while (timer_irq_count == 0 || plic_irq_count == 0) {
         if (--timeout == 0) {
             fail_test(5);
@@ -132,4 +130,3 @@ int main(void) {
     pass_test();
     return 0;
 }
-

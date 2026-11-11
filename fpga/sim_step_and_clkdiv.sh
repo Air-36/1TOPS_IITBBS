@@ -29,6 +29,7 @@ if ! command -v xvlog &> /dev/null; then
         source /etc/profile
     fi
     if command -v module &> /dev/null; then
+        module use /cad/modulefiles 2>/dev/null || true
         module load xilinx/vivado/2024.2 2>/dev/null || module load xilinx/vivado 2>/dev/null || module load vivado 2>/dev/null || true
     fi
 fi

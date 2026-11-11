@@ -31,12 +31,12 @@ class soc_full_env extends uvm_env;
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         // Connect Analysis Ports to Scoreboard
-        gpio_agt.ap.connect(scb.gpio_export);
-        irq_agt.ap.connect(scb.irq_export);
+        gpio_agt.item_collected_port.connect(scb.gpio_export);
+        irq_agt.item_collected_port.connect(scb.irq_export);
         uart_agt.ap.connect(scb.uart_export);
 
         // Connect GPIO to Coverage
-        gpio_agt.ap.connect(cov.analysis_export);
+        gpio_agt.item_collected_port.connect(cov.analysis_export);
     endfunction
 
 endclass : soc_full_env

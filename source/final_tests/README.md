@@ -55,7 +55,13 @@ final_tests/
 │   ├── Makefile                 # Benchmark runner
 │   └── README.md                # Algorithm metrics, CPI, and benchmark documentation
 │
-├── Makefile                     # Master Test Runner (executes all 7 subsystems)
+├── 08_debugger_verification/    # Subsystem 08: Comprehensive Debugger Verification (Block & Full-SoC)
+│   ├── block/                   # Block-level: ADP protocol, parser corner cases, CRV, 528 checks
+│   ├── soc/                     # Full-SoC: Black-box debugger verification with core/uncore, 84 checks
+│   ├── Makefile                 # QuestaSim & Icarus test runner
+│   └── README.md                # Test suite overview & verdict documentation
+│
+├── Makefile                     # Master Test Runner (executes all 8 subsystems)
 └── README.md                    # Master Verification Overview
 ```
 
@@ -72,13 +78,14 @@ final_tests/
 | **05. Peripherals & Accelerators** | `05_peripherals/` | Accelerator IP Socket, APB GPIO, 16550 UART, CLINT, PLIC, System Control & Boot ROM | Directed unit testbenches + 1TOPS SoC peripheral firmware + SPI Flash Model | `test_multiplier`, `test_gpio`, `test_uart`, `test_clint`, `test_plic`, `test_boot_sysctrl` |
 | **06. Debugger Subsystem** | `06_debugger_subsystem/` | SoCDebug Top (`riscv_debugger_top.sv`), ADP Controller, Step Controller | Deterministic signal-level timing checks & ADP protocol testbench | `test_features` (`ExternalStall`, `InstrRetired`, `dbg_core_reset`), `test_adp_protocol` (UART/FT1248) |
 | **07. System C Benchmarks** | `07_soc_system_benchmarks/` | Full SoC System (CPU, 2MB RAM, UART, CSR Performance Counters) | Bare-metal C execution with real-time UART streaming & `tohost` | `test_hello` (loop math), `test_matmul` (8x8 matrix), `test_qsort` (64-int quicksort) |
+| **08. Full Debugger Verification** | `08_debugger_verification/` | SoCDebug Top, AHB Mux, Step Controller, Full SoC Pin Interface | Exhaustive self-checking testbenches (Block: 528 checks, Full-SoC: 84 checks) | `test_block` (parser, memory R/W/F/V/M/U/P, random commands), `test_soc` (halt, step, traps, reset, FT1248) |
 
 ---
 
 ## 3. How to Run the Verification Suite
 
 ### Running the Complete Master Test Suite
-To run all 7 subsystems end-to-end:
+To run all 8 subsystems end-to-end:
 ```bash
 cd final_tests
 make test_all
@@ -122,10 +129,16 @@ cd 06_debugger_subsystem && make test_all
 make test_07_benchmarks
 # OR
 cd 07_soc_system_benchmarks && make test_all
+
+# Subsystem 08: Comprehensive Debugger Verification (Block & Full-SoC)
+make test_08_debugger_verification
+# OR
+cd 08_debugger_verification && make test_all
+# (or run via Icarus Verilog: make test_icarus)
 ```
 
 ### Cleaning Artifacts
-To wipe all compiled libraries, object files, logs, and memory dumps across all 7 subsystems:
+To wipe all compiled libraries, object files, logs, and memory dumps across all 8 subsystems:
 ```bash
 make clean
 ```
