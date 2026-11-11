@@ -35,7 +35,13 @@ module tops_soc_fpga_top #(
   input  logic                UARTSin,          // PMOD JA Pin 1 (Pin J1: from host PC)
   output logic                UARTSout,         // PMOD JA Pin 2 (Pin L2: to host PC)
 
-  // 4. Status LEDs
+  // 4. SPI boot interface: SoC is SPI master, Pico is SPI slave (PMOD JC top row)
+  output logic                spi_cs_n,         // PMOD JC Pin 1 (Pin K17: CS0, active low)
+  output logic                spi_mosi,         // PMOD JC Pin 2 (Pin M18: SoC -> Pico)
+  input  logic                spi_miso,         // PMOD JC Pin 3 (Pin N17: Pico -> SoC)
+  output logic                spi_sclk,         // PMOD JC Pin 4 (Pin P18: SPI clock)
+
+  // 5. Status LEDs
   output logic                led_core_halted,  // LED 0 (Pin U16: Lit when CPU is halted)
   output logic                led_dbg_sel,       // LED 1 (Pin E19: Reflects SW0 dbg_sel state)
   output logic                led_rx_detect
@@ -235,10 +241,24 @@ module tops_soc_fpga_top #(
   wire [31:0] GPIOIN = 32'b0;
   wire [31:0] GPIOOUT;
   wire [31:0] GPIOEN;
-  wire        SPIIn  = 1'b0;
+  // SPI boot interface (PMOD JC). SCLK and MOSI come straight from flops inside spi_apb.
+  // CS is decoded combinationally from the SPI controller's state (SPICS = mode ? CSDEF : f(state)),
+  // so it is re-registered here: a CS glitch would reset the Pico's bit position.
+  // The one-cycle delay is far inside the SPI CS-to-SCLK delays (>= half an SCLK period).
+  wire        SPIIn  = spi_miso;
   wire        SPIOut;
   wire [3:0]  SPICS;
   wire        SPICLK;
+
+  logic spi_cs_n_q;
+  always_ff @(posedge clk_soc) begin
+    if (reset_ext) spi_cs_n_q <= 1'b1;          // CS idle (high) during reset
+    else           spi_cs_n_q <= SPICS[0];
+  end
+
+  assign spi_cs_n = spi_cs_n_q;
+  assign spi_mosi = SPIOut;
+  assign spi_sclk = SPICLK;
 
   // Instantiate complete SoC from 1tops_soc/source/main/soc/riscv_soc_ahb.v
   riscv_soc_ahb #(

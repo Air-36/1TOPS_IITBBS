@@ -3,8 +3,12 @@
 // Purpose: Pipelined Datapath with Integrated AHB IFU/LSU and EBU Arbiter
 // =============================================================================
 
-module datapath #(parameter RESET_PC = 32'h0000_0000) (
+module datapath #(
+    parameter RESET_PC     = 32'h0000_0000,  // first fetch after a system / SYSCTRL soft reset
+    parameter DBG_RESET_PC = RESET_PC        // first fetch after a debugger core reset
+) (
     input         clk, reset,
+    input         DbgBoot,       // 1 = the last core reset came from the debugger (held after release)
     input  [2:0]  ResultSrc,
     input         ALUSrc, RegWrite, MemWrite,
     input  [1:0]  ImmSrc,
@@ -129,7 +133,28 @@ always @(*) begin
         PCNextF = PCPlus4;
 end
 
-reset_ff #(32, RESET_PC) pcreg(clk, reset, StallF, PCNextF, PC);
+// Boot address: the first fetch after a core reset depends on who reset the core.
+//   system reset / SYSCTRL soft reset -> RESET_PC      (boot ROM, natural boot)
+//   debugger core reset               -> DBG_RESET_PC  (instruction RAM, debugger flow)
+// pcreg keeps a constant asynchronous reset value. BootCycle (also a constant async reset)
+// substitutes the boot address for pcreg's output until the first fetch advances, so no flop
+// needs a signal-dependent reset value. When DbgBoot = 0, BootPC == RESET_PC == pcreg's reset
+// value, so a normal reset behaves exactly as before.
+wire [31:0] PCReg;
+wire [31:0] BootPC = DbgBoot ? DBG_RESET_PC : RESET_PC;
+reg         BootCycle;
+
+// spyglass disable_block Reset_check07
+// SMD: Clear pin of sequential element is driven by combinational logic
+// SJ: CPU core reset combines chip pad reset, debugger reset, and sysctrl soft reset (as reset_ff)
+always @(posedge clk or posedge reset) begin
+    if (reset)        BootCycle <= 1'b1;
+    else if (!StallF) BootCycle <= 1'b0;
+end
+// spyglass enable_block Reset_check07
+
+reset_ff #(32, RESET_PC) pcreg(clk, reset, StallF, PCNextF, PCReg);
+assign PC = BootCycle ? BootPC : PCReg;
 adder #(32) pcadd4(PC, 32'd4, PCPlus4);
 
 // AHB Instruction Fetch Interface (IFU)

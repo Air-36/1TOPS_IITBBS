@@ -59,6 +59,26 @@ set_property PULLUP TRUE [get_ports ft1248_miosio]
 set_property SLEW FAST [get_ports ft1248_miosio]
 set_property DRIVE 8 [get_ports ft1248_miosio]
 
+## 5b. SPI Boot Interface on PMOD JC (Top Row) - SoC = SPI master, Pico = SPI slave
+##     Standard Digilent PMOD SPI order. Connect PMOD GND (pin 5) to Pico GND.
+## Pin 1 (K17) = spi_cs_n  (CS0, active low)   -> Pico SPI CSn
+set_property PACKAGE_PIN K17 [get_ports spi_cs_n]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_cs_n]
+
+## Pin 2 (M18) = spi_mosi  (SoC -> Pico)       -> Pico SPI RX
+set_property PACKAGE_PIN M18 [get_ports spi_mosi]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_mosi]
+
+## Pin 3 (N17) = spi_miso  (Pico -> SoC)       <- Pico SPI TX
+##     Pull-up: with no Pico attached the loader reads 0xFF bytes -> bad magic -> error 0xE1
+set_property PACKAGE_PIN N17 [get_ports spi_miso]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_miso]
+set_property PULLUP TRUE [get_ports spi_miso]
+
+## Pin 4 (P18) = spi_sclk  (SPI clock, mode 3) -> Pico SPI SCK
+set_property PACKAGE_PIN P18 [get_ports spi_sclk]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_sclk]
+
 ## 6. Dedicated Debugger UART (on On-Board Micro-USB Port B18/A18)
 ##    Allows interactive HTerm debugging via the onboard Micro-USB cable!
 set_property PACKAGE_PIN B18 [get_ports uart_rx]
@@ -86,6 +106,8 @@ set_false_path -from [get_ports uart_rx]
 set_false_path -from [get_ports UARTSin]
 set_false_path -from [get_ports ft1248_miso]
 set_false_path -from [get_ports ft1248_miosio*]
+set_false_path -from [get_ports spi_miso]
+set_false_path -to   [get_ports spi_*]
 set_false_path -to   [get_ports led_*]
 set_false_path -to   [get_ports uart_tx]
 set_false_path -to   [get_ports UARTSout]

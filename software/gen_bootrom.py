@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""gen_bootrom.py - turn the internal boot ROM ELF into RTL.
+
+Rewrites the case table between the BOOTROM TABLE BEGIN/END markers in
+source/uncore/rom_ahb.sv (synthesizable ROM, ASIC + FPGA) and rewrites
+source/uncore/bootrom.mem (one 32-bit word per line, word 0 = 0x1000) to match.
+
+Usage (normally via `make -C software rom`):
+  gen_bootrom.py --elf build/bootrom_int.elf --rom ../source/uncore/rom_ahb.sv \
+                 --mem ../source/uncore/bootrom.mem [--objdump riscv64-unknown-elf-objdump]
+--objdump only adds disassembly comments to the table; the ROM contents come from the ELF.
+"""
+import argparse, re, shutil, struct, subprocess, sys
+from elftools.elf.elffile import ELFFile
+
+ROM_BASE  = 0x1000      # uncore.sv: Boot ROM 0x0000_1000 - 0x0000_1FFF
+ROM_WORDS = 1024        # rom_ahb ADDR_RANGE = 4095 -> 1024 words
+BEGIN = "// >>> BOOTROM TABLE BEGIN"
+END   = "// <<< BOOTROM TABLE END"
+
+
+def rom_image(path):
+    """Bytes of all PT_LOAD segments, placed relative to ROM_BASE (p_filesz bytes)."""
+    img = bytearray()
+    with open(path, "rb") as f:
+        elf = ELFFile(f)
+        if elf["e_entry"] != ROM_BASE:
+            sys.exit(f"{path}: entry {elf['e_entry']:#x} != ROM base {ROM_BASE:#x}")
+        for seg in elf.iter_segments():
+            if seg["p_type"] != "PT_LOAD" or seg["p_filesz"] == 0:
+                continue
+            if seg["p_offset"] == 0 and not (seg["p_flags"] & 0x3):   # header-only segment
+                continue
+            off = seg["p_paddr"] - ROM_BASE
+            if off < 0 or off + seg["p_filesz"] > ROM_WORDS * 4:
+                sys.exit(f"{path}: segment {seg['p_paddr']:#x}+{seg['p_filesz']:#x} outside the 4 KB ROM")
+            if len(img) < off + seg["p_filesz"]:
+                img += bytes(off + seg["p_filesz"] - len(img))
+            img[off:off + seg["p_filesz"]] = seg.data()
+    img += bytes(-len(img) % 4)
+    if not img:
+        sys.exit(f"{path}: no loadable bytes")
+    return list(struct.unpack(f"<{len(img) // 4}I", img))
+
+
+def disassembly(objdump, path):
+    """{address: 'mnemonic operands'} from objdump, or {} if unavailable."""
+    if not objdump or not shutil.which(objdump):
+        return {}
+    out = subprocess.run([objdump, "-d", path], capture_output=True, text=True, check=True).stdout
+    dis = {}
+    for line in out.splitlines():
+        m = re.match(r"^\s*([0-9a-f]+):\s+[0-9a-f]{8}\s+(.*?)\s*$", line)
+        if m:
+            dis[int(m.group(1), 16)] = re.sub(r"\s+", " ", m.group(2))
+    return dis
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--elf", required=True)
+    ap.add_argument("--rom", required=True, help="rom_ahb.sv to update in place")
+    ap.add_argument("--mem", required=True, help="bootrom.mem to rewrite")
+    ap.add_argument("--objdump")
+    a = ap.parse_args()
+
+    words = rom_image(a.elf)
+    dis = disassembly(a.objdump, a.elf)
+
+    width = len(str(len(words) - 1))
+    table = []
+    for i, w in enumerate(words):
+        addr = ROM_BASE + 4 * i
+        idx = f"10'd{i}:".ljust(width + 5)
+        note = f" {dis[addr]}" if addr in dis else ""
+        table.append(f"            {idx} rom_data = 32'h{w >> 16:04x}_{w & 0xffff:04x}; // {addr:#06x}:{note}\n")
+
+    src = open(a.rom).read().splitlines(keepends=True)
+    try:
+        b = next(i for i, l in enumerate(src) if BEGIN in l)
+        e = next(i for i, l in enumerate(src) if END in l)
+    except StopIteration:
+        sys.exit(f"{a.rom}: BOOTROM TABLE markers not found")
+    if e <= b:
+        sys.exit(f"{a.rom}: BOOTROM TABLE markers out of order")
+    open(a.rom, "w").write("".join(src[:b + 1] + table + src[e:]))
+
+    open(a.mem, "w").write("".join(f"{w:08x}\n" for w in words))
+    print(f"{a.rom}: {len(words)} words ({4 * len(words)} of {4 * ROM_WORDS} bytes)"
+          f"{'' if dis else ' (no disassembly comments: objdump not found)'}; {a.mem} rewritten")
+
+
+if __name__ == "__main__":
+    main()

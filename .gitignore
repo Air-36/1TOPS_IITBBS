@@ -181,3 +181,6 @@ __pycache__/
 *~
 *.bak*
 .DS_Store
+changes_s1.md
+changes_s2.md
+pico_fw.md
