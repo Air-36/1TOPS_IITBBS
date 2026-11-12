@@ -11,6 +11,7 @@ module riscv_soc_ahb #(
     parameter RESET_PC        = 32'h0000_1000,
     parameter MEM_SIZE_BYTES  = 65536,
     parameter IRAM_BASE        = 32'h8000_0000,
+    parameter DBG_RESET_PC     = IRAM_BASE,      // first fetch after a debugger core reset (C 0201/0101)
     parameter IRAM_SIZE_BYTES  = 32768,
     parameter DRAM_BASE        = 32'h8001_0000,
     parameter DRAM_SIZE_BYTES  = 32768,
@@ -256,6 +257,16 @@ module riscv_soc_ahb #(
     wire soft_core_rst_n;
     wire core_HRESETn = HRESETn & ~dbg_core_reset & soft_core_rst_n;
 
+    // Which source last reset the core: 1 = debugger (C 0201/0101), 0 = anything else.
+    // Reset only by the system reset, so it survives the core reset it describes.
+    // The core uses it to pick its first fetch: DBG_RESET_PC (RAM) vs RESET_PC (boot ROM).
+    reg core_rst_by_dbg;
+    always @(posedge HCLK or negedge HRESETn) begin
+        if (!HRESETn)              core_rst_by_dbg <= 1'b0;
+        else if (dbg_core_reset)   core_rst_by_dbg <= 1'b1;
+        else if (!soft_core_rst_n) core_rst_by_dbg <= 1'b0;
+    end
+
     core_step_controller #(
         .WATCHDOG_LIMIT(65536)
     ) u_step_controller (
@@ -404,9 +415,10 @@ module riscv_soc_ahb #(
     // =========================================================================
     // 3. Pipelined Processor Core (1TOPS SoC Core)
     // =========================================================================
-    riscv_cpu #(RESET_PC) cpu (
+    riscv_cpu #(.RESET_PC(RESET_PC), .DBG_RESET_PC(DBG_RESET_PC)) cpu (
         .HCLK(HCLK),
         .HRESETn(core_HRESETn),
+        .DbgBoot(core_rst_by_dbg),
         .HADDR(core_HADDR),
         .HWDATA(core_HWDATA),
         .HWSTRB(core_HWSTRB),
