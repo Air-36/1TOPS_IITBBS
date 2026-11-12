@@ -16,7 +16,11 @@ set proj_name  "tops_soc_fpga"
 set proj_dir   [file join $build_dir "vivado_project"]
 set part_num   "xc7a35tcpg236-1"
 
-set source_dir [file normalize [file join $script_dir ".." "source"]]
+if {[file exists [file join $script_dir ".." "source"]]} {
+    set source_dir [file normalize [file join $script_dir ".." "source"]]
+} else {
+    set source_dir [file normalize [file join $script_dir ".." ".." "source"]]
+}
 set top_dir    [file normalize [file join $script_dir "top"]]
 set constr_dir [file normalize [file join $script_dir "constrs"]]
 

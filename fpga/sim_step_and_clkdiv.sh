@@ -12,7 +12,11 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${SCRIPT_DIR}/build"
-SOURCE_DIR="$(cd "${SCRIPT_DIR}/../source" && pwd)"
+if [ -d "${SCRIPT_DIR}/../source" ]; then
+    SOURCE_DIR="$(cd "${SCRIPT_DIR}/../source" && pwd)"
+else
+    SOURCE_DIR="$(cd "${SCRIPT_DIR}/../../source" && pwd)"
+fi
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"

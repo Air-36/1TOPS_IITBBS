@@ -1,25 +1,39 @@
-# 1TOPS SoC RISC-V SoC: Dedicated FPGA Implementation (Basys 3)
+# 1TOPS SoC RISC-V SoC: FPGA Implementation & Subsystem Test Flows
 
-This directory contains the standalone, FPGA-tuned implementation of the **1TOPS SoC RISC-V SoC (`1tops_soc`)** with fully integrated **Dual-Protocol Hardware Debugger (UART + FT1248)**, **Hardware Core Step Controller**, **Reconfigurable Clock Dividers**, **Block RAM memory tuning**, and physical pin constraints for the **Digilent Basys 3** board (`xc7a35tcpg236-1`).
+This directory contains the FPGA implementations and verification environments for the **1TOPS SoC RISC-V SoC (`1tops_soc`)** with integrated **Dual-Protocol Hardware Debugger (UART + FT1248)**, **Hardware Core Step Controller**, **Reconfigurable Clock Dividers**, and **Multi-Board Support** (Digilent Basys 3 and AMD Zynq UltraScale+ ZCU102).
 
 ---
 
 ## 1. Directory Structure
 
 ```
-1tops_soc/fpga/
-├── constrs/
-│   └── basys3.xdc       # Complete physical pin constraints for Basys 3
-├── top/
-│   └── tops_soc_fpga_top.sv # Top-level FPGA wrapper wiring clocks, resets, pads to riscv_soc_ahb
-├── build_fpga.tcl       # Automated Vivado project creation and build script (sources from ../source)
-├── test_step_and_clkdiv.py   # Automated Python test runner for step execution, clock dividers & post-mortem debug
-├── sim_step_and_clkdiv.sh    # Automated Vivado XSIM simulation script (sources from ../source)
-├── STEP_AND_CLOCK_DIV_VERIFICATION_GUIDE.md # In-depth architectural & verification manual
-├── PERIPHERAL_VERIFICATION_GUIDE.md         # MMIO peripheral probing guide
-├── step_test.bin        # 64-byte deterministic assembly test program for step verification
-├── factorial.bin        # 76-byte factorial test program
-└── README.md            # This documentation
+fpga/
+├── soc_test/               # [Basys 3] Main branch SoC flow (SoC & Hardware Debugger test)
+│   ├── constrs/basys3.xdc  # Physical constraints for Basys 3 (retaining main branch baseline)
+│   ├── top/tops_soc_fpga_top.sv # Top-level wrapper (retaining main branch baseline)
+│   ├── build_fpga.tcl      # Project generator
+│   └── run_build.sh        # Build script
+│
+├── bootrom_test/           # [Basys 3] BootROM & External SPI Boot flow (bootrom-flow branch)
+│   ├── constrs/basys3.xdc  # Physical constraints with PMOD JC SPI boot pin mappings
+│   ├── top/tops_soc_fpga_top.sv # Top-level wrapper with SPI boot interface (Pico slave)
+│   ├── build_fpga.tcl      # Project generator
+│   └── run_build.sh        # Build script
+│
+├── zcu102/                 # [ZCU102] AMD Zynq UltraScale+ PL-only flow with ILA & hw_server
+│   ├── constrs/            # UG1182 constraints (pinmap, clocks, timing)
+│   ├── top/                # tops_soc_zcu102_top.sv wrapper
+│   ├── build_zcu102.tcl    # Vivado project builder
+│   ├── Makefile            # Build & remote bitstream stream targets
+│   └── README.md           # In-depth ZCU102 user manual
+│
+├── constrs/basys3.xdc      # Top-level constraints
+├── top/tops_soc_fpga_top.sv# Top-level FPGA wrapper
+├── build_fpga.tcl          # Root automated Vivado build script
+├── run_build.sh            # Root build runner
+├── sim_step_and_clkdiv.sh  # Automated Vivado XSIM simulation script
+├── test_step_and_clkdiv.py # Automated Python test runner
+└── README.md               # This documentation
 ```
 
 > **Note on RTL Sourcing**: All synthesizable circuitry, CPU core logic, uncore peripherals, and debugger infrastructure are sourced **strictly from `1tops_soc/source/`** (`../source/components/`, `../source/debugger/`, `../source/main/`, `../source/uncore/`).
