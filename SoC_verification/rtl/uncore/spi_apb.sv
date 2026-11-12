@@ -7,7 +7,11 @@ module spi_apb #(
 )(
   input  logic                PCLK, PRESETn,
   input  logic                PSEL,
+  // spyglass disable_block W240
+  // SMD: Input declared but not read
+  // SJ: PADDR[1:0] unused due to word-aligned register offsets
   input  logic [7:0]          PADDR,
+  // spyglass enable_block W240
   input  logic [XLEN-1:0]     PWDATA,
   input  logic                PWRITE,
   input  logic                PENABLE,
@@ -19,6 +23,12 @@ module spi_apb #(
   output logic                SPIIntr,
   output logic                SPICLK
 );
+
+  // spyglass disable_block W528
+  // SMD: Variable set but not read
+  // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+  wire unused_ok = &{1'b0, PADDR[1:0], 1'b0};
+  // spyglass enable_block W528
 
   // register map
   localparam SPI_SCKDIV =  8'h00;
@@ -113,7 +123,13 @@ module spi_apb #(
   // -- Note SPI registers are 32 bits no matter what; access them with LW SW.
 
   assign Din = PWDATA[31:0];
-  assign PRDATA = (XLEN == 64) ? {Dout, Dout} : Dout;
+  generate
+    if (XLEN == 64) begin : gen_prdata_64
+      assign PRDATA = {Dout, Dout};
+    end else begin : gen_prdata_32
+      assign PRDATA = Dout;
+    end
+  endgenerate
 
   // Register access
   always_ff @(posedge PCLK or negedge PRESETn)
@@ -180,6 +196,9 @@ module spi_apb #(
   assign ResetSCLKenable = Memwrite & (Entry == SPI_SCKDIV);
   assign FrameLength = Format[4:1];
 
+  // spyglass disable_block W391 bothedges
+  // SMD: Design unit uses both edges of clock
+  // SJ: SPI controller uses negative clock edge to generate half-cycle delayed shift/sample strobe alignment
   spi_controller controller(PCLK, PRESETn,
                             // Transmit Signals
                             TransmitStart, TransmitRegLoaded, ResetSCLKenable,
@@ -193,6 +212,7 @@ module spi_apb #(
                             Transmitting, InactiveState,
                             // Outputs
                             SPICLK);
+  // spyglass enable_block W391 bothedges
 
   // Transmit FIFO ---------------------------------------------------
 

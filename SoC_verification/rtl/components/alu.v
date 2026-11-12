@@ -8,11 +8,14 @@ module alu #(parameter WIDTH = 32) (
 );
 
 
+wire [WIDTH:0] sum_ab  = a + b;
+wire [WIDTH:0] diff_ab = a - b;
+
 // always block to determine the ALU output based on the ALU control signal
 always @(*) begin
     case (alu_ctrl)
-        4'b0000: alu_out = a + b;           // ADD
-        4'b0001: alu_out = a - b;           // SUB
+        4'b0000: alu_out = sum_ab[WIDTH-1:0];           // ADD
+        4'b0001: alu_out = diff_ab[WIDTH-1:0];          // SUB
         4'b0010: alu_out = a & b;           // AND
         4'b0011: alu_out = a | b;           // OR
         4'b0100: alu_out = a << b[4:0];     // SLL (Shift Left Logical)
@@ -21,7 +24,7 @@ always @(*) begin
         4'b0111: alu_out = a ^ b;           // XOR
         4'b1000: alu_out = $signed(a) >>> b[4:0]; // SRA (Arithmetic Right Shift)
         4'b1001: alu_out = a >> b[4:0];     // SRL (Logical Right Shift)
-        default: alu_out = 1'bx;               // Default case
+        default: alu_out = {WIDTH{1'b0}};   // Default case
     endcase
 end
 

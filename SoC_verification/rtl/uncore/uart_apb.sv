@@ -10,7 +10,11 @@ module uart_apb #(
     input  logic              PRESETn,
     input  logic              PSEL,
     input  logic [ 2:0]       PADDR,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PWDATA[31:8] unused; 16550 registers are 8 bits wide
     input  logic [XLEN-1:0]   PWDATA,
+    // spyglass enable_block W240
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [XLEN-1:0]   PRDATA,
@@ -31,6 +35,12 @@ module uart_apb #(
     output logic              TXRDYb,
     output logic              RXRDYb
 );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PWDATA[31:8], 1'b0};
+    // spyglass enable_block W528
 
 generate
 if (USE_REAL_UART == 1) begin : gen_real_uart
@@ -129,12 +139,15 @@ end else begin : gen_fast_model
     end
 
     // Replicate byte across all byte lanes of PRDATA
-    always_ff @(posedge PCLK or negedge PRESETn) begin
-        if (!PRESETn) begin
-            PRDATA <= '0;
-        end else begin
-            if (XLEN == 64) PRDATA <= {8{dout}};
-            else            PRDATA <= {4{dout}};
+    if (XLEN == 64) begin : gen_prdata_64
+        always_ff @(posedge PCLK or negedge PRESETn) begin
+            if (!PRESETn) PRDATA <= '0;
+            else          PRDATA <= {8{dout}};
+        end
+    end else begin : gen_prdata_32
+        always_ff @(posedge PCLK or negedge PRESETn) begin
+            if (!PRESETn) PRDATA <= '0;
+            else          PRDATA <= {4{dout}};
         end
     end
 
@@ -170,7 +183,7 @@ end else begin : gen_fast_model
                 UART_LCR: lcr <= din;
                 UART_MCR: mcr <= din;
                 UART_SCR: scr <= din;
-                default: ;
+                default: begin end
             endcase
         end
     end

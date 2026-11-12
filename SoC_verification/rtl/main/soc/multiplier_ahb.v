@@ -47,7 +47,8 @@ module multiplier_ahb #(
     // Registers for multiplier operands
     reg [31:0] operand_a;
     reg [31:0] operand_b;
-    wire [31:0] product = operand_a * operand_b;
+    wire [63:0] product_full = operand_a * operand_b;
+    wire [31:0] product      = product_full[31:0];
 
     always @(posedge clk or posedge reset) begin
         if (reset) begin

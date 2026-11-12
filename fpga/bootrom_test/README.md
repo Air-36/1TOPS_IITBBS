@@ -52,3 +52,4 @@ cd fpga/bootrom_test
 2. Connect Raspberry Pi Pico to Basys 3 PMOD JC (Pins 1-4 and GND).
 3. Set `SW1` to `1` (External SPI Boot).
 4. Press `btnC` (Reset). The 1TOPS SoC clocks the SPI bus, receives the `"BOOT"` stream, copies instructions into IMEM/DMEM, and executes.
+

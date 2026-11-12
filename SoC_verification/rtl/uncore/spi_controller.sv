@@ -110,6 +110,9 @@ module spi_controller (
   assign EndTransmission = TransmitFIFOEmpty & EndOfFrame;
   assign Phase = SckMode[0];
 
+  // spyglass disable_block Reset_check07
+  // SMD: Preset/Clear pin of sequential element is driven by combinational logic
+  // SJ: SPICLK reset value depends on CPOL polarity mode (SckMode[1]), which is static during reset
   always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       DivCounter <= 12'b0;
@@ -158,6 +161,7 @@ module spi_controller (
       end
     end
   end
+  // spyglass enable_block Reset_check07
 
   // The very last bit in a frame of any length.
   assign LastBit = (BitNum == FrameLength - 4'b1);
@@ -175,8 +179,10 @@ module spi_controller (
 
   // Delay ShiftEdge and SampleEdge by a half PCLK period
   // Aligned EXACTLY ON THE MIDDLE of the leading and trailing edges.
-  // Sweeeeeeeeeet...
   assign InvertClock = ^SckMode;
+  // spyglass disable_block W391 bothedges
+  // SMD: Design unit uses both edges of clock
+  // SJ: SPI controller uses negative clock edge to generate half-cycle delayed shift/sample strobe alignment
   always_ff @(negedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       ShiftEdge <= 0;
@@ -192,6 +198,7 @@ module spi_controller (
       EndOfFrame <= (InvertClock ^ SPICLK) & EndOfFramePulse;
     end
   end
+  // spyglass enable_block W391 bothedges
 
   always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin

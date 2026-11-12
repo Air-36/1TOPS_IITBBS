@@ -25,8 +25,12 @@ module core_debug_ahb #(
         input  wire                   HRESETn,
         input  wire                   core_reset_i,
         input  wire                   HSEL,
+        // spyglass disable_block W240
+        // SMD: Input declared but not read
+        // SJ: HADDR[31:12] decoded by interconnect; HWDATA[31:16] unused by 16-bit debug registers
         input  wire [31:0]            HADDR,
         input  wire [31:0]            HWDATA,
+        // spyglass enable_block W240
         input  wire                   HWRITE,
         input  wire [ 1:0]            HTRANS,
         input  wire                   HREADY,
@@ -81,6 +85,12 @@ module core_debug_ahb #(
         output reg  [ 7:0]            ft_clkdiv_val_o,
         input  wire                   dbg_sel_i
     );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, HADDR[31:12], HWDATA[31:16], 1'b0};
+    // spyglass enable_block W528
 
     // =========================================================================
     // 1. AHB-Lite Bus Control & Address Pipelining
@@ -241,7 +251,7 @@ module core_debug_ahb #(
                 // Pipeline Instructions & Flags
                 12'h094: HRDATA = InstrD;
                 12'h098: HRDATA = InstrM;
-                12'h09C: HRDATA = {16'b0, TrapM, mretM, ExternalStall, InstrRetired, FlushFlags, 1'b0, StallFlags};
+                12'h09C: HRDATA = {19'b0, TrapM, mretM, ExternalStall, InstrRetired, FlushFlags, 1'b0, StallFlags};
 
                 // Privileged CSRs
                 12'h0A0: HRDATA = mstatus;

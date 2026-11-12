@@ -4,7 +4,7 @@
 module ram_ahb #(
   parameter XLEN        = 32,
   parameter PA_BITS     = 32,
-  parameter RANGE       = 65535,
+  parameter ADDR_RANGE   = 65535,
   parameter BASE_ADDR   = 32'h8000_0000,
   parameter PRELOAD     = 0,
   parameter        MEMFILE = "test.mem",
@@ -16,7 +16,11 @@ module ram_ahb #(
   input  logic [PA_BITS-1:0]   HADDR,
   input  logic                 HWRITE,
   input  logic                 HREADY,
+  // spyglass disable_block W240
+  // SMD: Input declared but not read
+  // SJ: HTRANS[0] unused; RAM slave qualifies active transfers via HTRANS[1]
   input  logic [1:0]           HTRANS,
+  // spyglass enable_block W240
   input  logic [XLEN-1:0]      HWDATA,
   input  logic [XLEN/8-1:0]    HWSTRB,
   output logic [XLEN-1:0]      HREADRam,
@@ -24,7 +28,7 @@ module ram_ahb #(
   output logic                 HREADYRam
 );
 
-  localparam WORDS      = (RANGE + 1) / (XLEN / 8);
+  localparam WORDS      = (ADDR_RANGE + 1) / (XLEN / 8);
   localparam ADDR_WIDTH = (WORDS > 1) ? $clog2(WORDS) : 1;
   localparam OFFSET     = $clog2(XLEN / 8);
 
@@ -32,6 +36,12 @@ module ram_ahb #(
   logic                 initTrans;
   logic                 memwrite, memwriteD, memread;
   logic                 nextHREADYRam;
+
+  // spyglass disable_block W528
+  // SMD: Variable set but not read
+  // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+  wire unused_ok = &{1'b0, HTRANS[0], 1'b0};
+  // spyglass enable_block W528
   logic                 DelayReady;
 
   // AHB transaction detection
@@ -89,12 +99,16 @@ module ram_ahb #(
   (* ramstyle = "M9K" *) logic [7:0] mem2 [0:MEM_DEPTH-1];
   (* ramstyle = "M9K" *) logic [7:0] mem3 [0:MEM_DEPTH-1];
 
+  // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Ar_resetcross01
+  // SMD: Flip-flop has neither asynchronous set nor asynchronous reset / Unsynchronized reset crossing to unreset memory
+  // SJ: RAM storage arrays are unreset to enable Block RAM / SRAM macro inference; writes gated cleanly by memwriteD
   always_ff @(posedge HCLK) begin
     if (memwriteD && HWSTRB[0]) mem0[ram_word_addr] <= HWDATA[ 7: 0];
     if (memwriteD && HWSTRB[1]) mem1[ram_word_addr] <= HWDATA[15: 8];
     if (memwriteD && HWSTRB[2]) mem2[ram_word_addr] <= HWDATA[23:16];
     if (memwriteD && HWSTRB[3]) mem3[ram_word_addr] <= HWDATA[31:24];
   end
+  // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Ar_resetcross01
 
   always_ff @(posedge HCLK or negedge HRESETn) begin
     if (!HRESETn) begin
@@ -116,6 +130,9 @@ module ram_ahb #(
   end
 // synthesis translate_on
 
+  // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+  // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
+  // SJ: RAM storage arrays are unreset to enable Block RAM / SRAM macro inference and avoid routing congestion
   // Byte-lane masked synchronous write
   always @(posedge HCLK) begin
     if (memwriteD) begin
@@ -125,6 +142,7 @@ module ram_ahb #(
       if (HWSTRB[3]) mem[ram_word_addr][31:24] <= HWDATA[31:24];
     end
   end
+  // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
 
   // Synchronous read
   always_ff @(posedge HCLK or negedge HRESETn) begin

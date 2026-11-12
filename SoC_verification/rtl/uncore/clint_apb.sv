@@ -7,7 +7,11 @@ module clint_apb #(
     input  logic              PCLK,
     input  logic              PRESETn,
     input  logic              PSEL,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PADDR[1:0] unused due to word-aligned register offsets
     input  logic [15:0]       PADDR,
+    // spyglass enable_block W240
     input  logic [31:0]       PWDATA,
     input  logic [ 3:0]       PSTRB,
     input  logic              PWRITE,
@@ -18,6 +22,12 @@ module clint_apb #(
     output logic              MTimerInt,
     output logic              MSwInt
 );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PADDR[1:0], 1'b0};
+    // spyglass enable_block W528
 
     // Register Offsets (word-aligned)
     localparam CLINT_MSIP      = 16'h0000;

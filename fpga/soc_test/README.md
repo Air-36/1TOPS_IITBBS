@@ -44,3 +44,4 @@ To run XSIM simulation of the hardware debugger and step controller:
 cd fpga/soc_test
 ./sim_step_and_clkdiv.sh
 ```
+
