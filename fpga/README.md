@@ -72,7 +72,7 @@ fpga/
   - Exposes General Purpose Registers (`x0`–`x31`) via a non-intrusive auxiliary combinational read port on `reg_file.v`.
   - Exposes all 5 pipeline stage Program Counters (`PCF`, `PCD`, `PCE`, `PCM`, `PCW`), instruction opcodes, and hazard flags.
   - Exposes privileged CSRs (`mstatus`, `mcause`, `mtval`, `mepc`, `mtvec`, `mie`, `mip`, `mscratch`, cycle and instret counters).
-- **Instantaneous Hardware Auto-Halt**:
+- **Instantaneous Hardware Auto-Halt** (off after reset: enable it by writing `DBG_CTRL` at `0x0B00_00D0`, e.g. `A 0B0000D0`, `W 00000003`):
   - Unhandled exceptions (`TrapM = 1` or `IllegalInstrD = 1`) immediately assert `auto_halt_trap`, switching the step controller into `STATE_HALTED` within the same clock cycle to prevent the CPU from entering infinite crash loops or overwriting register state.
 - **Sticky Crash Registers**: Synchronously latches `TRAP_CAUSE` (`mcause`), `TRAP_VAL` (`mtval`), and `TRAP_PC` (`PCM`) at the moment of failure.
 - **16-Entry Circular Micro-Trace Buffer**: Records the last 16 committed instruction PCs leading up to the crash.
@@ -86,7 +86,7 @@ fpga/
   - **Mode 1 (`SW1 = 1`) — Boot from External SPI Flash**:
     - The Boot ROM First-Stage Bootloader (FSBL) activates the uncore SPI master (`0x1004_0000`), asserts chip select `SPICS[0] = 0`, sends READ command `0x03` with 24-bit address `0x000000`, sequentially copies firmware code into Instruction SRAM (`0x8000_0000`), deasserts CS, and executes `jr 0x8000_0000` to start execution from RAM.
 - **Dynamic Reset Vector & ROM Remapping**:
-  - `SYSCTRL_RESET_VEC` (`0x1008_0004`): Allows the debugger or software to dynamically re-point the core reset vector to any 32-bit address (e.g. `0x8000_0000`).
+  - `SYSCTRL_RESET_VEC` (`0x1008_0004`): Register only, **not connected to the core**. The reset PC is fixed: a system or SYSCTRL soft reset starts at `0x0000_1000` (boot ROM), and a debugger core reset (`C 0201` / `C 0101`) always starts at `0x8000_0000` (IRAM).
   - `SYSCTRL_REMAP_CTRL` (`0x1008_000C`): Aliases `0x0000_0000 - 0x0000_7FFF` to Instruction SRAM, allowing legacy 0x0-based vectors without modifying core datapath.
 
 ---
@@ -99,14 +99,14 @@ fpga/
 | `reset_btn` | **Pin U18 (btnC)** | Input | Center pushbutton (active-high system reset; OR'd with MMCM lock) |
 | `dbg_sel` | **Pin V17 (SW0)** | Input | Slide switch: `0` (Down) = UART, `1` (Up) = FT1248 |
 | `boot_mode` | **Pin V16 (SW1)** | Input | Slide switch: `0` (Down) = Boot Internal ROM, `1` (Up) = Boot SPI Flash |
-| `uart_rx` | **PMOD JA Pin 1 (J1)** | Input | Debugger UART RX (connect to USB-UART Dongle TXD) |
-| `uart_tx` | **PMOD JA Pin 2 (L2)** | Output | Debugger UART TX (connect to USB-UART Dongle RXD) |
+| `uart_rx` | **Pin B18 (on-board micro-USB)** | Input | Debugger UART RX (from host PC via the Basys 3 USB-UART) |
+| `uart_tx` | **Pin A18 (on-board micro-USB)** | Output | Debugger UART TX (to host PC via the Basys 3 USB-UART) |
 | `ft1248_clk` | **PMOD JB Pin 1 (A14)** | Output | FT1248 Serial Clock (SCLK to FT232H) |
 | `ft1248_ss_n` | **PMOD JB Pin 2 (A16)** | Output | FT1248 Active-Low Chip Select (SS# to FT232H) |
 | `ft1248_miso` | **PMOD JB Pin 3 (B15)** | Input | FT1248 Read Available Status (MISO / RXF# from FT232H) |
 | `ft1248_miosio` | **PMOD JB Pin 4 (B16)** | Inout | FT1248 Bidirectional Serial Data Bus |
-| `UARTSin` | *Pin B18 (Unused)* | Input | Uncore Application UART RX (tied high in top-wrapper) |
-| `UARTSout` | *Pin A18 (Unused)* | Output | Uncore Application UART TX (unconnected in top-wrapper) |
+| `UARTSin` | **PMOD JA Pin 1 (J1)** | Input | Application UART RX (connect to USB-UART dongle TXD) |
+| `UARTSout` | **PMOD JA Pin 2 (L2)** | Output | Application UART TX (connect to USB-UART dongle RXD) |
 | `led_core_halted` | **Pin U16 (LED 0)** | Output | Status LED (lit when CPU core is halted by debugger) |
 | `led_dbg_sel` | **Pin E19 (LED 1)** | Output | Status LED (lit when FT1248 mode is selected) |
 | `led_rx_detect` | **Pin L1 (LED 15)** | Output | UART RX Activity / Prompt `]` Detector (Blinks ~200ms on any byte, latches ON upon detecting `]`) |
@@ -246,8 +246,7 @@ The repository includes a dedicated 64-byte stepping verification binary (`step_
 1. **Halt CPU**: `C 0202`
 2. **Zero DRAM**: `A 80010000` $\rightarrow$ `V 00000000` $\rightarrow$ `F 08`
 3. **Upload `step_test.bin`**: `A 80000000` $\rightarrow$ `U 40` $\rightarrow$ send `step_test.bin` in HTerm.
-4. **Configure Reset Vector & Reset Core**:
-   - Set reset vector to IMEM: `A 10080004` $\rightarrow$ `W 80000000`
+4. **Reset Core** (a debugger core reset always restarts at IMEM `0x8000_0000`; no reset-vector setup needed):
    - Pulse core reset: `C 0201` $\rightarrow$ `C 0101`
 5. **Step Instructions**:
    - Send `C 0204` then `C 0104` four times.
