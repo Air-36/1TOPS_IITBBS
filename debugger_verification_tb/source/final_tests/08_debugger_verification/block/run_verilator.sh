@@ -1,6 +1,7 @@
 #!/bin/bash
 # Block-level debugger regression on Verilator 5 (timing + SVA)
-R=${1:-$(cd $(dirname $0)/../../../debugger && pwd)}
+# default RTL: <repo>/source (this suite lives in debugger_verification_tb/, outside source/)
+R=${1:-$(cd $(dirname $0)/../../../../../source/debugger && pwd)}
 cd $(dirname $0)
 export PATH=/usr/local/lib/python3.13/dist-packages/verilator/bin:$PATH
 rm -rf obj_block

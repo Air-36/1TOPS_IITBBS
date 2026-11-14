@@ -9,7 +9,7 @@ Here it runs on the ZCU102 (`xczu9eg-ffvb1156-2-e`).
   Remote server (code + Vivado)                      Lab bench
  ┌───────────────────────────┐   network    ┌─────────────────────────────┐   USB-JTAG (J2)  ┌─────────┐
  │ make build_fpga           │ ───────────▶ │ PC running hw_server        │ ───────────────▶ │ ZCU102  │
- │ make stream_remote ───────┼── :3121 ───▶ │ 10.10.37.116:3121           │   USB-UART (J83) │         │
+ │ make stream_remote ───────┼── :3121 ───▶ │ 10.10.92.226:3121           │   USB-UART (J83) │         │
  └───────────────────────────┘              │ HTerm (debugger console)    │ ◀──────────────▶ │         │
                                             └─────────────────────────────┘                  └─────────┘
                                                                          buttons, switches, LEDs: by hand
@@ -72,7 +72,7 @@ cd fpga/zcu102
 make code                 # software: boot ROMs + tests (RISC-V toolchain)
 make rom                  # write the SPI boot ROM into source/uncore/rom_ahb.sv (see caveat 1)
 make build_fpga           # -> output/tops_soc_zcu102.bit (+ .ltx), timing/utilization reports
-make stream_remote        # program the ZCU102 through hw_server 10.10.37.116:3121
+make stream_remote        # program the ZCU102 through hw_server 10.10.92.226:3121
 ```
 Options:
 - `CLK_SRC=SI570`: use the 300 MHz SI570 clock instead of CLK_125 (see caveat 2).
@@ -95,7 +95,7 @@ Options:
 5. **SPI boot with the Pico:** wire the Pico to PMOD0 J55: CS = J55.1, MOSI = J55.3, MISO = J55.5, SCK = J55.7, plus
    GND (see UG1182 Figure 3-28 for the J55 GND/3.3 V pins). Load the Pico with `software/make_image.py … --serial`,
    then press SW20.
-6. **ILA (optional):** in Vivado Hardware Manager on the server, connect to `10.10.37.116:3121`, open the target and
+6. **ILA (optional):** in Vivado Hardware Manager on the server, connect to `10.10.92.226:3121`, open the target and
    set the probes file to `output/tops_soc_zcu102.ltx`. Probes:
    - `probe0` = {SPI cs_n, mosi, miso, sclk, debugger UART rx/tx, app UART in/out};
    - `probe1` = PC;

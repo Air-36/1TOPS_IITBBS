@@ -116,7 +116,8 @@ module spi_controller (
   always_ff @(posedge PCLK or negedge PRESETn) begin
     if (~PRESETn) begin
       DivCounter <= 12'b0;
-      SPICLK <= SckMode[1];
+      SPICLK <= 1'b0;   // = SckMode[1]: SckMode resets to 0 on the same PRESETn. A signal-dependent
+                        // async reset value made this an FDCPE ("cannot be timed accurately").
       SCK <= 0;
       BitNum <= 4'h0;
       DelayCounter <= 0;

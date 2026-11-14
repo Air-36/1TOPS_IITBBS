@@ -2,10 +2,13 @@
 # Makefile: Firmware compilation for 1TOPS RISC-V SoC Verification
 # ==============================================================================
 
-TOOLCHAIN_BIN := /home/23EC01043/tools/xpack-riscv-none-elf-gcc-15.2.0-1/bin
-CC            := $(TOOLCHAIN_BIN)/riscv-none-elf-gcc
-OBJCOPY       := $(TOOLCHAIN_BIN)/riscv-none-elf-objcopy
-OBJDUMP       := $(TOOLCHAIN_BIN)/riscv-none-elf-objdump
+# Override on the command line, e.g. make TOOLCHAIN_BIN=$HOME/riscv_toolchain/bin
+# or with a different tool prefix: make RV_PREFIX=riscv64-unknown-elf- TOOLCHAIN_BIN=<dir>
+TOOLCHAIN_BIN ?= /home/23EC01043/tools/xpack-riscv-none-elf-gcc-15.2.0-1/bin
+RV_PREFIX     ?= riscv-none-elf-
+CC            := $(TOOLCHAIN_BIN)/$(RV_PREFIX)gcc
+OBJCOPY       := $(TOOLCHAIN_BIN)/$(RV_PREFIX)objcopy
+OBJDUMP       := $(TOOLCHAIN_BIN)/$(RV_PREFIX)objdump
 PYTHON        := python3
 
 BSP_DIR       := ../bsp
@@ -24,7 +27,8 @@ MEMS          := $(addsuffix _instr.mem, $(TESTS))
 
 .PHONY: all clean
 
-all: $(ELFS) $(DIS) $(MEMS)
+# .dis listings only when objdump exists (they are not needed to run the tests)
+all: $(ELFS) $(MEMS) $(if $(wildcard $(OBJDUMP)),$(DIS))
 
 %.elf: %.c $(CRT0) $(LDSCRIPT) $(BSP_DIR)/soc_regs.h
 	$(CC) $(CFLAGS) $(CRT0) $< -o $@

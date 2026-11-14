@@ -38,6 +38,7 @@ RISCV_SEARCH_DIRS = [
     "/cad/mentor/xpack-riscv-none-elf-gcc/bin",
 ]
 SPIKE_SEARCH_DIRS = [
+    os.environ.get("SPIKE_BIN", ""),     # folder containing the spike binary
     os.environ.get("RISCV_BIN", ""),
     "/home/23EC01009/cvw/1tops_soc/1tops_iitbbs/spike_iss/install/bin",
 ]
@@ -56,7 +57,9 @@ VLOG    = find_tool(["vlog"], QUESTA_SEARCH_DIRS)
 VLIB    = find_tool(["vlib"], QUESTA_SEARCH_DIRS)
 
 # Reference test suite (riscv-arch-tests from ibex vendor)
-_ARCH_REF = "/home/23EC01043/Desktop/RiscV_Core_verification/IbexDV/ibex/vendor/riscv-arch-tests"
+# Override with ARCH_TEST_DIR=<riscv-arch-test checkout> (the folder that contains riscv-test-suite/)
+_ARCH_REF = os.environ.get("ARCH_TEST_DIR",
+                           "/home/23EC01043/Desktop/RiscV_Core_verification/IbexDV/ibex/vendor/riscv-arch-tests")
 RV32I_SUITE_DIR = os.path.join(_ARCH_REF, "riscv-test-suite/rv32i_m/I/src")
 PRIV_SUITE_DIR  = os.path.join(_ARCH_REF, "riscv-test-suite/rv32i_m/privilege/src")
 ZICSR_SUITE_DIR = os.path.join(SCRIPT_DIR, "zicsr_env")  # local fallback if no external
@@ -174,6 +177,8 @@ def run_test(test_name, build_dir):
     src_file, test_type = locate_source(test_name)
     if not src_file:
         print(f"[-] Source file for {test_name} not found!")
+        print(f"    searched: {RV32I_SUITE_DIR}\n              {PRIV_SUITE_DIR}\n              {ZICSR_SUITE_DIR}")
+        print("    set ARCH_TEST_DIR=<riscv-arch-test checkout containing riscv-test-suite/>")
         return False
 
     elf_file = os.path.join(build_dir, f"{test_name}.elf")

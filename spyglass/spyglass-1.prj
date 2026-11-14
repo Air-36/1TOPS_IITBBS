@@ -115,6 +115,8 @@ set_option language_mode mixed
 set_option designread_enable_synthesis no
 set_option designread_disable_flatten no
 set_option enableSV yes
+# Lint-only RAM depth cap in source/uncore/ram_ahb.sv (FPGA/ASIC synthesis uses the full size)
+set_option define SOC_LINT_SMALL_RAM
 set_option top riscv_soc_ahb
 set_option active_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
 

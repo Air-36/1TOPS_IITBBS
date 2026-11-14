@@ -30,6 +30,7 @@ module tb_dbg_block;
   reg        uart_rx = 1'b1;
   wire       uart_tx;
   wire       ft_clk, ft_ssn, ft_miso; wire [0:0] ft_miosio;
+  wire [0:0] ft_mo, ft_moe;                           // declared before use (Icarus 13+ requires it)
   wire       core_halt, core_reset, core_step, core_step_mode;
   wire [7:0] gpo8;
   wire       stall, step_busy, step_done, step_done_flag; wire [31:0] step_count;
@@ -89,7 +90,6 @@ module tb_dbg_block;
   reg  ftb_tx_ready = 1'b1; reg [7:0] ftb_rx_data = 0; reg ftb_rx_valid = 0;
   assign ft_miosio[0] = (!ftb_mio_z) ? ftb_mio_o : 1'bz;
   assign ft_miso      = ftb_miso;
-  wire [0:0] ft_mo, ft_moe;
   assign ft_miosio[0] = ft_moe[0] ? ft_mo[0] : 1'bz;   // pad, as in riscv_soc_ahb.v
   f232h_ft1248_stream u_ftdev (
     .ft_clk_i(ft_clk), .ft_ssn_i(ft_ssn), .ft_miso_o(ftb_miso), .ft_miosio_i(ft_miosio[0]), .ft_miosio_o(ftb_mio_o), .ft_miosio_z(ftb_mio_z),

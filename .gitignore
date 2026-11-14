@@ -88,6 +88,8 @@ modelsim.ini
 *.a
 software/*.bin
 software/*.mem
+fpga/zcu102/*.bin
+fpga/*.bin
 
 # 7. Quartus Compilation & Project Outputs
 output_files/
@@ -184,3 +186,10 @@ __pycache__/
 changes_s1.md
 changes_s2.md
 pico_fw.md
+# ZCU102 build outputs (bit/hwh/ltx/xsa/reports)
+fpga/zcu102/output/
+fpga/output/
+fpga/sim/build/
+
+nohup.out
+rpi4_spi_boot_options.txt

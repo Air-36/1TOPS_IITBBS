@@ -21,6 +21,13 @@ class soc_full_env extends uvm_env;
 
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
+        // The tests drive GPIO pins directly through the interface and never start GPIO sequences,
+        // so the GPIO agent is passive (monitor only, no driver competing for gpio_in).
+        begin
+            gpio_config gcfg = gpio_config::type_id::create("gcfg");
+            gcfg.is_active = UVM_PASSIVE;
+            uvm_config_db#(gpio_config)::set(this, "gpio_agt", "cfg", gcfg);
+        end
         gpio_agt = gpio_agent::type_id::create("gpio_agt", this);
         irq_agt  = irq_agent::type_id::create("irq_agt", this);
         uart_agt = uart_agent::type_id::create("uart_agt", this);
@@ -31,12 +38,13 @@ class soc_full_env extends uvm_env;
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         // Connect Analysis Ports to Scoreboard
-        gpio_agt.ap.connect(scb.gpio_export);
-        irq_agt.ap.connect(scb.irq_export);
+        // gpio_agent / irq_agent expose item_collected_port (uart_agent uses ap)
+        gpio_agt.item_collected_port.connect(scb.gpio_export);
+        irq_agt.item_collected_port.connect(scb.irq_export);
         uart_agt.ap.connect(scb.uart_export);
 
         // Connect GPIO to Coverage
-        gpio_agt.ap.connect(cov.analysis_export);
+        gpio_agt.item_collected_port.connect(cov.analysis_export);
     endfunction
 
 endclass : soc_full_env

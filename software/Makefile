@@ -12,6 +12,11 @@ OBJCOPY = $(RISCV_PREFIX)objcopy
 CROSS ?= $(RISCV_PREFIX)
 ARCH  ?= -march=rv32i -mabi=ilp32
 CFLAGS2 = $(ARCH) -nostdlib -nostartfiles -Icommon
+# Print the boot ROM size (informational: the linker scripts already enforce 4 KB / 1 KB).
+# Falls back to Python (pyelftools) when the toolchain has no `size` binary.
+SHOW_SIZE = @if command -v $(CROSS)size >/dev/null 2>&1; then $(CROSS)size $@; \
+  else python3 -c "import sys; from elftools.elf.elffile import ELFFile; e = ELFFile(open(sys.argv[1], 'rb')); \
+  print(sys.argv[1] + ':', sum(g['p_filesz'] for g in e.iter_segments() if g['p_type'] == 'PT_LOAD'), 'bytes loaded')" $@ 2>/dev/null || echo "$@: size not shown (no size tool or pyelftools)"; fi
 # The internal ROM is RTL: a generated case table in source/uncore/rom_ahb.sv (see `make rom`)
 ROM_RTL = ../source/uncore/rom_ahb.sv
 ROM_MEM = ../source/uncore/bootrom.mem
@@ -72,7 +77,7 @@ build:
 
 build/bootrom_int.elf: bootrom_int/bootrom_int.S bootrom_int/bootrom_int.ld common/loader.S | build
 	$(CROSS)gcc $(CFLAGS2) -T bootrom_int/bootrom_int.ld $< -o $@
-	$(CROSS)size $@
+	$(SHOW_SIZE)
 
 # Write the internal boot ROM into the RTL: rewrites the generated case table in rom_ahb.sv
 # and bootrom.mem. Explicit target (not part of `all`) because it edits RTL source.
@@ -81,7 +86,7 @@ rom: build/bootrom_int.elf
 
 build/bootrom_ext.elf: bootrom_ext/bootrom_ext.S bootrom_ext/bootrom_ext.ld common/loader.S | build
 	$(CROSS)gcc $(CFLAGS2) -T bootrom_ext/bootrom_ext.ld $< -o $@
-	$(CROSS)size $@
+	$(SHOW_SIZE)
 
 # usage: make image MODE=0|1 TEST=path/to/test.elf   ->  build/flash.bin (SPI boot stream)
 ifneq ($(filter image,$(MAKECMDGOALS)),)

@@ -1,0 +1,85 @@
+S0 boot|S0.1|banner and prompt after power-on|PASS||
+S0 boot|S0.2|B reports UART divider CLK/BAUD and FT divider 4|PASS||B 0x00040010
+S0 boot|S0.3|DBG_CTRL.halt_on_trap_en = 0 after reset (C1 fix)|PASS||0x00000000
+S0 boot|S0.4|DBG_UART_CLKDIV readable by AHB = 16|PASS||16
+S0 boot|S0.5|DBG_FT_CLKDIV readable by AHB = 4|PASS||4
+S0 boot|S0.6|DBG_IF_STATUS = UART selected, not stalled|PASS||0x00000000
+S1 contention|S1.1|16 debugger write/read-back pairs while the core runs|PASS||0 mismatches
+S1 contention|S1.2|8-word burst read of the running program|PASS||
+S1 contention|S1.3|core kept running during debugger traffic|PASS||
+S1 contention|S1.4|core self-check intact (no lost/corrupted core access)|PASS||fail flag 0x0
+S1 contention|S1.5|10 reads of a live counter are monotonic (coherent view)|PASS||
+S1 contention|S1.6|F fills 16 DRAM words while the core runs|PASS||
+S1 contention|S1.7|core self-check intact after F|PASS||
+S2 halt|S2.1|status bit0 = halted|PASS||GPI8 0x01
+S2 halt|S2.2|PC, memory and INSTRET frozen while halted|PASS||
+S2 halt|S2.3|DBG_IF_STATUS bit3 = ExternalStall while halted|PASS||0x00000008
+S3 register/CSR readback|S3.1|R 00000020 burst: all 32 GPRs match the register file|PASS||0 mismatches
+S3 register/CSR readback|S3.2|known register values (a0, s11) as set by the program|PASS||
+S3 register/CSR readback|S3.3|PCF/PCD/PCE/PCM/PCW match the pipeline|PASS||8000011c 80000114 80000110 00000000 00000000
+S3 register/CSR readback|S3.4|INSTR_DECODE shows the instruction in decode|PASS||dbg 01242223, core 01242223
+S3 register/CSR readback|S3.5|INSTR_MEMORY matches|PASS||
+S3 register/CSR readback|S3.6|PIPELINE_STATUS matches the hazard unit|PASS||0x0000041f
+S3 register/CSR readback|S3.7|PIPELINE_STATUS layout as documented ([9:5] = StallFlags)|XFAIL|C11|0x0000041f
+S3 register/CSR readback|S3.8|8 CSRs match the CSR file|PASS||
+S3 register/CSR readback|S3.9|mtvec / mscratch hold the values the program wrote|PASS||800001a0 5a5a1234
+S3 register/CSR readback|S3.10|INSTRET (64-bit) matches|PASS||
+S3 register/CSR readback|S3.11|CYCLE (64-bit) consistent|PASS||
+S3 register/CSR readback|S3.12|unused debug register reads 0|PASS||
+S3 register/CSR readback|S3.13|GPR window is read-only (write ignored)|PASS||
+S4 instruction step|S4.1|14 instruction steps over loads, stores, load-use, branches, jal/ret, lui, auipc: exactly one instruction each|PASS||0 bad
+S4 instruction step|S4.2b|after a step the host sees GPI8[2] = step done (sticky)|PASS||GPI8 0x05
+S4 instruction step|S4.2|halted and not busy after stepping|PASS||0x05
+S4 instruction step|S4.3|program self-check intact after stepping|PASS||
+S5 cycle step|S5.1|8 cycle steps: the core is released for exactly one clock each|PASS||0 bad
+S5 cycle step|S5.2|program still consistent after cycle steps|PASS||
+S6 trace buffer|S6.1|trace count saturates at 16|PASS||TRACE_STATUS 0x00000510
+S6 trace buffer|S6.2|TRACE_BUF[0..15] at 0x100-0x13C reads the trace buffer over AHB|PASS||16 of 16 entries read non-zero; buffer[newest] = 800000e8
+S6 trace buffer|S6.3|trace content = PCs of the last 16 retired instructions (checked inside the buffer)|PASS||newest 800000e8, last retired PC 800000e8; buffer differs from the PCW stream (PCW at retire = 800000e4)
+S6 trace buffer|S6.4|TRACE_STATUS layout as documented ([4] wrap, [3:0] pointer)|XFAIL|C11|0x00000510
+S7 exceptions|S7.1|illegal instruction (armed): halted, trap latched, illegal flag (GPI8 bits 0,3,4)|PASS||GPI8 0x19
+S7 exceptions|S7.2|TRAP_CAUSE=2, TRAP_VAL=instruction, TRAP_PC=0x8000012c|PASS||00000002 00004073 8000012c
+S7 exceptions|S7.3|DBG_CTRL shows auto_halt_active and trap_latched|PASS||0x0000000d
+S7 exceptions|S7.4|newest trace entry (read over AHB) is the last instruction before the crash|PASS||newest 800000ac
+S7 exceptions|S7.5|clearing the latch (bit2 W1C) resumes the core|PASS||GPI8 0x00
+S7 exceptions|S7.6|handler ran once with mcause 2 and the program finished|PASS||
+S7 exceptions|S7.7|ebreak (armed): halted, cause 3|PASS||GPI8 0x49 cause 3
+S7 exceptions|S7.8|ebreak sets none of the documented fault flags (doc: [5]=misalign [6]=memfault [7]=TrapM)|XFAIL|C11|GPI8 0x49
+S7 exceptions|S7.9|ebreak with only halt_on_ebreak_en=1 halts the core|PASS||GPI8 0x49
+S7 exceptions|S7.10|misaligned jump (armed): halted, cause 0|XFAIL|N9|GPI8 0x00 cause 0
+S7 exceptions|S7.11|misaligned flag in GPI8[5] as documented|XFAIL|N9,C11|GPI8 0x00
+S7 exceptions|S7.12|ecall not armed: core keeps running, trap still latched (cause 11)|PASS||GPI8 0x08 cause 11
+S7 exceptions|S7.13|handler ran and program finished|PASS||
+S7 exceptions|S7.14|core reset cleared the old latch; new trap (illegal) latched|PASS||cause 2
+S7 exceptions|S7.15|undefined opcode 0xFFFFFFFF traps as illegal instruction|XFAIL|N2|GPI8 0x00 cause 0
+S8 interrupt|S8.1|external interrupt taken (mcause 0x8000000B)|PASS||count 1 cause 8000000b
+S8 interrupt|S8.2|interrupt with auto-halt armed: core NOT frozen, nothing latched (C1 fix)|PASS||GPI8 0x00
+S8 interrupt|S8.3|after mret the program continues where it was interrupted|XFAIL|N8|mepc saved by handler = 00000000, PCF now 00001084
+S9 reset|S9.1|core reset while running: INSTRET = 0 while held in reset|PASS||0
+S9 reset|S9.2|core reset clears the trace buffer status|PASS||0x00000000
+S9 reset|S9.3|reset released while halted: core waits at the reset vector|PASS||PCF 80000000 INSTRET 0
+S9 reset|S9.4|core runs from the reset vector after resume|PASS||
+S9 reset|S9.5|status clean after reset sequence|PASS||0x00
+S10 upload/poll|S10.1|U 14 upload reply|PASS||
+S10 upload/poll|S10.2|20 uploaded bytes landed in IRAM|PASS||
+S10 upload/poll|S10.3|uploaded program runs after core reset|PASS||0x0000600d
+S10 upload/poll|S10.4|P waits until the running core sets bit 8 of its counter|PASS||P 0x0000061d
+S10 upload/poll|S10.5|P matched against live data|PASS||
+S11 bus edge|S11.1|read of an unmapped address returns a bus error (R!)|XFAIL|A3|reply 'R 0x00000000'
+S11 bus edge|S11.2|debugger still responsive after the unmapped access|PASS||
+S11 bus edge|S11.3|debugger writes its own UART divider through AHB (reply arrives at old baud)|PASS||
+S11 bus edge|S11.4|link continues at the new baud; B reports 20|PASS||B 0x00040014
+S11 bus edge|S11.5|restored to 16 with B|PASS||
+S11 bus edge|S11.6|firmware wrote the debugger baud divider (24); host follows|PASS||B 0x00040018
+S11 bus edge|S11.7|restored to 16|PASS||
+S12 FT1248|S12.1|FT1248: status shows halted|PASS||C 0x01020000
+S12 FT1248|S12.2|FT1248: IRAM burst read|PASS||
+S12 FT1248|S12.3|DBG_IF_STATUS = FT1248 selected + stalled|PASS||0x00000009
+S12 FT1248|S12.4|FT1248: register readback|PASS||
+S12 FT1248|S12.5|FT1248: resume|PASS||
+S12 FT1248|S12.7|every byte the debugger sends over FT1248 is fully defined at the FTDI model (bit 7 not Z)|PASS||0 of 177 bytes had an undefined bit
+S12 FT1248|S12.6|back on UART|PASS||
+S13 global|S13.1|every command got its prompt (no hangs)|PASS||0 timeouts
+S13 global|S13.2|core never changed a waited AHB request|XFAIL|N3|171
+S13 global|S13.3|shared bus address stable during wait states (a core request change passes through the mux)|PASS||0
+SUMMARY|75|0|9|0

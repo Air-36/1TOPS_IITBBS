@@ -1,0 +1,22 @@
+# config.txt - Raspberry Pi 4 boot configuration for the 1TOPS SPI-slave program.
+# SD card (FAT32 boot partition): start4.elf, fixup4.dat, bcm2711-rpi-4-b.dtb, config.txt, kernel8.img
+# Comments must be on their own lines (no comments after a value).
+
+# Run kernel8.img in AArch64 mode
+arm_64bit=1
+kernel=kernel8.img
+
+# Load address; must match link.ld (stated explicitly because firmware defaults vary)
+kernel_address=0x80000
+
+# PL011 UART: reference clock assumed by hw.c (UART_CLK_HZ)
+enable_uart=1
+init_uart_clock=48000000
+
+disable_splash=1
+
+# Peripherals must stay in "low peripheral" mode (0xFE000000): do NOT set arm_peri_high=1.
+
+# Optional: fixed maximum ARM clock so the SPI loop speed is constant
+# (check with the TIME command). Not needed at the 250 kHz SPI clock.
+#force_turbo=1

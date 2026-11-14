@@ -69,18 +69,19 @@
 // -----------------------------------------------------------------------------
 // 16550 UART Registers
 // -----------------------------------------------------------------------------
-#define UART_RBR            REG32(UART_BASE + 0x0000) // Receiver Buffer (R)
-#define UART_THR            REG32(UART_BASE + 0x0000) // Transmitter Holding (W)
-#define UART_DLL            REG32(UART_BASE + 0x0000) // Divisor Latch LSB (DLAB=1)
-#define UART_IER            REG32(UART_BASE + 0x0004) // Interrupt Enable
-#define UART_DLM            REG32(UART_BASE + 0x0004) // Divisor Latch MSB (DLAB=1)
-#define UART_IIR            REG32(UART_BASE + 0x0008) // Interrupt Ident (R)
-#define UART_FCR            REG32(UART_BASE + 0x0008) // FIFO Control (W)
-#define UART_LCR            REG32(UART_BASE + 0x000C) // Line Control
-#define UART_MCR            REG32(UART_BASE + 0x0010) // Modem Control
-#define UART_LSR            REG32(UART_BASE + 0x0014) // Line Status
-#define UART_MSR            REG32(UART_BASE + 0x0018) // Modem Status
-#define UART_SCR            REG32(UART_BASE + 0x001C) // Scratch
+// 16550 registers are 1 byte apart (uart_apb decodes PADDR[2:0]); access them as bytes.
+#define UART_RBR            REG8(UART_BASE + 0x0) // Receiver Buffer (R)
+#define UART_THR            REG8(UART_BASE + 0x0) // Transmitter Holding (W)
+#define UART_DLL            REG8(UART_BASE + 0x0) // Divisor Latch LSB (DLAB=1)
+#define UART_IER            REG8(UART_BASE + 0x1) // Interrupt Enable
+#define UART_DLM            REG8(UART_BASE + 0x1) // Divisor Latch MSB (DLAB=1)
+#define UART_IIR            REG8(UART_BASE + 0x2) // Interrupt Ident (R)
+#define UART_FCR            REG8(UART_BASE + 0x2) // FIFO Control (W)
+#define UART_LCR            REG8(UART_BASE + 0x3) // Line Control
+#define UART_MCR            REG8(UART_BASE + 0x4) // Modem Control
+#define UART_LSR            REG8(UART_BASE + 0x5) // Line Status
+#define UART_MSR            REG8(UART_BASE + 0x6) // Modem Status
+#define UART_SCR            REG8(UART_BASE + 0x7) // Scratch
 
 #define UART_LSR_DR         0x01
 #define UART_LSR_THRE       0x20

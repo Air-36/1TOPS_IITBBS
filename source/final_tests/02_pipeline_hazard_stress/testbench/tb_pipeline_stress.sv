@@ -88,7 +88,7 @@ module tb_signal_level;
         .HWDATA(soc.HWDATA),
         .HWSTRB(soc.HWSTRB),
         .HWRITE(soc.HWRITE),
-        .HSIZE(soc.HSIZE),
+        .HSIZE(soc.bus_HSIZE),
         .HTRANS(soc.HTRANS),
         .HRDATA(soc.HRDATA),
         .HREADY(soc.HREADY),

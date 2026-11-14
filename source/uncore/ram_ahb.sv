@@ -81,9 +81,15 @@ module ram_ahb #(
     localparam MEM_DEPTH = WORDS;
 `elsif SYNTHESIS
     `define INFER_BYTE_RAM_M9K
-    // For SpyGlass / ASIC lint synthesis: cap depth to 64 words (512 bits per byte lane)
-    // to strictly stay under SpyGlass mthresh (4096 bits) and prevent SYNTH_5273
+  `ifdef SOC_LINT_SMALL_RAM
+    // SpyGlass lint only (spyglass/spyglass-1.prj defines SOC_LINT_SMALL_RAM): cap depth to
+    // 64 words (512 bits per byte lane) to stay under SpyGlass mthresh (4096 bits), SYNTH_5273.
     localparam MEM_DEPTH = (WORDS > 64) ? 64 : WORDS;
+  `else
+    // FPGA / ASIC synthesis: full size. (Vivado also defines SYNTHESIS; capping here made the
+    // FPGA RAMs 256 bytes, so every address wrapped every 256 bytes.)
+    localparam MEM_DEPTH = WORDS;
+  `endif
 `else
     localparam MEM_DEPTH = WORDS;
 `endif
@@ -110,13 +116,17 @@ module ram_ahb #(
   end
   // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet Ar_resetcross01
 
-  always_ff @(posedge HCLK or negedge HRESETn) begin
-    if (!HRESETn) begin
-      HREADRam <= '0;
-    end else begin
-      HREADRam <= {mem3[ram_word_addr], mem2[ram_word_addr], mem1[ram_word_addr], mem0[ram_word_addr]};
-    end
+  // Synchronous read WITHOUT reset: a block RAM's output register cannot have an asynchronous
+  // reset, so with one Vivado builds the 32 KB from LUTs/flip-flops instead of block RAM.
+  // The value after reset is never used (HREADRam is only selected in a read data phase,
+  // which always follows a read address phase).
+  // spyglass disable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
+  // SMD: Flip-flop has neither asynchronous set nor asynchronous reset
+  // SJ: Block RAM output register; no reset needed (read data is always preceded by an address phase)
+  always_ff @(posedge HCLK) begin
+    HREADRam <= {mem3[ram_word_addr], mem2[ram_word_addr], mem1[ram_word_addr], mem0[ram_word_addr]};
   end
+  // spyglass enable_block STARC-2.3.4.3 STARC05-2.3.4.3 AsyncResetOrSet
 
 `else
   // 32-bit memory array with byte enables (directly accessible by testbench preloads)

@@ -31,6 +31,11 @@ module cpu_exec_monitor (
 
     logic [31:0] prev_haddr;
     logic        prev_write;
+    // fail_test() writes the mailbox (0xDEADBEEF) FIRST, then (code<<1)|1 to the SYSCTRL scratchpad
+    // and TOHOST. Firmware may also use the scratchpad as a plain register (fw_boot_bringup writes
+    // 0x5AA54321), so an odd scratchpad/TOHOST value is a failure code only after a mailbox failure.
+    logic        fail_seen;
+    logic [6:0]  fail_wait;
 
     // Track address phase of AHB writes
     always_ff @(posedge clk or posedge reset) begin
@@ -41,7 +46,15 @@ module cpu_exec_monitor (
             test_failed <= 1'b0;
             plic_armed  <= 1'b0;
             error_code  <= 32'd0;
-        end else if (HREADY) begin
+            fail_seen   <= 1'b0;
+            fail_wait   <= 7'd0;
+        end else begin
+          // Mailbox failure with no code following within 64 cycles: fail anyway (code 0)
+          if (fail_seen && !test_failed) begin
+            fail_wait <= fail_wait + 7'd1;
+            if (fail_wait == 7'd64) test_failed <= 1'b1;
+          end
+          if (HREADY) begin
             if (HTRANS[1] && HWRITE) begin
                 prev_haddr <= HADDR;
                 prev_write <= 1'b1;
@@ -60,7 +73,7 @@ module cpu_exec_monitor (
                         plic_armed <= 1'b1;
                         $display("[CPU_MONITOR @ %0t] >>> PLIC ARMED! Mailbox = 0x%08x <<<", $time, HWDATA);
                     end else if (HWDATA == 32'hDEAD_BEEF) begin
-                        test_failed <= 1'b1;
+                        fail_seen <= 1'b1;          // test_failed is set when the code arrives
                         $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! Mailbox = 0x%08x <<<", $time, HWDATA);
                     end
                 end
@@ -70,10 +83,10 @@ module cpu_exec_monitor (
                     if (HWDATA == 32'd1 || HWDATA == 32'd42) begin
                         test_passed <= 1'b1;
                         $display("[CPU_MONITOR @ %0t] >>> PASS DETECTED! Scratchpad = 0x%08x <<<", $time, HWDATA);
-                    end else if ((HWDATA & 1) && HWDATA != 1) begin
+                    end else if (fail_seen && (HWDATA & 1) && HWDATA != 1) begin
                         test_failed <= 1'b1;
                         error_code <= HWDATA >> 1;
-                        $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! Scratchpad Code = 0x%08x <<<", $time, error_code);
+                        $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! Scratchpad Code = 0x%08x <<<", $time, HWDATA >> 1);
                     end
                 end
 
@@ -82,13 +95,14 @@ module cpu_exec_monitor (
                     if (HWDATA == 32'd1) begin
                         test_passed <= 1'b1;
                         $display("[CPU_MONITOR @ %0t] >>> PASS DETECTED! TOHOST = 1 <<<", $time);
-                    end else if (HWDATA != 0) begin
+                    end else if (fail_seen && HWDATA != 0) begin
                         test_failed <= 1'b1;
                         error_code <= HWDATA >> 1;
-                        $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! TOHOST = 0x%08x <<<", $time, error_code);
+                        $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! TOHOST = 0x%08x <<<", $time, HWDATA >> 1);
                     end
                 end
             end
+          end
         end
     end
 

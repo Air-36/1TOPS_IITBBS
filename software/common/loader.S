@@ -12,8 +12,14 @@
 .equ SPI_FMT,     0x40
 .equ SPI_TXDATA,  0x48
 .equ SPI_RXDATA,  0x4C
+.equ SPI_RXMARK,  0x54
+.equ SPI_IP,      0x74            # interrupt pending: bit 1 = RX watermark (RX FIFO count > RXMARK)
+.equ IP_RXWM,     0x2
 
-.equ SCKDIV_VAL,  24            # SCLK = clk/(2*(24+1)): 1 MHz at 50 MHz (FPGA), 2 MHz at 100 MHz
+.equ SCKDIV_VAL,  99            # SCLK = clk/(2*(99+1)): 250 kHz at 50 MHz (FPGA), 500 kHz at 100 MHz.
+                                # 250 kHz gives the Raspberry Pi 4 software SPI slave a 2 us window
+                                # per bit (software/rpi4_spi_slave, rpi4_spi_boot_options.txt sec. 11).
+                                # Was 24 (1 MHz) for the Pico's hardware slave.
 .equ SCKMODE_VAL, 3             # CPOL=1, CPHA=1 (mode 3), so Pico can keep CS low across bytes
 .equ CSMODE_AUTO, 0
 .equ CSMODE_HOLD, 2
@@ -40,7 +46,8 @@ spi_init:
     sw   zero, SPI_CSMODE(t0)         # AUTO (CS inactive)
     li   t1, 0x00080000
     sw   t1, SPI_FMT(t0)              # 8-bit frames, MSB first
-1:  lw   t1, SPI_RXDATA(t0)           # drain any stale RX bytes
+    sw   zero, SPI_RXMARK(t0)         # RX watermark pending as soon as 1 byte is in the RX FIFO
+1:  lw   t1, SPI_RXDATA(t0)           # drain any stale RX bytes (no transfer running: no race)
     bgez t1, 1b                       # bit31=0 -> a byte was present, keep popping
     ret
 
@@ -57,13 +64,21 @@ spi_cs_high:
     ret
 
 # returns one byte in a0 (clobbers t0, t1)
+# Do NOT poll RXDATA to wait for the byte: in spi_apb a read of RXDATA can pop the RX FIFO
+# while returning "empty" when the byte arrives between the read's APB setup and access
+# edges, and that byte is lost (shown with the real RTL in
+# software/rpi4_spi_slave/sim/tb_spi_pi_slave.sv, +OLD_RXPOLL). So: wait on the RX watermark
+# bit in SPI_IP (reading IP has no side effect), then read RXDATA exactly once.
 spi_read_byte:
     li   t0, SPI_BASE
 1:  lw   t1, SPI_TXDATA(t0)
     bltz t1, 1b                       # bit31 = TX FIFO full -> wait
     sw   zero, SPI_TXDATA(t0)         # dummy byte: 8 clocks, 1 byte comes in
-2:  lw   a0, SPI_RXDATA(t0)
-    bltz a0, 2b                       # bit31 = RX empty -> wait
+2:  lw   t1, SPI_IP(t0)
+    andi t1, t1, IP_RXWM
+    beqz t1, 2b                       # wait until the received byte is in the RX FIFO
+3:  lw   a0, SPI_RXDATA(t0)           # one read = one pop (byte present for >= 2 cycles)
+    bltz a0, 3b                       # safety net: "empty" pops nothing, so re-reading is safe
     andi a0, a0, 0xFF
     ret
 

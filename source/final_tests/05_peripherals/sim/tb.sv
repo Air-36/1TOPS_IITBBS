@@ -27,7 +27,7 @@ module tb(
     reset = 1;
     #50;
     reset = 0;
-    #250000; // Simulation timeout limit
+    #2000000; // Simulation timeout limit: 2 ms (plic-01 has 955 table entries and needs ~303 us; was 250 us)
     $display("\n[TB ERROR] Simulation reached timeout limit!");
     $finish;
   end

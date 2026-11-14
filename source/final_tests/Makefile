@@ -12,7 +12,8 @@
         test_04_bus_fabric \
         test_05_peripherals \
         test_06_debugger \
-        test_07_benchmarks
+        test_07_benchmarks \
+        test_09_spi_boot
 
 all: test_all
 
@@ -28,9 +29,10 @@ help:
 	@echo "   make test_05_peripherals    - Peripherals & Accelerator (GPIO, UART, CLINT, PLIC, Mult)"
 	@echo "   make test_06_debugger       - Debugger features & ADP protocol (UART / FT1248)"
 	@echo "   make test_07_benchmarks     - Full SoC bare-metal C applications (hello, matmul, qsort)"
+	@echo "   make test_09_spi_boot       - SPI boot flow end to end (boot ROM + stream + partner, resets)"
 	@echo ""
 	@echo " Master Targets:"
-	@echo "   make test_all               - Execute all 7 subsystem test suites end-to-end"
+	@echo "   make test_all               - Execute all 8 subsystem test suites end-to-end"
 	@echo "   make clean                  - Clean all build and simulation artifacts"
 	@echo "=================================================================="
 
@@ -62,16 +64,21 @@ test_07_benchmarks:
 	@echo "\n>>> [SUBSYSTEM 07/07] Running SoC Top-Level System & Bare-Metal C Benchmarks..."
 	@$(MAKE) -C 07_soc_system_benchmarks test_all
 
+test_09_spi_boot:
+	@echo "\n>>> [SUBSYSTEM 09] Running SPI Boot Flow End-to-End (boot ROM, stream, partner, resets)..."
+	@$(MAKE) -C 09_spi_boot_e2e test_all
+
 test_all: test_01_core_modules \
           test_02_pipeline_hazard \
           test_03_cpu_core_arch \
           test_04_bus_fabric \
           test_05_peripherals \
           test_06_debugger \
-          test_07_benchmarks
+          test_07_benchmarks \
+          test_09_spi_boot
 	@echo ""
 	@echo "=================================================================="
-	@echo " >>> ALL 7 SUBSYSTEM VERIFICATION SUITES PASSED SUCCESSFULLY! <<< "
+	@echo " >>> ALL 8 SUBSYSTEM VERIFICATION SUITES PASSED SUCCESSFULLY! <<< "
 	@echo "=================================================================="
 
 clean:
@@ -82,4 +89,5 @@ clean:
 	@$(MAKE) -C 05_peripherals clean
 	@$(MAKE) -C 06_debugger_subsystem clean
 	@$(MAKE) -C 07_soc_system_benchmarks clean
+	@$(MAKE) -C 09_spi_boot_e2e clean
 	@echo "All subsystem artifacts cleaned."

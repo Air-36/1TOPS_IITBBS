@@ -12,8 +12,9 @@ FW_DIR        := firmware
 VSIM_CMD      := module load mentor/questasim/2023.4_5 && vsim
 VLOG_CMD      := module load mentor/questasim/2023.4_5 && vlog
 
-VLOG_OPTS     := -sv -timescale "1ns/1ps" +acc=all -suppress 12110,2244,7033,2892,13314
-VSIM_OPTS     := -c -voptargs="+acc" -suppress 12110,2244,7033,2892,13314 -do "run -all; quit -f"
+# 7053: the tests reach tb_soc_full_top signals via $root from inside a package (Questa: suppressible)
+VLOG_OPTS     := -sv -timescale "1ns/1ps" +acc=all -suppress 12110,2244,7033,2892,13314,7053
+VSIM_OPTS     := -c -voptargs="+acc" -suppress 12110,2244,7033,2892,13314,7053 -do "run -all; quit -f"
 
 INCLUDES      := +incdir+$(VIP_DIR)/gpio_vip \
                  +incdir+$(VIP_DIR)/irq_vip \
@@ -33,7 +34,8 @@ RTL_SRCS      := $(RTL_DIR)/components/*.v \
                  $(RTL_DIR)/debugger/*.sv \
                  $(RTL_DIR)/main/pipelined/riscv_pipelined.v \
                  $(RTL_DIR)/main/riscv_cpu.v \
-                 $(RTL_DIR)/main/soc/riscv_soc_ahb.v
+                 $(RTL_DIR)/main/soc/riscv_soc_ahb.v \
+                 $(RTL_DIR)/main/soc/multiplier_ahb.v
 
 VIP_SRCS      := $(VIP_DIR)/gpio_vip/gpio_if.sv \
                  $(VIP_DIR)/gpio_vip/gpio_pkg.sv \

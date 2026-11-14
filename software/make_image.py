@@ -6,7 +6,7 @@ Stream:  mode 0 -> [test image]
          mode 1 -> [ext boot ROM image][test image]
 
 Usage:
-  make_image.py --mode 1 --test test.elf --ext bootrom_ext.elf -o flash.bin [--dump] [--serial /dev/ttyACM0]
+  make_image.py --mode 1 --test test.elf --ext bootrom_ext.elf -o flash.bin [--dump] [--serial PORT [--baud 115200]]
 """
 import argparse, struct, sys
 from elftools.elf.elffile import ELFFile
@@ -52,6 +52,7 @@ def main():
     ap.add_argument("-o", "--out", default="flash.bin")
     ap.add_argument("--dump", action="store_true")
     ap.add_argument("--serial")
+    ap.add_argument("--baud", type=int, default=115200, help="serial baud (Pi 4 UART: 115200)")
     a = ap.parse_args()
 
     test, tchunks, _ = build_image(a.test, a.dump)
@@ -62,6 +63,10 @@ def main():
         ext, echunks, eentry = build_image(a.ext, a.dump)
         if eentry < EXT_BASE:
             sys.exit("ext boot ROM entry below EXT_BASE")
+        for addr, size, _ in echunks:   # the ext ROM must lie entirely in its 1 KB (bootrom_ext.ld)
+            if addr < EXT_BASE or addr + size > EXT_BASE + 0x400:
+                sys.exit(f"ext boot ROM chunk {addr:#x}+{size:#x} outside {EXT_BASE:#x}-{EXT_BASE + 0x400:#x} "
+                         "(ELF headers in a load segment? check bootrom_ext.ld PHDRS)")
         for addr, size, _ in tchunks:   # test must not overwrite the running ext boot ROM
             if addr < EXT_BASE + 0x400 and addr + size > EXT_BASE:
                 sys.exit("test image overlaps external boot ROM region")
@@ -71,10 +76,18 @@ def main():
     print(f"wrote {a.out}: {len(stream)} bytes (mode {a.mode})")
 
     if a.serial:
+        # Same protocol for the Pico (USB serial) and the Raspberry Pi 4 bare-metal slave
+        # (UART via a USB-UART adapter): "PICO" + len + stream -> "OK" / "E2" / "E3".
         import serial
-        with serial.Serial(a.serial, 115200, timeout=2) as s:
-            s.write(b"PICO" + struct.pack("<I", len(stream)) + stream)
-            print("sent to Pico:", s.read(2))   # Pico replies "OK"
+        payload = b"PICO" + struct.pack("<I", len(stream)) + stream
+        with serial.Serial(a.serial, a.baud, timeout=2) as s:
+            s.reset_input_buffer()     # drop a boot banner / stale bytes, so we read the reply
+            s.write(payload)
+            s.flush()                  # wait until all bytes are transmitted (~6 s for 64 KB at 115200)
+            reply = s.read(2)
+        print(f"sent {len(payload)} bytes to the SPI slave on {a.serial} @ {a.baud}: {reply!r}")
+        if reply != b"OK":
+            sys.exit("SPI slave did not acknowledge (expected b'OK'; E2 = bad length, E3 = timeout)")
 
 
 if __name__ == "__main__":
