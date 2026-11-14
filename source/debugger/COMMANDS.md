@@ -12,7 +12,7 @@ The debugger subsystem features a physical hardware input pad, **`dbg_sel`** (Sl
 
 | `dbg_sel` Pad Level | Active Physical Interface | Physical Pins Used | Transfer Characteristics |
 | :---: | :--- | :--- | :--- |
-| **`0` (LOW)** | **Dedicated Debug UART** | `uart_rx` (J1), `uart_tx` (L2) | Asynchronous 8-N-1 (Default 115200 Baud). Simple standard serial terminal (HTerm) or USB-to-UART dongle. |
+| **`0` (LOW)** | **Dedicated Debug UART** | `uart_rx` (B18), `uart_tx` (A18): Basys 3 on-board micro-USB | Asynchronous 8-N-1 (Default 115200 Baud). Simple standard serial terminal (HTerm) or USB-to-UART dongle. |
 | **`1` (HIGH)** | **Dedicated FT1248 Interface** | `ft1248_clk` (A14), `ft1248_ss_n` (A16), `ft1248_miso` (B15), `ft1248_miosio` (B16) | Synchronous serial/nibble/byte bus with FTDI FT232H / FT2232H. High-speed transfers up to 30 MHz. |
 
 ### Visual Feedback LEDs (Basys 3)
@@ -31,7 +31,7 @@ The debugger subsystem features a physical hardware input pad, **`dbg_sel`** (Sl
 
 ### Startup & Direct Auto-Entry
 - **Direct Auto-Prompt on Boot**: On power-on or board reset (`btnC`), the controller sends ` 0x50c1ab04\r\n`, auto-enters ADP command mode, outputs the prompt character `]`, and latches LED 15 ON. **No escape character (`0x1B`) is required!**
-- **Exit Command Mode (`X` / `Ctrl+D`)**: Type `X` (or send `0x04`) to leave ADP monitor mode and switch to terminal/STDIO passthrough if desired.
+- **Exit Command Mode (`X` / `Ctrl+D`)**: Type `X` (or send `0x04`) to leave ADP monitor mode. In this SoC the debugger STDIO stream is tied off (`riscv_debugger_top.sv`), so passthrough mode carries no data; the link is silent until `<ESC>`.
 - **Re-enter Command Mode (`<ESC>` / `0x1B`)**: If in passthrough mode, send `<ESC>` (`\x1b`) to re-enter ADP command mode.
 
 | Command | Syntax | Description | Example & Response |
@@ -43,7 +43,7 @@ The debugger subsystem features a physical hardware input pad, **`dbg_sel`** (Sl
 | **Assert Reset** | `C 0201` | Sets bit 0 of GPO8 (`core_reset_o = 1`). Holds CPU in reset. | `] C 0201`<br>`C 0x00010201` |
 | **Release Reset** | `C 0101` | Clears bit 0 of GPO8 (`core_reset_o = 0`). Releases CPU reset. The CPU restarts at **`0x8000_0000`** (instruction RAM, `DBG_RESET_PC`), not the boot ROM. A system reset (power-on / btnC) or a SYSCTRL soft reset starts at the boot ROM (`0x1000`). | `] C 0101`<br>`C 0x00000200` |
 | **Overwrite GPO8** | `C 03<val8>` | Overwrites entire 8-bit GPO8 with `<val8>`. | `] C 0300`<br>`C 0x00000200` |
-| **Query Status** | `C` | Reads current GPO8 outputs and GPI8 inputs without modifying them. Bit 0 = Halted, Bit 1 = Step Busy, Bit 2 = Step Done. | `] C`<br>`C 0x01000000` |
+| **Query Status** | `C` | Reads current GPO8 outputs and GPI8 inputs without modifying them. Reply format `C 0x<GPI8><GPO8><param16>`. GPI8 bits: 0 Halted, 1 Step Busy, 2 Step Done, 3 Trap Latched, 4 Illegal Instr, 5 Misalign, 6 Mem Fault, 7 Trap Active (see 8.2). | `] C`<br>`C 0x01000000` |
 | **Enter ADP Mode** | `<ESC>` (`\x1b`) | Wakes up ADP command mode from idle/passthrough. | Send `1B` (HEX) -> displays `]` |
 | **Exit ADP Mode** | `X` | Exits ADP monitor mode and switches serial channel to terminal/STDIO bypass. | `] X` |
 
@@ -143,7 +143,7 @@ Used to wait for hardware accelerator completion (e.g. busy bit clearing) withou
 
 | Command | Syntax | Description | Example & Response |
 | :--- | :--- | :--- | :--- |
-| **Inject STDIN** | `S <hex_char>` | Injects an 8-bit character into the processor's UART/STDIN receive FIFO (if STDIN bus enabled). | `] S 0a` (sends Enter/newline) |
+| **Inject STDIN** | `S <hex_char>` | Pushes an 8-bit character onto the debugger STDIN stream. **Not connected in this SoC**: the command echoes normally but the character goes nowhere. | `] S 0a` (sends Enter/newline) |
 
 ---
 
@@ -162,10 +162,10 @@ The debugger automatically adjusts AHB transfer size (`HSIZE` = byte, halfword, 
 | :--- | :--- | :--- | :--- |
 | `0x0000_1000 - 0x0000_1FFF` | 4 KB | Boot ROM | Default reset vector (`RESET_PC = 0x0000_1000`), dual-mode bootloader |
 | `0x0B00_0000 - 0x0B00_0FFF` | 4 KB | Core Debug & Post-Mortem | CPU GPRs (x0-x31), CSRs, Trace Buffer & Crash Trap Registers |
-| `0x1000_0000 - 0x1000_0007` | 8 B | 16550 Uncore UART | Application printf/console UART |
-| `0x1004_0000 - 0x1004_000F` | 16 B | SPI Master Controller | Uncore SPI master (Flash boot & external peripherals) |
-| `0x1006_0000 - 0x1006_0007` | 8 B | GPIO Controller | Uncore general-purpose I/O |
-| `0x1008_0000 - 0x1008_00FF` | 256 B | System Control Block | `sysctrl_apb.sv` (Reset vector, soft reset, boot strap, ROM remap) |
+| `0x1000_0000 - 0x1000_0FFF` | 4 KB (8 regs at +0..+7, aliased) | 16550-style Uncore UART | Application printf/console UART |
+| `0x1004_0000 - 0x1004_0FFF` | 4 KB (regs +0x00..+0x74) | SPI Master Controller | Uncore SPI master (Flash boot & external peripherals) |
+| `0x1006_0000 - 0x1006_0FFF` | 4 KB (regs +0x00..+0x34) | GPIO Controller | Uncore general-purpose I/O |
+| `0x1008_0000 - 0x1008_0FFF` | 4 KB (regs +0x00..+0x18) | System Control Block | `sysctrl_apb.sv` (soft reset, boot strap, ROM remap, scratchpad, chip ID; reset-vector register not connected) |
 | `0x3000_0000` | 4 B | Accelerator IP Socket | Operand A / Control (part of uncore) |
 | `0x3000_0004` | 4 B | Accelerator IP Socket | Operand B / Status (part of uncore) |
 | `0x3000_0008` | 4 B | Accelerator IP Socket | Product result (part of uncore) |
@@ -194,7 +194,7 @@ The **Core Debug AHB Slave** (`core_debug_ahb.v`) exposes the internal state of 
 | `0x090` | `PC_WRITEBACK` (`PCW`) | R | Last committed Program Counter retiring from Writeback stage |
 | `0x094` | `INSTR_DECODE` (`InstrD`) | R | Raw 32-bit instruction word currently in Decode stage |
 | `0x098` | `INSTR_MEMORY` (`InstrM`) | R | Raw 32-bit instruction word currently in Memory stage |
-| `0x09C` | `PIPELINE_STATUS` | R | Pipeline Hazard Status: `[9:5]` = `StallFlags[4:0]`, `[4:0]` = `FlushFlags[4:0]` |
+| `0x09C` | `PIPELINE_STATUS` | R | `[12]` = `TrapM`, `[11]` = `mretM`, `[10]` = `ExternalStall`, `[9]` = `InstrRetired`, `[8:6]` = `FlushFlags` {M,E,D}, `[5]` = 0, `[4:0]` = `StallFlags` {W,M,E,D,F} |
 | `0x0A0` | `CSR_MSTATUS` | R | Machine Status CSR (`mstatus`) |
 | `0x0A4` | `CSR_MCAUSE` | R | Machine Cause CSR (`mcause`) — dynamic current value |
 | `0x0A8` | `CSR_MTVAL` | R | Machine Trap Value CSR (`mtval`) — dynamic current value |
@@ -207,7 +207,7 @@ The **Core Debug AHB Slave** (`core_debug_ahb.v`) exposes the internal state of 
 | `0x0C4` | `CYCLE_HIGH` | R | 64-bit Hardware Cycle Counter [63:32] |
 | `0x0C8` | `INSTRET_LOW` | R | 64-bit Retired Instruction Counter [31:0] |
 | `0x0CC` | `INSTRET_HIGH` | R | 64-bit Retired Instruction Counter [63:32] |
-| `0x0D0` | `DBG_CTRL` | R/W | Control Register:<br/>- Bit 0: `halt_on_trap_en` (1 = freeze core upon trap, default 1)<br/>- Bit 1: `halt_on_ebreak_en` (1 = freeze core upon ebreak, default 1)<br/>- Bit 2: `trap_clr` (write 1 to manually clear sticky crash latches).<br/>*(Note: Soft-resetting the CPU via `C 0201` / `C 0101` automatically clears all sticky crash latches and trace buffer).* |
+| `0x0D0` | `DBG_CTRL` | R/W | Control Register:<br/>- Bit 0: `halt_on_trap_en` (1 = freeze core upon trap, **default 0**)<br/>- Bit 1: `halt_on_ebreak_en` (1 = freeze core upon ebreak, **default 0**)<br/>- Bit 2: `trap_clr` (write 1 to manually clear sticky crash latches).<br/>- Read-back: bit 2 = `trap_latched`, bit 3 = `auto_halt_active`.<br/>**Auto-halt is off after reset: write `0x3` here before running code you want to catch.**<br/>*(Note: Soft-resetting the CPU via `C 0201` / `C 0101` automatically clears all sticky crash latches and trace buffer).* |
 | `0x0D4` | `TRAP_CAUSE` | R | **Sticky Latched Crash Cause**: Captures `mcause` at the exact cycle of exception |
 | `0x0D8` | `TRAP_VAL` | R | **Sticky Latched Fault Value**: Captures `mtval` (faulting address or illegal instruction) |
 | `0x0DC` | `TRAP_PC` | R | **Sticky Latched Faulting PC**: Captures `PCM` (PC of instruction that caused the trap) |
@@ -215,7 +215,7 @@ The **Core Debug AHB Slave** (`core_debug_ahb.v`) exposes the internal state of 
 | `0x0E4` | `DBG_FT_CLKDIV` | R/W | **FT1248 Clock Divider**: 8-bit prescaler (e.g. `1` for 12.5 MHz, `4` for 5 MHz). Controllable by both Core via AHB and Debugger via ADP. |
 | `0x0E8` | `DBG_IF_STATUS` | R | **Debugger Interface Status**: Bit 0 = `dbg_sel` (0=UART, 1=FT1248), Bit 3 = `ExternalStall` |
 | `0x100 - 0x13C` | `TRACE_BUF[0..15]` | R | **16-Entry Circular Micro-Trace Buffer**: Contains the last 16 retired instruction PCs prior to crash |
-| `0x140` | `TRACE_STATUS` | R | Trace Buffer Status: `[4]` = `wrap_flag`, `[3:0]` = `write_pointer` |
+| `0x140` | `TRACE_STATUS` | R | Trace Buffer Status: `[11:8]` = `write_pointer`, `[4:0]` = number of valid entries (0-16) |
 
 ---
 
@@ -308,8 +308,8 @@ To clear the latched trap and reset the sticky registers:
 ```
 ] A 0B0000D0       <-- DBG_CTRL register
 A 0x0B0000D0
-] W 00000003       <-- Assert trap_clr (bit 1) and keep auto_halt_en (bit 0)
-W 0x00000003
+] W 00000007       <-- Assert trap_clr (bit 2) and keep both auto-halt enables (bits 0, 1)
+W 0x00000007
 ```
 After clearing, the core can be reset via `C 0201` / `C 0101` or resumed via `C 0102`.
 
@@ -381,13 +381,13 @@ W 0x00B52023
 W 0x00100073
 ```
 
-#### Step 4: Configure Reset Vector and Reset the CPU Core
-Program the reset vector register in the System Control block (`SYSCTRL_RESET_VEC` at `0x1008_0004`) to point to `0x8000_0000` (so the core jumps straight to your loaded code in IMEM rather than the default Boot ROM), then pulse the core reset line while remaining halted:
+#### Step 4: Arm Auto-Halt on EBREAK and Reset the CPU Core
+A debugger core reset (`C 0201` / `C 0101`) always restarts the core at `0x8000_0000` (IMEM), so no reset-vector setup is needed (the SYSCTRL `RESET_VEC` register is not connected to the core). Auto-halt is off after reset, so enable halt-on-ebreak first, then pulse the core reset line while remaining halted:
 ```
-] A 10080004
-A 0x10080004
-] W 80000000
-W 0x80000000
+] A 0B0000D0
+A 0x0B0000D0
+] W 00000002
+W 0x00000002
 ] C 0201
 C 0x00010201
 ] C 0101
@@ -435,5 +435,6 @@ B 0x000101b2
    B 0x000101b2
    ```
    *115,200 baud communication is restored!*
+
 
 
