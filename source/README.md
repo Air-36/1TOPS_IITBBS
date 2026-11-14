@@ -253,7 +253,7 @@ The SoC address map allocates dedicated spaces for on-chip memories, debug apert
 | `0x0000_1000` | `0x0000_1FFF` | 4 KB | 4 KB | AHB | `rom_ahb.sv` | On-chip Boot ROM (Reset bootloader) |
 | `0x0200_0000` | `0x0200_FFFF` | 64 KB | 64 KB | APB | `clint_apb.sv` | Core Local Interruptor: `msip` (0x0000), `mtimecmp` (0x4000), `mtime` (0xBFF8) |
 | `0x0B00_0000` | `0x0B00_0FFF` | 4 KB | 4 KB | AHB | `core_debug_ahb.v` | Core Post-Mortem Debug Slave: GPRs `x0`–`x31`, PCs (`PCF`..`PCW`), CSRs, Trace Buffer |
-| `0x0C00_0000` | `0x0FFF_FFFF` | 64 MB | 64 MB | APB | `plic_apb.sv` | Platform-Level Interrupt Controller (Priority gateways & claim/complete) |
+| `0x0C00_0000` | `0x0FFF_FFFF` | 64 MB | 64 MB | APB | `plic_apb.sv` | Platform-Level Interrupt Controller: 4 sources, 3-bit priorities, threshold, claim register (no gateway; writes to claim are ignored, an interrupt clears when its source drops) |
 | `0x1000_0000` | `0x1000_0FFF` | 8 B | 4 KB | APB | `uart_apb.sv` | Uncore application UART. 16550 register layout; the SoC builds the register-only model (`USE_REAL_UART = 0`): THR writes print in simulation, no serial TX/RX on hardware. The full `uartPC16550D.sv` core is present but not selected |
 | `0x1004_0000` | `0x1004_0FFF` | 4 KB | 4 KB | APB | `spi_apb.sv` | SiFive FU540-compatible SPI Master controller with 8-byte TX/RX FIFOs |
 | `0x1006_0000` | `0x1006_0FFF` | 56 B | 4 KB | APB | `gpio_apb.sv` | 32-bit GPIO: input/output enables, output value, rise/fall (sticky) and high/low (live) interrupts. No polarity-inversion register |
@@ -414,6 +414,28 @@ The SoC provides a dedicated accelerator IP socket integrated as part of the unc
   * **Mode 0 (`boot_mode = 0`)**: Executes internal ROM self-test and reaches `main()` directly within ROM.
   * **Mode 1 (`boot_mode = 1`)**: Programs SPI controller (`0x1004_0000`), issues READ command `0x03` to external SPI Flash, streams instructions into IMEM (`0x8000_0000`), and executes `jr 0x8000_0000`.
 
+### G. Interrupt & Exception Handling (`trap_unit.v` & `csr_file.v`)
+Traps are taken precisely in the Memory stage. `trap_unit.v` picks the highest-priority pending trap and computes the target PC; `csr_file.v` holds `mtvec`, `mcause`, `mepc`, `mtval`, `mstatus`, `mie` and `mip`.
+
+**Interrupt vector table**
+
+| Trap | Code | `mcause` | Source | Priority | Target PC (vectored mode) |
+| :--- | :---: | :--- | :--- | :---: | :--- |
+| Machine external interrupt (MEI) | 11 | `0x8000_000B` | PLIC (UART = src 1, GPIO = src 2, SPI = src 3) or `MExtInt` pin | 1 (highest) | `BASE + 0x2C` |
+| Machine software interrupt (MSI) | 3 | `0x8000_0003` | CLINT `msip` | 2 | `BASE + 0x0C` |
+| Machine timer interrupt (MTI) | 7 | `0x8000_0007` | CLINT `mtime >= mtimecmp` | 3 | `BASE + 0x1C` |
+| Instruction address misaligned | 0 | `0x0000_0000` | Tied off (never raised, bug N9) | 4 | `BASE` (mtval = PC) |
+| Illegal instruction | 2 | `0x0000_0002` | Bad SYSTEM encoding only (bug N2) | 5 | `BASE` (mtval = instruction) |
+| Breakpoint (`ebreak`) | 3 | `0x0000_0003` | `ebreak` | 6 | `BASE` (mtval = PC) |
+| Environment call (`ecall`) | 11 | `0x0000_000B` | `ecall` | 7 (lowest) | `BASE` (mtval = 0) |
+
+- **Enable:** an interrupt is taken only when `mstatus.MIE = 1` and its `mie` bit is set (MSIE = bit 3, MTIE = bit 7, MEIE = bit 11). Interrupts win over exceptions.
+- **Direct mode** (`mtvec[1:0] = 00`): every trap jumps to `BASE = {mtvec[31:2], 2'b00}`.
+- **Vectored mode** (`mtvec[1:0] = 01`): interrupts jump to `BASE + 4 x cause`; exceptions still go to `BASE`. Each slot is 4 bytes, so it normally holds one `j handler`.
+- **On trap entry:** `mepc <- PCM`, `mcause`/`mtval` written, `MPIE <- MIE`, `MIE <- 0`, `MPP <- 11`, younger instructions flushed.
+- **`mret`:** `MIE <- MPIE`, `MPIE <- 1`, PC <- `mepc`.
+- **Not implemented:** load/store misaligned and access faults (causes 1, 4-7). A bus error does not trap.
+
 ---
 
 ## 6. ASCII Debug Protocol (ADP) Command Reference
@@ -537,4 +559,15 @@ make test_07_benchmarks       # Bare-metal C benchmarks on full SoC
 | `led_rx_detect` | **Pin L1 (LED 15)** | Output | UART RX Activity & Prompt `]` Detector (latches ON on `]`) |
 | `UARTSin` | **PMOD JA Pin 1 (J1)** | Input | Application UART RX (connect to USB-UART dongle TXD) |
 | `UARTSout` | **PMOD JA Pin 2 (L2)** | Output | Application UART TX (connect to USB-UART dongle RXD) |
+
+---
+
+## 10. Origins & Credits
+
+| Part | Origin |
+| :--- | :--- |
+| Processor core | Based on the open-source [CORE-V-Wally](https://github.com/openhwgroup/cvw) RISC-V processor (OpenHW Group): the pipeline datapath was taken from Wally and reworked into this 5-stage RV32I + Zicsr core. Design follows *Digital Design and Computer Architecture, RISC-V Edition* by Sarah L. Harris and David Harris, with the RISC-V ISA specifications and other references |
+| Hardware debugger | Taken from the SoC Labs [Accelerator Project](https://git.soton.ac.uk/soclabs/accelerator-project) (University of Southampton, nanoSoC reference architecture): SoCDebug ADP engine, UART and FT1248 links. Adapted and modified here with core stepping, auto-halt, the post-mortem slave and the 2-to-1 arbiter |
+| Peripherals (uncore) | CLINT, PLIC, UART, SPI, GPIO, RAM/ROM wrappers and the AHB-to-APB bridge taken from the CORE-V-Wally uncore, simplified and adapted |
+| Written for this project | System Control block, accelerator socket, SPI boot flow, FPGA tops, verification suites |
 
