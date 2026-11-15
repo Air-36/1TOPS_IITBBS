@@ -1,0 +1,22 @@
+Dashboard
+
+Date: Sun Nov 15 14:46:18 2026
+
+User: 24EE01040
+
+Version: W-2024.09-SP2-8
+Command line: urg -dir simv.vdb -format text -report reports/coverage_report 
+
+Number of tests: 1
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  GROUP  
+100.00 100.00 
+
+
+-------------------------------------------------------------------------------
+Total Groups Coverage Summary 
+SCORE  WEIGHT 
+100.00 1      
+

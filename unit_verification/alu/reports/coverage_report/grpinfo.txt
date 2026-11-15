@@ -1,0 +1,305 @@
+Group : alu_uvm_pkg::alu_coverage::alu_cg
+
+===============================================================================
+Group : alu_uvm_pkg::alu_coverage::alu_cg
+===============================================================================
+SCORE  WEIGHT GOAL   AT LEAST AUTO BIN MAX PRINT MISSING 
+100.00 1      100    1        64           64            
+
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/unit_verification/alu/alu_coverage.sv
+
+
+
+-------------------------------------------------------------------------------
+
+Summary for Group   alu_uvm_pkg::alu_coverage::alu_cg
+
+
+
+CATEGORY  EXPECTED UNCOVERED COVERED PERCENT 
+Variables 27       0         27      100.00  
+Crosses   100      0         100     100.00  
+
+
+Variables for Group  alu_uvm_pkg::alu_coverage::alu_cg
+
+
+VARIABLE     EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST AUTO BIN MAX COMMENT 
+cp_operation 10       0         10      100.00  100  1      1        0                    
+cp_a         5        0         5       100.00  100  1      1        0                    
+cp_b         5        0         5       100.00  100  1      1        0                    
+cp_signs     4        0         4       100.00  100  1      1        0                    
+cp_shift     3        0         3       100.00  100  1      1        0                    
+
+
+Crosses for Group  alu_uvm_pkg::alu_coverage::alu_cg
+
+
+CROSS             EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST PRINT MISSING COMMENT 
+operation_a_cross 50       0         50      100.00  100  1      1        0                     
+operation_b_cross 50       0         50      100.00  100  1      1        0                     
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_operation
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 10       0         10      100.00  
+
+
+User Defined Bins for cp_operation
+
+
+Bins
+
+NAME         COUNT AT LEAST 
+operations_0 13    1        
+operations_1 21    1        
+operations_2 15    1        
+operations_3 19    1        
+operations_4 14    1        
+operations_5 16    1        
+operations_6 17    1        
+operations_7 20    1        
+operations_8 16    1        
+operations_9 19    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_a
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 5        0         5       100.00  
+
+
+User Defined Bins for cp_a
+
+
+Excluded/Illegal bins
+
+NAME  COUNT STATUS   
+other 100   Excluded 
+
+
+Covered bins
+
+NAME         COUNT AT LEAST 
+min_negative 10    1        
+max_positive 10    1        
+all_ones     20    1        
+one          20    1        
+zero         10    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_b
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 5        0         5       100.00  
+
+
+User Defined Bins for cp_b
+
+
+Excluded/Illegal bins
+
+NAME  COUNT STATUS   
+other 100   Excluded 
+
+
+Covered bins
+
+NAME         COUNT AT LEAST 
+min_negative 10    1        
+max_positive 10    1        
+all_ones     20    1        
+one          20    1        
+zero         10    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_signs
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 4        0         4       100.00  
+
+
+User Defined Bins for cp_signs
+
+
+Bins
+
+NAME    COUNT AT LEAST 
+neg_neg 49    1        
+neg_pos 33    1        
+pos_neg 24    1        
+pos_pos 64    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_shift
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 3        0         3       100.00  
+
+
+User Defined Bins for cp_shift
+
+
+Bins
+
+NAME     COUNT AT LEAST 
+shift_31 36    1        
+shift_1  25    1        
+shift_0  25    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Cross operation_a_cross
+
+
+Samples crossed: cp_operation cp_a
+CATEGORY                           EXPECTED UNCOVERED COVERED PERCENT MISSING 
+Automatically Generated Cross Bins 50       0         50      100.00          
+
+
+Automatically Generated Cross Bins for operation_a_cross
+
+
+Bins
+
+cp_operation cp_a         COUNT AT LEAST 
+operations_0 zero         1     1        
+operations_0 min_negative 1     1        
+operations_0 max_positive 1     1        
+operations_0 all_ones     2     1        
+operations_0 one          2     1        
+operations_1 zero         1     1        
+operations_1 min_negative 1     1        
+operations_1 max_positive 1     1        
+operations_1 all_ones     2     1        
+operations_1 one          2     1        
+operations_2 zero         1     1        
+operations_2 min_negative 1     1        
+operations_2 max_positive 1     1        
+operations_2 all_ones     2     1        
+operations_2 one          2     1        
+operations_3 zero         1     1        
+operations_3 min_negative 1     1        
+operations_3 max_positive 1     1        
+operations_3 all_ones     2     1        
+operations_3 one          2     1        
+operations_4 zero         1     1        
+operations_4 min_negative 1     1        
+operations_4 max_positive 1     1        
+operations_4 all_ones     2     1        
+operations_4 one          2     1        
+operations_5 zero         1     1        
+operations_5 min_negative 1     1        
+operations_5 max_positive 1     1        
+operations_5 all_ones     2     1        
+operations_5 one          2     1        
+operations_6 zero         1     1        
+operations_6 min_negative 1     1        
+operations_6 max_positive 1     1        
+operations_6 all_ones     2     1        
+operations_6 one          2     1        
+operations_7 zero         1     1        
+operations_7 min_negative 1     1        
+operations_7 max_positive 1     1        
+operations_7 all_ones     2     1        
+operations_7 one          2     1        
+operations_8 zero         1     1        
+operations_8 min_negative 1     1        
+operations_8 max_positive 1     1        
+operations_8 all_ones     2     1        
+operations_8 one          2     1        
+operations_9 zero         1     1        
+operations_9 min_negative 1     1        
+operations_9 max_positive 1     1        
+operations_9 all_ones     2     1        
+operations_9 one          2     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Cross operation_b_cross
+
+
+Samples crossed: cp_operation cp_b
+CATEGORY                           EXPECTED UNCOVERED COVERED PERCENT MISSING 
+Automatically Generated Cross Bins 50       0         50      100.00          
+
+
+Automatically Generated Cross Bins for operation_b_cross
+
+
+Bins
+
+cp_operation cp_b         COUNT AT LEAST 
+operations_0 zero         1     1        
+operations_0 min_negative 1     1        
+operations_0 max_positive 1     1        
+operations_0 all_ones     2     1        
+operations_0 one          2     1        
+operations_1 zero         1     1        
+operations_1 min_negative 1     1        
+operations_1 max_positive 1     1        
+operations_1 all_ones     2     1        
+operations_1 one          2     1        
+operations_2 zero         1     1        
+operations_2 min_negative 1     1        
+operations_2 max_positive 1     1        
+operations_2 all_ones     2     1        
+operations_2 one          2     1        
+operations_3 zero         1     1        
+operations_3 min_negative 1     1        
+operations_3 max_positive 1     1        
+operations_3 all_ones     2     1        
+operations_3 one          2     1        
+operations_4 zero         1     1        
+operations_4 min_negative 1     1        
+operations_4 max_positive 1     1        
+operations_4 all_ones     2     1        
+operations_4 one          2     1        
+operations_5 zero         1     1        
+operations_5 min_negative 1     1        
+operations_5 max_positive 1     1        
+operations_5 all_ones     2     1        
+operations_5 one          2     1        
+operations_6 zero         1     1        
+operations_6 min_negative 1     1        
+operations_6 max_positive 1     1        
+operations_6 all_ones     2     1        
+operations_6 one          2     1        
+operations_7 zero         1     1        
+operations_7 min_negative 1     1        
+operations_7 max_positive 1     1        
+operations_7 all_ones     2     1        
+operations_7 one          2     1        
+operations_8 zero         1     1        
+operations_8 min_negative 1     1        
+operations_8 max_positive 1     1        
+operations_8 all_ones     2     1        
+operations_8 one          2     1        
+operations_9 zero         1     1        
+operations_9 min_negative 1     1        
+operations_9 max_positive 1     1        
+operations_9 all_ones     2     1        
+operations_9 one          2     1        
+
+

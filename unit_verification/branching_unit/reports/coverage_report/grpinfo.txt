@@ -1,0 +1,198 @@
+Group : branch_pkg::branch_coverage::branch_cg
+
+===============================================================================
+Group : branch_pkg::branch_coverage::branch_cg
+===============================================================================
+SCORE  WEIGHT GOAL   AT LEAST AUTO BIN MAX PRINT MISSING 
+100.00 1      100    1        64           64            
+
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/verification/branching_unit/branch_coverage.sv
+
+
+
+-------------------------------------------------------------------------------
+
+Summary for Group   branch_pkg::branch_coverage::branch_cg
+
+
+
+CATEGORY  EXPECTED UNCOVERED COVERED PERCENT 
+Variables 13       0         13      100.00  
+Crosses   56       0         56      100.00  
+
+
+Variables for Group  branch_pkg::branch_coverage::branch_cg
+
+
+VARIABLE  EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST AUTO BIN MAX COMMENT 
+cp_funct3 7        0         7       100.00  100  1      1        0                    
+cp_zero   2        0         2       100.00  100  1      1        0                    
+cp_less   2        0         2       100.00  100  1      1        0                    
+cp_lessu  2        0         2       100.00  100  1      1        0                    
+
+
+Crosses for Group  branch_pkg::branch_coverage::branch_cg
+
+
+CROSS        EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST PRINT MISSING COMMENT 
+branch_cross 56       0         56      100.00  100  1      1        0                     
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_funct3
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 7        0         7       100.00  
+
+
+User Defined Bins for cp_funct3
+
+
+Bins
+
+NAME    COUNT AT LEAST 
+invalid 16    1        
+bgeu    8     1        
+bltu    8     1        
+bge     8     1        
+blt     8     1        
+bne     8     1        
+beq     8     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_zero
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 2        0         2       100.00  
+
+
+User Defined Bins for cp_zero
+
+
+Bins
+
+NAME   COUNT AT LEAST 
+zero_1 32    1        
+zero_0 32    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_less
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 2        0         2       100.00  
+
+
+User Defined Bins for cp_less
+
+
+Bins
+
+NAME   COUNT AT LEAST 
+less_1 32    1        
+less_0 32    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_lessu
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 2        0         2       100.00  
+
+
+User Defined Bins for cp_lessu
+
+
+Bins
+
+NAME    COUNT AT LEAST 
+lessu_1 32    1        
+lessu_0 32    1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Cross branch_cross
+
+
+Samples crossed: cp_funct3 cp_zero cp_less cp_lessu
+CATEGORY                           EXPECTED UNCOVERED COVERED PERCENT MISSING 
+Automatically Generated Cross Bins 56       0         56      100.00          
+
+
+Automatically Generated Cross Bins for branch_cross
+
+
+Bins
+
+cp_funct3 cp_zero cp_less cp_lessu COUNT AT LEAST 
+invalid   zero_1  less_1  lessu_0  2     1        
+invalid   zero_1  less_1  lessu_1  2     1        
+invalid   zero_1  less_0  lessu_0  2     1        
+invalid   zero_1  less_0  lessu_1  2     1        
+invalid   zero_0  less_1  lessu_0  2     1        
+invalid   zero_0  less_1  lessu_1  2     1        
+invalid   zero_0  less_0  lessu_0  2     1        
+invalid   zero_0  less_0  lessu_1  2     1        
+bgeu      zero_1  less_1  lessu_0  1     1        
+bgeu      zero_1  less_1  lessu_1  1     1        
+bgeu      zero_1  less_0  lessu_0  1     1        
+bgeu      zero_1  less_0  lessu_1  1     1        
+bgeu      zero_0  less_1  lessu_0  1     1        
+bgeu      zero_0  less_1  lessu_1  1     1        
+bgeu      zero_0  less_0  lessu_0  1     1        
+bgeu      zero_0  less_0  lessu_1  1     1        
+bltu      zero_1  less_1  lessu_0  1     1        
+bltu      zero_1  less_1  lessu_1  1     1        
+bltu      zero_1  less_0  lessu_0  1     1        
+bltu      zero_1  less_0  lessu_1  1     1        
+bltu      zero_0  less_1  lessu_0  1     1        
+bltu      zero_0  less_1  lessu_1  1     1        
+bltu      zero_0  less_0  lessu_0  1     1        
+bltu      zero_0  less_0  lessu_1  1     1        
+bge       zero_1  less_1  lessu_0  1     1        
+bge       zero_1  less_1  lessu_1  1     1        
+bge       zero_1  less_0  lessu_0  1     1        
+bge       zero_1  less_0  lessu_1  1     1        
+bge       zero_0  less_1  lessu_0  1     1        
+bge       zero_0  less_1  lessu_1  1     1        
+bge       zero_0  less_0  lessu_0  1     1        
+bge       zero_0  less_0  lessu_1  1     1        
+blt       zero_1  less_1  lessu_0  1     1        
+blt       zero_1  less_1  lessu_1  1     1        
+blt       zero_1  less_0  lessu_0  1     1        
+blt       zero_1  less_0  lessu_1  1     1        
+blt       zero_0  less_1  lessu_0  1     1        
+blt       zero_0  less_1  lessu_1  1     1        
+blt       zero_0  less_0  lessu_0  1     1        
+blt       zero_0  less_0  lessu_1  1     1        
+bne       zero_1  less_1  lessu_0  1     1        
+bne       zero_1  less_1  lessu_1  1     1        
+bne       zero_1  less_0  lessu_0  1     1        
+bne       zero_1  less_0  lessu_1  1     1        
+bne       zero_0  less_1  lessu_0  1     1        
+bne       zero_0  less_1  lessu_1  1     1        
+bne       zero_0  less_0  lessu_0  1     1        
+bne       zero_0  less_0  lessu_1  1     1        
+beq       zero_1  less_1  lessu_0  1     1        
+beq       zero_1  less_1  lessu_1  1     1        
+beq       zero_1  less_0  lessu_0  1     1        
+beq       zero_1  less_0  lessu_1  1     1        
+beq       zero_0  less_1  lessu_0  1     1        
+beq       zero_0  less_1  lessu_1  1     1        
+beq       zero_0  less_0  lessu_0  1     1        
+beq       zero_0  less_0  lessu_1  1     1        
+
+

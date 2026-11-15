@@ -1,0 +1,14 @@
+Design Module List
+
+Total Module Definition Coverage Summary 
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 96.88  93.75 100.00 100.00 --      93.75 
+
+
+Total modules in report: 3
+-------------------------------------------------------------------------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME       
+ 96.35  91.67 100.00 100.00 --      93.75 alu        
+100.00 --     --     100.00 --     --     alu_if     
+100.00 100.00 --     100.00 --     --     alu_tb_top 
+
