@@ -1,0 +1,276 @@
+Group : regfile_pkg::regfile_coverage::regfile_cg
+
+===============================================================================
+Group : regfile_pkg::regfile_coverage::regfile_cg
+===============================================================================
+SCORE  WEIGHT GOAL   AT LEAST AUTO BIN MAX PRINT MISSING 
+ 99.48 1      100    1        64           64            
+
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/verification/regfile/regfile_coverage.sv
+
+
+
+-------------------------------------------------------------------------------
+
+Summary for Group   regfile_pkg::regfile_coverage::regfile_cg
+
+
+
+CATEGORY  EXPECTED UNCOVERED COVERED PERCENT 
+Variables 132      1         131     99.48   
+
+
+Variables for Group  regfile_pkg::regfile_coverage::regfile_cg
+
+
+VARIABLE     EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST AUTO BIN MAX COMMENT 
+cp_wr_en     2        0         2       100.00  100  1      1        0                    
+cp_wr_addr   32       0         32      100.00  100  1      1        0                    
+cp_rd_addr1  32       0         32      100.00  100  1      1        0                    
+cp_rd_addr2  32       0         32      100.00  100  1      1        0                    
+cp_dbg_addr  32       1         31      96.88   100  1      1        0                    
+cp_same_addr 2        0         2       100.00  100  1      1        0                    
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_wr_en
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 2        0         2       100.00  
+
+
+User Defined Bins for cp_wr_en
+
+
+Bins
+
+NAME           COUNT AT LEAST 
+write_disabled 63    1        
+write_enabled  171   1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_wr_addr
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 32       0         32      100.00  
+
+
+User Defined Bins for cp_wr_addr
+
+
+Bins
+
+NAME         COUNT AT LEAST 
+registers_00 8     1        
+registers_01 11    1        
+registers_02 5     1        
+registers_03 5     1        
+registers_04 8     1        
+registers_05 9     1        
+registers_06 4     1        
+registers_07 6     1        
+registers_08 2     1        
+registers_09 5     1        
+registers_0a 5     1        
+registers_0b 5     1        
+registers_0c 13    1        
+registers_0d 9     1        
+registers_0e 7     1        
+registers_0f 2     1        
+registers_10 10    1        
+registers_11 6     1        
+registers_12 12    1        
+registers_13 7     1        
+registers_14 9     1        
+registers_15 6     1        
+registers_16 7     1        
+registers_17 11    1        
+registers_18 5     1        
+registers_19 5     1        
+registers_1a 9     1        
+registers_1b 14    1        
+registers_1c 7     1        
+registers_1d 5     1        
+registers_1e 13    1        
+registers_1f 4     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_rd_addr1
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 32       0         32      100.00  
+
+
+User Defined Bins for cp_rd_addr1
+
+
+Bins
+
+NAME         COUNT AT LEAST 
+registers_00 39    1        
+registers_01 7     1        
+registers_02 8     1        
+registers_03 5     1        
+registers_04 6     1        
+registers_05 8     1        
+registers_06 9     1        
+registers_07 8     1        
+registers_08 9     1        
+registers_09 1     1        
+registers_0a 3     1        
+registers_0b 6     1        
+registers_0c 6     1        
+registers_0d 8     1        
+registers_0e 3     1        
+registers_0f 4     1        
+registers_10 9     1        
+registers_11 11    1        
+registers_12 4     1        
+registers_13 5     1        
+registers_14 7     1        
+registers_15 2     1        
+registers_16 7     1        
+registers_17 5     1        
+registers_18 5     1        
+registers_19 13    1        
+registers_1a 9     1        
+registers_1b 10    1        
+registers_1c 6     1        
+registers_1d 2     1        
+registers_1e 5     1        
+registers_1f 4     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_rd_addr2
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 32       0         32      100.00  
+
+
+User Defined Bins for cp_rd_addr2
+
+
+Bins
+
+NAME         COUNT AT LEAST 
+registers_00 38    1        
+registers_01 7     1        
+registers_02 5     1        
+registers_03 7     1        
+registers_04 9     1        
+registers_05 9     1        
+registers_06 8     1        
+registers_07 3     1        
+registers_08 4     1        
+registers_09 5     1        
+registers_0a 8     1        
+registers_0b 8     1        
+registers_0c 9     1        
+registers_0d 7     1        
+registers_0e 3     1        
+registers_0f 7     1        
+registers_10 6     1        
+registers_11 11    1        
+registers_12 4     1        
+registers_13 8     1        
+registers_14 4     1        
+registers_15 3     1        
+registers_16 4     1        
+registers_17 5     1        
+registers_18 10    1        
+registers_19 6     1        
+registers_1a 9     1        
+registers_1b 6     1        
+registers_1c 7     1        
+registers_1d 2     1        
+registers_1e 7     1        
+registers_1f 5     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_dbg_addr
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 32       1         31      96.88   
+
+
+User Defined Bins for cp_dbg_addr
+
+
+Uncovered bins
+
+NAME         COUNT AT LEAST NUMBER 
+registers_1d 0     1        1      
+
+
+Covered bins
+
+NAME         COUNT AT LEAST 
+registers_00 38    1        
+registers_01 6     1        
+registers_02 4     1        
+registers_03 4     1        
+registers_04 7     1        
+registers_05 11    1        
+registers_06 6     1        
+registers_07 12    1        
+registers_08 8     1        
+registers_09 6     1        
+registers_0a 6     1        
+registers_0b 5     1        
+registers_0c 9     1        
+registers_0d 6     1        
+registers_0e 11    1        
+registers_0f 6     1        
+registers_10 7     1        
+registers_11 7     1        
+registers_12 4     1        
+registers_13 4     1        
+registers_14 5     1        
+registers_15 8     1        
+registers_16 7     1        
+registers_17 5     1        
+registers_18 7     1        
+registers_19 5     1        
+registers_1a 7     1        
+registers_1b 7     1        
+registers_1c 4     1        
+registers_1e 6     1        
+registers_1f 6     1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_same_addr
+
+
+CATEGORY          EXPECTED UNCOVERED COVERED PERCENT 
+User Defined Bins 2        0         2       100.00  
+
+
+User Defined Bins for cp_same_addr
+
+
+Bins
+
+NAME     COUNT AT LEAST 
+no_match 229   1        
+match    5     1        
+
+

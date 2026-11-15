@@ -1,0 +1,12 @@
+Design Hierarchy
+
+
+----------------
+SCORE  LINE   COND   TOGGLE FSM    BRANCH            
+ 96.88  93.75 100.00 100.00 --      93.75 alu_tb_top 
+  
+  ----------------
+  SCORE  LINE   COND   TOGGLE FSM    BRANCH         
+  100.00 --     --     100.00 --     --     alu_vif 
+   96.35  91.67 100.00 100.00 --      93.75 dut     
+

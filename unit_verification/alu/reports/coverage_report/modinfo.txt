@@ -1,0 +1,421 @@
+===============================================================================
+Module : alu
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 96.35  91.67 100.00 100.00 --      93.75 
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/unit_verification/alu/alu.v
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME           
+ 96.35  91.67 100.00 100.00 --      93.75 alu_tb_top.dut 
+
+
+
+-------------------------------------------------------------------------------
+Line Coverage for Module : alu
+
+             Line No.   Total   Covered  Percent
+TOTAL                       12       11    91.67
+ALWAYS             13       12       11    91.67
+
+12                      always @(*) begin
+13         1/1              case (alu_ctrl)
+14         1/1                  4'b0000: alu_out = a + b;           // ADD
+15         1/1                  4'b0001: alu_out = a - b;           // SUB
+16         1/1                  4'b0010: alu_out = a & b;           // AND
+17         1/1                  4'b0011: alu_out = a | b;           // OR
+18         1/1                  4'b0100: alu_out = a << b[4:0];     // SLL (Shift Left Logical)
+19         1/1                  4'b0101: alu_out = ($signed(a) < $signed(b)) ? 1 : 0; // SLT (Signed comparison)
+20         1/1                  4'b0110: alu_out = (a < b) ? 1 : 0; // SLTU (Unsigned comparison)
+21         1/1                  4'b0111: alu_out = a ^ b;           // XOR
+22         1/1                  4'b1000: alu_out = $signed(a) >>> b[4:0]; // SRA (Arithmetic Right Shift)
+23         1/1                  4'b1001: alu_out = a >> b[4:0];     // SRL (Logical Right Shift)
+24         0/1     ==>          default: alu_out = 1'bx;               // Default case
+
+-------------------------------------------------------------------------------
+Cond Coverage for Module : alu
+
+               Total   Covered  Percent
+Conditions          8        8   100.00
+Logical             8        8   100.00
+Non-Logical         0        0
+Event               0        0
+
+ LINE       20
+ EXPRESSION ((a < b) ? 1 : 0)
+             ---1---
+
+-1- Status
+ 0  Covered
+ 1  Covered
+
+ LINE       29
+ EXPRESSION ((alu_out == 0) ? 1'b1 : 1'b0)
+             -------1------
+
+-1- Status
+ 0  Covered
+ 1  Covered
+
+ LINE       29
+ SUB-EXPRESSION (alu_out == 0)
+                -------1------
+
+-1- Status
+ 0  Covered
+ 1  Covered
+
+ LINE       31
+ EXPRESSION ((a < b) ? 1'b1 : 1'b0)
+             ---1---
+
+-1- Status
+ 0  Covered
+ 1  Covered
+
+-------------------------------------------------------------------------------
+Toggle Coverage for Module : alu
+                Total Covered Percent 
+Totals          7     7       100.00  
+Total Bits      206   206     100.00  
+Total Bits 0->1 103   103     100.00  
+Total Bits 1->0 103   103     100.00  
+
+                              
+Ports          7   7   100.00 
+Port Bits      206 206 100.00 
+Port Bits 0->1 103 103 100.00 
+Port Bits 1->0 103 103 100.00 
+
+Port Details
+              Toggle Toggle 1->0 Toggle 0->1 Direction 
+a[31:0]       Yes    Yes         Yes         INPUT     
+b[31:0]       Yes    Yes         Yes         INPUT     
+alu_ctrl[3:0] Yes    Yes         Yes         INPUT     
+alu_out[31:0] Yes    Yes         Yes         OUTPUT    
+zero          Yes    Yes         Yes         OUTPUT    
+less          Yes    Yes         Yes         OUTPUT    
+less_u        Yes    Yes         Yes         OUTPUT    
+
+
+-------------------------------------------------------------------------------
+Branch Coverage for Module : alu
+         Line No. Total Covered Percent 
+Branches          16    15      93.75   
+TERNARY  29       2     2       100.00  
+TERNARY  31       2     2       100.00  
+CASE     13       12    11      91.67   
+
+
+29         assign zero   = (alu_out == 0) ? 1'b1 : 1'b0;
+                                          -1-  
+                                          ==>  
+                                          ==>  
+
+Branches:
+
+-1- Status  
+1   Covered 
+0   Covered 
+
+
+31         assign less_u = (a < b) ? 1'b1 : 1'b0;
+                                   -1-  
+                                   ==>  
+                                   ==>  
+
+Branches:
+
+-1- Status  
+1   Covered 
+0   Covered 
+
+
+13             case (alu_ctrl)
+               -1-  
+14                 4'b0000: alu_out = a + b;           // ADD
+                   ==>
+15                 4'b0001: alu_out = a - b;           // SUB
+                   ==>
+16                 4'b0010: alu_out = a & b;           // AND
+                   ==>
+17                 4'b0011: alu_out = a | b;           // OR
+                   ==>
+18                 4'b0100: alu_out = a << b[4:0];     // SLL (Shift Left Logical)
+                   ==>
+19                 4'b0101: alu_out = ($signed(a) < $signed(b)) ? 1 : 0; // SLT (Signed comparison)
+                   ==>
+20                 4'b0110: alu_out = (a < b) ? 1 : 0; // SLTU (Unsigned comparison)
+                                              -2-  
+                                              ==>  
+                                              ==>  
+21                 4'b0111: alu_out = a ^ b;           // XOR
+                   ==>
+22                 4'b1000: alu_out = $signed(a) >>> b[4:0]; // SRA (Arithmetic Right Shift)
+                   ==>
+23                 4'b1001: alu_out = a >> b[4:0];     // SRL (Logical Right Shift)
+                   ==>
+24                 default: alu_out = 1'bx;               // Default case
+                   ==>
+
+Branches:
+
+-1-      -2- Status      
+4'b0000  -   Covered     
+4'b0001  -   Covered     
+4'b0010  -   Covered     
+4'b0011  -   Covered     
+4'b0100  -   Covered     
+4'b0101  -   Covered     
+4'b0110  1   Covered     
+4'b0110  0   Covered     
+4'b0111  -   Covered     
+4'b1000  -   Covered     
+4'b1001  -   Covered     
+default  -   Not Covered 
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : alu_tb_top.dut
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 96.35  91.67 100.00 100.00 --      93.75 
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 96.35  91.67 100.00 100.00 --      93.75 
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME 
+ 96.35  91.67 100.00 100.00 --      93.75 alu  
+
+
+Parent : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME       
+100.00 100.00 --     100.00 --     --     alu_tb_top 
+
+
+Subtrees :
+
+
+no children
+----------------
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.
+===============================================================================
+Module : alu_if
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+100.00 --     --     100.00 --     --     
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/unit_verification/alu/alu_if.sv
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME               
+100.00 --     --     100.00 --     --     alu_tb_top.alu_vif 
+
+
+
+-------------------------------------------------------------------------------
+Toggle Coverage for Module : alu_if
+                Total Covered Percent 
+Totals          8     8       100.00  
+Total Bits      208   208     100.00  
+Total Bits 0->1 104   104     100.00  
+Total Bits 1->0 104   104     100.00  
+
+                          
+Ports          1 1 100.00 
+Port Bits      2 2 100.00 
+Port Bits 0->1 1 1 100.00 
+Port Bits 1->0 1 1 100.00 
+
+                                
+Signals          7   7   100.00 
+Signal Bits      206 206 100.00 
+Signal Bits 0->1 103 103 100.00 
+Signal Bits 1->0 103 103 100.00 
+
+Port Details
+    Toggle Toggle 1->0 Toggle 0->1 Direction 
+clk Yes    Yes         Yes         INPUT     
+
+Signal Details
+              Toggle Toggle 1->0 Toggle 0->1 
+a[31:0]       Yes    Yes         Yes         
+b[31:0]       Yes    Yes         Yes         
+alu_ctrl[3:0] Yes    Yes         Yes         
+alu_out[31:0] Yes    Yes         Yes         
+zero          Yes    Yes         Yes         
+less          Yes    Yes         Yes         
+less_u        Yes    Yes         Yes         
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : alu_tb_top.alu_vif
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+100.00 --     --     100.00 --     --     
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+100.00 --     --     100.00 --     --     
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME   
+100.00 --     --     100.00 --     --     alu_if 
+
+
+Parent : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME       
+100.00 100.00 --     100.00 --     --     alu_tb_top 
+
+
+Subtrees :
+
+
+no children
+----------------
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.
+===============================================================================
+Module : alu_tb_top
+===============================================================================
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+100.00 100.00 --     100.00 --     --     
+
+Source File(s) : 
+
+/home/24EE01040/Projects/1TOPS_IITBBS/unit_verification/alu/alu_tb_top.sv
+
+Module self-instances :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME       
+100.00 100.00 --     100.00 --     --     alu_tb_top 
+
+
+
+-------------------------------------------------------------------------------
+Line Coverage for Module : alu_tb_top
+
+             Line No.   Total   Covered  Percent
+TOTAL                        4        4   100.00
+ALWAYS              9        2        2   100.00
+INITIAL            28        2        2   100.00
+
+8                       
+9          2/2              always #5 clk = ~clk;
+10                      
+11                          // Interface instance
+12                          alu_if alu_vif(clk);
+13                      
+14                          // DUT instance
+15                          alu #(
+16                              .WIDTH(32)
+17                          ) dut (
+18                              .a        (alu_vif.a),
+19                              .b        (alu_vif.b),
+20                              .alu_ctrl (alu_vif.alu_ctrl),
+21                              .alu_out  (alu_vif.alu_out),
+22                              .zero     (alu_vif.zero),
+23                              .less     (alu_vif.less),
+24                              .less_u   (alu_vif.less_u)
+25                          );
+26                      
+27                          initial begin
+28         1/1                  uvm_config_db#(virtual alu_if)::set(
+29                                  null,
+30                                  "*",
+31                                  "vif",
+32                                  alu_vif
+33                              );
+34                      
+35         1/1                  run_test("alu_test");
+
+-------------------------------------------------------------------------------
+Toggle Coverage for Module : alu_tb_top
+                Total Covered Percent 
+Totals          1     1       100.00  
+Total Bits      2     2       100.00  
+Total Bits 0->1 1     1       100.00  
+Total Bits 1->0 1     1       100.00  
+
+                            
+Signals          1 1 100.00 
+Signal Bits      2 2 100.00 
+Signal Bits 0->1 1 1 100.00 
+Signal Bits 1->0 1 1 100.00 
+
+Signal Details
+    Toggle Toggle 1->0 Toggle 0->1 
+clk Yes    Yes         Yes         
+
+
+-------------------------------------------------------------------------------
+===============================================================================
+Module Instance : alu_tb_top
+===============================================================================
+
+Instance :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+100.00 100.00 --     100.00 --     --     
+
+
+Instance's subtree :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH 
+ 96.88  93.75 100.00 100.00 --      93.75 
+
+
+Module : 
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME       
+100.00 100.00 --     100.00 --     --     alu_tb_top 
+
+
+Parent : 
+
+none
+----------------
+
+
+Subtrees :
+
+SCORE  LINE   COND   TOGGLE FSM    BRANCH NAME    
+100.00 --     --     100.00 --     --     alu_vif 
+ 96.35  91.67 100.00 100.00 --      93.75 dut     
+
+
+
+-------------------------------------------------------------------------------
+Since this is the module's only instance, the coverage report is the same as for the module.
