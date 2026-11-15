@@ -1,6 +1,7 @@
 #!/bin/bash
 # Full-SoC suite on Verilator.  run_verilator.sh <repo>/source [RAM_LATENCY]
-R=${1:-$(cd $(dirname $0)/../../.. && pwd)}; LAT=${2:-0}
+# default RTL: <repo>/source (this suite lives in debugger_verification_tb/, outside source/)
+R=${1:-$(cd $(dirname $0)/../../../../../source && pwd)}; LAT=${2:-0}
 cd $(dirname $0)
 export PATH=/usr/local/lib/python3.13/dist-packages/verilator/bin:$PATH
 rm -rf src_lat && mkdir src_lat && cp $R/uncore/*.sv src_lat/ && sed -i "s/\.RAM_LATENCY(0)/.RAM_LATENCY($LAT)/" src_lat/uncore.sv

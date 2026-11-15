@@ -13,21 +13,22 @@ import subprocess
 import argparse
 
 RISCV_PREFIX = ""
-if shutil.which("riscv64-unknown-elf-gcc"):
-    GCC = shutil.which("riscv64-unknown-elf-gcc")
-    OBJCOPY = shutil.which("riscv64-unknown-elf-objcopy")
-    OBJDUMP = shutil.which("riscv64-unknown-elf-objdump")
-    NM = shutil.which("riscv64-unknown-elf-nm")
-elif os.path.exists("/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-gcc"):
-    GCC = "/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-gcc"
-    OBJCOPY = "/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-objcopy"
-    OBJDUMP = "/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-objdump"
-    NM = "/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-nm"
-else:
-    GCC = "riscv64-unknown-elf-gcc"
-    OBJCOPY = "riscv64-unknown-elf-objcopy"
-    OBJDUMP = "riscv64-unknown-elf-objdump"
-    NM = "riscv64-unknown-elf-nm"
+# Each tool is looked up on its own: a toolchain on PATH may lack some binutils (e.g. no nm/objdump),
+# so fall back per tool to riscv-none-elf-* and then to the RISC-V toolchain shipped with Vivado 2024.2.
+_VIVADO_RV = "/cad/xilinx/Vivado/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin"
+
+def _rv_tool(tool):
+    for name in (f"riscv64-unknown-elf-{tool}", f"riscv-none-elf-{tool}", f"riscv32-unknown-elf-{tool}"):
+        p = shutil.which(name)
+        if p:
+            return p
+    p = os.path.join(_VIVADO_RV, f"riscv64-unknown-elf-{tool}")
+    return p if os.path.exists(p) else f"riscv64-unknown-elf-{tool}"
+
+GCC = _rv_tool("gcc")
+OBJCOPY = _rv_tool("objcopy")
+OBJDUMP = _rv_tool("objdump")
+NM = _rv_tool("nm")
 
 VSIM = shutil.which("vsim") or "/cad/mentor/questa_sim-2023.4_5/questasim/bin/vsim"
 VLOG = shutil.which("vlog") or "/cad/mentor/questa_sim-2023.4_5/questasim/bin/vlog"

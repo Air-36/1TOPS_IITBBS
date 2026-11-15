@@ -81,7 +81,7 @@ class soc_full_coverage extends uvm_subscriber #(gpio_item);
 
     // Sample from GPIO subscriber
     virtual function void write(gpio_item t);
-        sample_gpio_in  = t.sampled_in;
+        sample_gpio_in  = t.sampled_in;    // gpio_item fields are sampled_in / sampled_out
         sample_gpio_out = t.sampled_out;
         cg_gpio.sample();
     endfunction

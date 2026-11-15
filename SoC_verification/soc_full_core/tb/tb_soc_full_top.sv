@@ -21,7 +21,7 @@ import gpio_pkg::*;
 import irq_pkg::*;
 import uart_pkg::*;
 import soc_full_env_pkg::*;
-import soc_full_tests_pkg::*;
+import soc_full_tests_pkg::*;   // registers the test classes with the UVM factory (+UVM_TESTNAME)
 
 module tb_soc_full_top #(
     parameter bit        USE_BOOTROM = 0,
@@ -82,9 +82,9 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     wire [31:0] GPIOOUT, GPIOEN;
     wire [31:0] GPIOIN = gpio_vif.gpio_in;
-    assign gpio_vif.gpio_out  = GPIOOUT;
-    assign gpio_vif.gpio_en   = GPIOEN;
-    assign gpio_vif.gpio_intr = u_dut.uncore.GPIOIntr;
+    assign gpio_vif.gpio_out = GPIOOUT;
+    assign gpio_vif.gpio_en   = GPIOEN;                 // gpio_if names it gpio_en
+    assign gpio_vif.gpio_intr = u_dut.uncore.GPIOIntr;  // sampled by the GPIO monitor
 
     wire UARTSout;
     wire UARTSin = uart_vif.sin;
@@ -143,12 +143,19 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // Connect IRQ VIP Interface to Uncore Interrupt Lines
     // -------------------------------------------------------------------------
+    // Bit 0: MTimerInt (CLINT)
+    // Bit 1: MSwInt (CLINT)
+    // Bit 2: MExtInt (PLIC Core line)
+    // Bit 3: GPIOIntr (GPIO peripheral line)
+    // Bit 4: UARTIntr (UART peripheral line)
+    // Bit 5: SPIIntr (SPI peripheral line)
+    // irq_if has one named signal per line (no irq_lines bus)
     assign irq_vif.mtimer_int = u_dut.MTimerInt;
     assign irq_vif.msw_int    = u_dut.MSwInt;
     assign irq_vif.mext_int   = u_dut.core_MExtInt;
     assign irq_vif.sext_int   = 1'b0;
-    assign irq_vif.uart_intr  = u_dut.uncore.UARTIntr;
     assign irq_vif.gpio_intr  = u_dut.uncore.GPIOIntr;
+    assign irq_vif.uart_intr  = u_dut.uncore.UARTIntr;
     assign irq_vif.spi_intr   = u_dut.uncore.SPIIntr;
     assign irq_vif.sdc_intr   = 1'b0;
 
@@ -209,13 +216,17 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     uvm_root root_h;
     soc_full_env env_h;
+    // Explicit reference to the tests package: a bare wildcard import may be optimized away by vopt,
+    // and then no test class is registered with the UVM factory (+UVM_TESTNAME ... not found).
+    soc_full_tests_pkg::soc_full_base_test keep_tests_pkg_h;
 
     always @(posedge clk) begin
-        if (!reset && u_dut.uncore.PSEL[2] && u_dut.uncore.PENABLE && u_dut.uncore.PWRITE && (u_dut.uncore.PADDR[2:0] == 3'b000)) begin
-            if (!u_dut.uncore.gen_uart.uart.gen_fast_model.lcr[7]) begin
+        if (!reset && u_dut.uncore.gen_uart.uart.gen_fast_model.memwrite) begin
+            if (u_dut.uncore.gen_uart.uart.PADDR == 3'b000 && !u_dut.uncore.gen_uart.uart.gen_fast_model.lcr[7]) begin
+                // Character sent
                 root_h = uvm_root::get();
                 if ($cast(env_h, root_h.find("uvm_test_top.env"))) begin
-                    env_h.uart_agt.monitor.record_char(u_dut.uncore.PWDATA[7:0]);
+                    env_h.uart_agt.monitor.record_char(u_dut.uncore.gen_uart.uart.gen_fast_model.din);
                 end
             end
         end
@@ -239,12 +250,14 @@ module tb_soc_full_top #(
     apb_protocol_checker u_apb_chk (
         .PCLK(clk),
         .PRESETn(~reset),
-        .PSEL(|u_dut.uncore.PSEL),
+        .PSEL(|u_dut.uncore.PSEL),                       // PSEL is one bit per peripheral
         .PENABLE(u_dut.uncore.PENABLE),
         .PADDR(u_dut.uncore.PADDR),
         .PWRITE(u_dut.uncore.PWRITE),
         .PWDATA(u_dut.uncore.PWDATA),
-        .PREADY(&u_dut.uncore.PREADY_PERIPHS),
+        // Ready of the SELECTED peripheral, as the AHB-APB bridge uses it (PREADY[sel_idx]).
+        // An AND of all PREADYs would stall the checker whenever an idle peripheral is not ready.
+        .PREADY(|(u_dut.uncore.PSEL & u_dut.uncore.PREADY_PERIPHS)),
         .PSEL_PERIPHERALS(u_dut.uncore.PSEL[3:0])
     );
 
@@ -261,6 +274,10 @@ module tb_soc_full_top #(
 
         uvm_config_db#(virtual uart_if)::set(null, "*uart_agt*", "vif", uart_vif);
         uvm_config_db#(virtual uart_if)::set(null, "*", "uart_vif", uart_vif);
+        // The VIP monitors look up "vif" (same as the coreless env's tb top)
+        uvm_config_db#(virtual gpio_if)::set(null, "uvm_test_top.env.gpio_agt*", "vif", gpio_vif);
+        uvm_config_db#(virtual irq_if)::set(null,  "uvm_test_top.env.irq_agt*",  "vif", irq_vif);
+        uvm_config_db#(virtual uart_if)::set(null, "uvm_test_top.env.uart_agt*", "vif", uart_vif);
 
         uvm_config_db#(virtual soc_ctrl_if)::set(null, "*", "ctrl_vif", ctrl_vif);
 

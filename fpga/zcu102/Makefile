@@ -29,7 +29,9 @@ JOBS              ?= 8
 ALLOW_TIMING_FAIL ?= 0
 
 # Remote hardware server (same address/port as the nanosoc flow)
-HW_SERVER        ?= 10.10.37.116:3121
+# Lab PC running hw_server (the PC the ZCU102 JTAG USB J2 is plugged into). Change it here, or
+# override per run: make stream_remote HW_SERVER=<ip>:3121  (or export HW_SERVER=<ip>:3121).
+HW_SERVER        ?= 10.10.92.226:3121
 BITFILE          ?= $(OUTPUT_DIR)/$(DESIGN_NAME).bit
 
 .PHONY: help code rom build_fpga build_only stream_remote sim clean_fpga clean_fpga_all

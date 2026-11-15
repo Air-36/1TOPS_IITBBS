@@ -24,8 +24,8 @@ int main(void) {
 
     // Schedule initial timer interrupt in 100 cycles
     uint32_t cur = CLINT_MTIME;
-    CLINT_MTIMECMPH = 0;
-    CLINT_MTIMECMP  = cur + 100;
+    CLINT_MTIMECMPH = 0;              // MTIMECMP resets to all ones: clear the upper half or the timer never fires
+    CLINT_MTIMECMP = cur + 100;
 
     // Enable both Timer and Software interrupts
     set_csr_mie(MIE_MTIE | MIE_MSIE);

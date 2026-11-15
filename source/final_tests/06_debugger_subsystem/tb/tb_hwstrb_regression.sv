@@ -178,7 +178,7 @@ module tb_hwstrb_regression;
         @(posedge clk);
         #1; // Allow combinational logic to settle
         $display("[T1] Data cycle: dbg_core_halt_status=%b, HWSTRB=%b, core_HWSTRB=%b, dbg_HWSTRB=%b, HSIZE=%b, HADDR=0x%08x",
-                 soc.dbg_core_halt_status, soc.HWSTRB, soc.core_HWSTRB, soc.dbg_HWSTRB, soc.HSIZE, soc.HADDR);
+                 soc.dbg_core_halt_status, soc.HWSTRB, soc.core_HWSTRB, soc.dbg_HWSTRB, soc.bus_HSIZE, soc.HADDR);
 
         // Complete data cycle on HREADY
         while (!soc.HREADY) begin

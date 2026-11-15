@@ -13,6 +13,7 @@
         test_05_peripherals \
         test_06_debugger \
         test_07_benchmarks \
+        test_09_spi_boot \
         test_08_debugger_verification
 
 all: test_all
@@ -29,6 +30,7 @@ help:
 	@echo "   make test_05_peripherals    - Peripherals & Accelerator (GPIO, UART, CLINT, PLIC, Mult)"
 	@echo "   make test_06_debugger       - Debugger features & ADP protocol (UART / FT1248)"
 	@echo "   make test_07_benchmarks     - Full SoC bare-metal C applications (hello, matmul, qsort)"
+	@echo "   make test_09_spi_boot       - SPI boot flow end to end (boot ROM + stream + partner, resets)"
 	@echo "   make test_08_debugger_verification - Comprehensive Debugger Verification (Block & Full-SoC)"
 	@echo ""
 	@echo " Master Targets:"
@@ -64,6 +66,9 @@ test_07_benchmarks:
 	@echo "\n>>> [SUBSYSTEM 07/08] Running SoC Top-Level System & Bare-Metal C Benchmarks..."
 	@$(MAKE) -C 07_soc_system_benchmarks test_all
 
+test_09_spi_boot:
+	@echo "\n>>> [SUBSYSTEM 09] Running SPI Boot Flow End-to-End (boot ROM, stream, partner, resets)..."
+	@$(MAKE) -C 09_spi_boot_e2e test_all
 test_08_debugger_verification:
 	@echo "\n>>> [SUBSYSTEM 08/08] Running Full Debugger Verification (Block & Full-SoC)..."
 	@$(MAKE) -C 08_debugger_verification test_all
@@ -75,6 +80,7 @@ test_all: test_01_core_modules \
           test_05_peripherals \
           test_06_debugger \
           test_07_benchmarks \
+          test_09_spi_boot \
           test_08_debugger_verification
 	@echo ""
 	@echo "=================================================================="
@@ -89,5 +95,6 @@ clean:
 	@$(MAKE) -C 05_peripherals clean
 	@$(MAKE) -C 06_debugger_subsystem clean
 	@$(MAKE) -C 07_soc_system_benchmarks clean
+	@$(MAKE) -C 09_spi_boot_e2e clean
 	@$(MAKE) -C 08_debugger_verification clean
 	@echo "All subsystem artifacts cleaned."

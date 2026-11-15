@@ -105,15 +105,20 @@ module tops_soc_zcu102_top #(
   localparam real  DIV0      = 20.0;    // 50 MHz
 `endif
 
-  wire clk_in;
+  wire clk_ibuf;                        // after the differential input buffer
+  wire clk_in;                          // after the BUFG, into the MMCM
   wire clk_soc_unbuf;
   wire clk_fb;
 
 `ifdef ZCU102_CLK_SI570
-  IBUFDS u_ibufds (.I(USER_SI570_P), .IB(USER_SI570_N), .O(clk_in));
+  IBUFDS u_ibufds (.I(USER_SI570_P), .IB(USER_SI570_N), .O(clk_ibuf));
 `else
-  IBUFDS u_ibufds (.I(CLK_125_P), .IB(CLK_125_N), .O(clk_in));
+  IBUFDS u_ibufds (.I(CLK_125_P), .IB(CLK_125_N), .O(clk_ibuf));
 `endif
+  // CLK_125 (bank 47) is an HD bank: no dedicated clock route to an MMCM, so the placer rejects
+  // a direct IBUFDS -> MMCM connection (Place 30-681). A BUFG in between is the documented
+  // workaround; harmless for the SI570 input as well.
+  BUFG u_bufg_in (.I(clk_ibuf), .O(clk_in));
 
   MMCME4_BASE #(
     .BANDWIDTH          ("OPTIMIZED"),
