@@ -61,13 +61,13 @@
 | Verification | Unit, pipeline-stress, ISA-compliance, bus, peripheral, debugger, system-benchmark and UVM suites, plus Spyglass static checks |
 
 **Current state (short)**
-- **Verified:** the SoC RTL is verified extensively in simulation and runs on the Basys 3 board (debugger-driven program loading and execution).
-- **Implemented and verified in simulation:**
-  - the SPI boot flow;
-  - the ZCU102 FPGA build;
-  - the Raspberry Pi 4 SPI-boot partner.
+- **Verified in simulation:** the SoC RTL, extensively, including the whole SPI boot flow end to end (suite 09: 14/14 scenarios).
+- **Verified on hardware (Basys 3):**
+  - debugger-driven program loading and execution;
+  - **SPI boot from a Raspberry Pi 4, both modes** (2026-11-14): the self-checking boot test (mode 0, and mode 1 five times in a row) and the factorial program.
+- **Built, not yet on the bench:** the ZCU102 bitstream (timing met).
 
-  These still need bring-up on real hardware (section 18).
+The step-by-step bench procedure, including every error met during bring-up, is in `Full-Guide.md`.
 
 ---
 
@@ -623,7 +623,11 @@ The SoC has no flash memory and its RAMs are empty at power-up. The boot flow br
 ### 12.8 Timing
 - **Per byte:** at 250 kHz one byte takes 32 µs on the wire plus the loader's per-byte overhead, about **35–40 µs per byte**.
 - **Totals:** a typical 4 KB test loads in about **0.15 s**; a full 64 KB image in about **2.5 s**.
-- **Clock history:** the clock was 1 MHz with the Pico. It was lowered to 250 kHz so that the Raspberry Pi 4's software slave has a 2 µs window per bit (section 13.2). The Pico works at any clock.
+- **Clock history and choice:**
+  - SPI clock = 50 MHz / (2 × (divider + 1)). The slave must change its data bit after each falling clock edge and before the next rising edge, so it has **half a clock period per bit**: 2 µs at 250 kHz, 0.5 µs at 1 MHz, 0.1 µs at 5 MHz.
+  - The clock was 1 MHz (divider 24) with the Pico, whose hardware SPI slave shifts the bits by itself.
+  - The Raspberry Pi 4's slave is software: a polling loop must catch every edge. In simulation, a Pi model at 1 MHz worked only with a 100–200 ns polling loop and failed (bits shifted) with a slower one, while 250 kHz tolerated a 5–10× slower loop. So the loader was changed to **250 kHz (divider 99)**; both boot ROMs share it, and the Pico also works at 250 kHz.
+  - On the bench, the Pi measured a worst-case reaction of 79 ns against the 2 µs window (about 25× margin). 1 MHz would still leave about 6× margin but has not been tried on hardware; 5 MHz (100 ns) would leave essentially none.
 
 ### 12.9 Robustness fix found during this work (SPI receive race)
 - **The problem:**
@@ -640,7 +644,7 @@ The SoC has no flash memory and its RAMs are empty at power-up. The boot flow br
   1. The boot ROM program is assembled.
   2. A generator script converts it into the synthesizable ROM table and a simulation hex file.
 - **Build order:** this must be run on the server (it needs the RISC-V toolchain) before the FPGA is built.
-- **Current repository state:** this has **not yet been done**. The ROM table still holds an older teammate test ROM: a diagnostic program in one strap position and a simple 0x03-command SPI-flash read in the other. One existing system test depends on that older ROM. Regenerating the ROM is the first step of SPI-boot bring-up (section 16.4).
+- **Current repository state:** done. The ROM table in `source/uncore/rom_ahb.sv` holds the SPI loader (88 words, SPI clock divider 99 = 250 kHz), and this is the ROM the Basys 3 boots on the bench. One older system test (`tb_sysctrl_boot` in suite 05) still checks the previous teammate ROM and reports 2 failures until it is rewritten (section 18).
 
 ---
 
@@ -700,12 +704,15 @@ The SoC has no flash memory and its RAMs are empty at power-up. The boot flow br
 | Mixed simulation: the **real SoC SPI controller RTL** against a timed model of the Pi algorithm (two-image mode-1 run) | Pass at 250 kHz with a 200 ns Pi loop, and still at a 5× slower Pi. Fails, as predicted, at 1 MHz. Exposed the receive race (section 12.9). |
 | Compiler warnings on all firmware C files | Clean |
 
-**Still to do:** building the Pi program with the 64-bit ARM cross-compiler on the server, and the bench bring-up (section 16.5).
+**Bench result (2026-11-14, Basys 3): works** (section 16.5).
+- The Pi's own TIME measurement: GPIO read 12 ns, write 5 ns, loop 74 ns, **worst reaction 79 ns** against the 2 µs budget.
+- The UART setup (PL011, 48 MHz clock, 115200 baud) and the activity LED (GPIO 42) work as coded.
+- **The SD card must also hold the Pi 4 device-tree file `bcm2711-rpi-4-b.dtb`.** Without it, the Pi firmware loads the program but never starts it (no banner, no reply). The build now downloads it with the other firmware files.
 
 **Known limits:**
 - There is no CRC.
 - The Pi serves either SPI or serial at a time, so the stream must be loaded before resetting the SoC.
-- Some board details are to be confirmed on the bench: the firmware entry exception level, the UART clock, and the activity-LED pin.
+- The SD card's FAT32 partition needs exactly five files at its top level: `start4.elf`, `fixup4.dat`, `bcm2711-rpi-4-b.dtb`, `config.txt`, `kernel8.img`.
 
 ---
 
@@ -767,10 +774,11 @@ Verification is layered from individual blocks up to full-system benchmarks, wit
 | 06 Debugger features | Core freeze, instruction-retired signal, ADP basics | Signal-level timing checks | Passing |
 | 07 System C benchmarks | Whole SoC running C programs (hello, 8×8 matrix multiply, quicksort) | Compiled C, UART streaming, pass/fail mailbox | Passing |
 | 08 Debugger verification | Full debugger: every command, parser edge cases, both links, bus errors, wait states, random traffic, stepping; and full SoC through the debugger pins | Self-checking block and SoC testbenches with assertions; runs on Icarus and Verilator | **Block: 524 pass, 3 known-bug XFAIL. SoC: 75 pass, 9 XFAIL.** No new failures |
+| 09 SPI boot end to end | The real SoC with its default reset addresses, the generated boot ROM, real boot streams and an SPI partner model (ideal and Pi 4 timed): both modes, errors E1/E2, debugger versus SoC reset, partner rules | Self-checking testbench with a byte-for-byte RAM check; Questa and Icarus | **14/14 scenarios pass** |
 | Standard suites | Industry test suites and benchmarks on the core | See 15.2 | See 15.2 |
 | UVM SoC verification | IP unit tests and whole-SoC tests with VIPs | See 15.3 | All listed tests marked passed |
 | Static checks | Lint, clock-domain and reset-domain crossing | Spyglass | Reports archived (15.4) |
-| Boot flow (this work) | Reset split, System Control boot, ZCU102 board top, Pi 4 partner with real SPI RTL | Icarus testbenches and host unit tests | ZCU102 top 17/17; Pi tests 33/33 and 9/9; RTL SPI simulation pass |
+| Boot flow (this work) | Reset split, System Control boot, ZCU102 board top, Pi 4 partner with real SPI RTL | Icarus testbenches, host unit tests, bench | ZCU102 top 17/17; Basys 3 top 15/15; Pi tests 33/33 and 9/9; RTL SPI simulation pass; **bench: Basys 3 + Pi 4 SPI boot passes in both modes** |
 
 ### 15.2 Standard industry suites (core)
 | Suite | What it is | Outcome |
@@ -818,6 +826,10 @@ Each is reproduced by a test marked "expected failure". When a bug is fixed, the
   - maps the debugger link, SPI, app UART and FT1248 to board connectors;
   - drives status LEDs.
 - **Memories** map onto FPGA block RAM.
+- **Fixes from the first Vivado runs:**
+  - the RAMs had been capped at 64 words (256 B) under Vivado, because the cap was tied to the `SYNTHESIS` define. It now applies only to a dedicated lint define, so the FPGA RAMs are the full 32 KB in block RAM;
+  - the SPI clock output register now resets to a constant, which removes a Vivado critical warning;
+  - ZCU102 only: a global clock buffer between the clock input and the MMCM (see 16.3).
 - **The boot ROM** is plain logic, so no memory-initialisation files are needed.
 
 ### 16.2 Digilent Basys 3 (Artix-7 35T): primary, proven board
@@ -827,14 +839,15 @@ Each is reproduced by a test marked "expected failure". When a bug is fixed, the
 | System reset | Centre push-button |
 | Debugger link select | Slide switch 0 (UART / FT1248) |
 | Boot-mode strap | Slide switch 1 (informational, see 12.3) |
-| Debugger UART | USB-UART dongle on PMOD JA |
+| Debugger UART | On-board micro-USB J4 (the same cable carries power and JTAG) |
+| App UART | PMOD JA |
 | FT1248 | PMOD JB |
 | SPI boot | PMOD JC (CS, MOSI, MISO, SCLK) |
 | LEDs | Core halted; FT1248 selected; serial activity / prompt detected |
 
-The debugger-driven flows (upload, run, step, post-mortem, baud changes) are demonstrated on this board.
+The debugger-driven flows (upload, run, step, post-mortem, baud changes) are demonstrated on this board, and so is the SPI boot from a Raspberry Pi 4 (section 16.5). The bitstream is built on the server and programmed over the network through hw_server, exactly like the ZCU102.
 
-### 16.3 AMD ZCU102 (Zynq UltraScale+): second board, "to be tested"
+### 16.3 AMD ZCU102 (Zynq UltraScale+): second board, built, bench test pending
 - **Design:** a programmable-logic-only port of the Basys design; the board's ARM processing system is not used. Pins come from the board user guide's master constraints listing.
 - **Remote build, local board:**
   - The code and Vivado live on a remote server; the board sits on a lab bench.
@@ -866,7 +879,10 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
   - heartbeat.
 
   The clock path elaborates in all four configurations, and every port has exactly one pin.
-- **Not yet run in Vivado.** A possible I/O-standard issue on the 125 MHz clock input is anticipated, with the SI570 clock as the fallback.
+- **Vivado build: done.**
+  - The first run failed in placement: `[Place 30-681] Sub-optimal placement for a global clock-capable IO pin and MMCM pair`. Fixed by adding a global clock buffer (BUFG) between the clock input buffer and the MMCM; the SI570 fallback was not needed.
+  - Timing met: WNS 6.396 ns, WHS 0.020 ns.
+- **Not yet run on the bench** (`Full-Guide.md`, Part Q).
 
 ### 16.4 Bring-up sequence (recommended order)
 1. **Program and alive:** clock-OK and heartbeat LEDs come on; the terminal shows the banner and the prompt.
@@ -875,17 +891,28 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
 4. **Run a program:** upload the factorial program and check 5! = 120.
 5. **Crash path:** run the trap test; confirm auto-halt, the latched cause/PC and the trace buffer.
 6. **Accelerator socket:** write operands and read the product through the debugger.
-7. **Boot ROM:** regenerate the ROM (section 12.10) and rebuild. Then:
+7. **Boot ROM** (already regenerated, section 12.10; done on the Basys 3):
    - With nothing attached: a system reset should give error E1 with an all-ones magic (proves the ROM runs and SPI is driven).
    - With the partner attached and a mode-0 stream loaded: the test program runs after reset.
    - Then the same with a mode-1 stream (second-stage ROM).
 8. **Observe:** use the ILA (ZCU102) or a logic analyser on chip-select, clock and data to confirm the 250 kHz clock and the per-image chip-select framing.
 
-### 16.5 Raspberry Pi 4 bench bring-up
-1. **Pi alone:** the terminal shows the ready banner; TIME reports "margin OK", with the worst reaction time well below the 2 µs budget. If not, force the Pi's turbo clock or halve the SPI clock again.
-2. **Load:** the host tool reports OK; STAT shows the stream armed with nothing sent.
-3. **Boot:** reset the SoC. STAT shows everything sent; the activity LED goes off; check the program's results through the debugger.
+### 16.5 Raspberry Pi 4 bench bring-up (done on the Basys 3, 2026-11-14)
+1. **Pi alone:** the ready banner; TIME → `worst_reaction_ns=79 budget_ns=2000 margin=OK`. (If the margin were low: force the Pi's turbo clock or halve the SPI clock again.)
+2. **Load:** the host tool reports `OK`; STAT shows `ARMED=248 SENT=0`.
+3. **Boot:** system reset (btnC). STAT shows `SENT=248 REM=0`, the activity LED goes off, and the debugger reads the PASS word 0x600DB007 and error word 0.
+   - Mode 1 (620-byte stream): same result, five runs in a row.
+   - A second program (factorial, input set through the debugger): 5! = 0x78.
+   - Control: without the reset nothing runs and STAT still shows `SENT=0`.
 4. **On error E1:** read the received magic through the post-mortem window and diagnose as in section 12.7.
+
+**Problems met during bring-up** (full signatures and fixes: `Full-Guide.md`, Part P):
+- a 0-byte `start4.elf` on the SD card: the LED blinks about 3 times, then stays on; no UART output;
+- the missing device-tree file: the firmware loads the program but never starts it;
+- the chip-select wire left off after a test: error E1 with STAT `SENT=0`;
+- serial-port permissions on the lab PC, lost on every re-plug (fixed with a udev rule);
+- typing into a serial terminal did not reach the debugger; a small script that sends whole commands is used instead;
+- the first remote programming runs: no JTAG target seen (board power/cable), then a script error after programming had already succeeded (fixed).
 
 ---
 
@@ -895,12 +922,12 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
   REMOTE SERVER (code, toolchains, Vivado)
     1. build software, boot ROMs, boot streams; regenerate the ROM table
     2. build the FPGA bitstream (Basys 3 or ZCU102)
-    3. (ZCU102) program the board over the network via hw_server :3121
+    3. program the board (Basys 3 or ZCU102) over the network via hw_server :3121
     4. build the Pi 4 SD-card image
                  |  files copied to the lab laptop
                  v
   LAB LAPTOP / BENCH PC
-    - runs hw_server (ZCU102 JTAG), or programs the Basys 3 locally
+    - runs hw_server (the board's JTAG), so the server programs the FPGA remotely
     - serial terminal / Python CLI for the debugger
     - image tool sends the boot stream to the Pico / Pi 4 over serial
                  |
@@ -909,6 +936,8 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
          ^
          | debugger UART / FT1248
 ```
+
+Step-by-step commands for every stage: `Full-Guide.md`.
 
 **Two ways to get a program running:**
 - **Debugger path** (development): halt → upload over serial → debugger core reset → run or step. The boot ROM is never involved.
@@ -920,7 +949,8 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
 
 | Area | Item | Impact / next step |
 |---|---|---|
-| Boot ROM | ROM table not yet regenerated from the current boot loader; still holds the older teammate ROM | SPI boot with the Pico/Pi 4 will not work until it is regenerated; one older system test depends on the old ROM and must be updated |
+| Boot ROM | Regenerated (SPI loader, 250 kHz) and proven on hardware | One older system test (`tb_sysctrl_boot`, suite 05) still checks the previous ROM and reports 2 failures: rewrite it for the new ROM |
+| SPI clock | 250 kHz chosen for margin (12.8); 1 MHz not tried on hardware | Optional bench experiment (divider 24) if boot time ever matters |
 | SPI controller | Receive-data read race can lose a byte | Fixed in the boot loader; RTL fix recommended for all other software |
 | Boot stream | No CRC/checksum | A corrupted byte is copied silently; CRC proposed as a follow-up |
 | App UART | The SoC builds a register-only UART model (no serial output on hardware) | Switch to the full 16550 core (one parameter) and verify |
@@ -930,8 +960,8 @@ The debugger-driven flows (upload, run, step, post-mortem, baud changes) are dem
 | Bus | No default slave: unmapped addresses read as zero without an error (A3) | Add an error-responding default slave |
 | Core | Open bugs N2, N3, N8, N9 (section 15.5) | Fix and remove the expected-failure tags |
 | Verification | UVM environment uses a diverged RTL copy | Re-sync and re-run the regression |
-| Docs | Some documents still describe a 1 MHz boot SPI clock, 8 KB RAMs, or the reset-vector step | Update when the design is frozen |
-| Hardware | ZCU102 build, Pi 4 partner, regenerated boot ROM: not yet run on real hardware; ZCU102 Vivado build not yet run | Follow the bring-up sequences in 16.4 and 16.5 |
+| Docs | Some documents still describe a 1 MHz boot SPI clock (`rpi4_spi_boot_options.txt` §1.2, `pico_fw.md`, the changes files), 8 KB RAMs, the reset-vector step, or a guaranteed chip-select-high gap between the two images in mode 1 | Update when the design is frozen |
+| Hardware | Basys 3 + Pi 4 SPI boot proven. ZCU102 bitstream built (timing met) but not yet on the bench | ZCU102 board checks (16.4), then ZCU102 + Pi 4 (`Full-Guide.md`, Part Q) |
 | Accelerator | Socket holds a demonstration multiplier | Integrate the real accelerator (section 9.3) |
 
 ---

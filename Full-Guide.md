@@ -797,6 +797,12 @@ The banner after reset is ` 0x50c1ab04`, and the prompt is `]`. Full list: `sour
 
 Rule: **only a new `make_image.py` rewinds the Pi to byte 0.** A SoC reset doesn't.
 
+### SPI clock
+**250 kHz**, set by `SCKDIV_VAL 99` in `software/common/loader.S` and built into the boot ROM (`li t1,99` in `source/uncore/rom_ahb.sv`).
+- The Pi's software slave has half a clock period per bit, so 2 µs at this speed. It measured 79 ns at worst (`TIME`).
+- 1 MHz (the old Pico value, divider 24) has not been tried on hardware. 5 MHz would leave no margin.
+- The reasoning is in `1TOPS_SoC_Technical_Overview.md` §12.8.
+
 ### LEDs
 | LED | On | Off |
 |---|---|---|
