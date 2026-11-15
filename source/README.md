@@ -130,9 +130,9 @@ The SoC integrates the pipelined processor core, the hardware debugger subsystem
          | (clint_apb.sv)    | | (plic_apb.sv)     |              | (uart_apb.sv +    | | (spi_apb.sv +     |
          | 0x0200_0000       | | 0x0C00_0000       |              |  uartPC16550D.sv) | |  spi_fifo.sv)     |
          | - msip: 0x02000000| | - 64 MB Aperture  |              | 0x1000_0000       | | 0x1004_0000       |
-         | - mtime:0x0200BFF8| | - Prioritized     |              | - TI 16550 Core   | | - SiFive FU540    |
+         | - mtime:0x0200BFF8| | - Prioritized     |              | - 16550 reg model | | - SiFive FU540    |
          | - mtimecmp        | |   Gateway         |              | - 16-Byte FIFOs   | |   Compatible      |
-         +---------+---------+ +---------+---------+              | - PMOD JA UART    | | - TX/RX FIFOs     |
+         +---------+---------+ +---------+---------+              | - PMOD JA pins    | | - TX/RX FIFOs     |
                    | MTimerInt           | MExtInt_uncore         +---------+---------+ +---------+---------+
                    | MSwInt              |                                  |                     |
                    +----------+----------+                                  v                     v
@@ -253,11 +253,11 @@ The SoC address map allocates dedicated spaces for on-chip memories, debug apert
 | `0x0000_1000` | `0x0000_1FFF` | 4 KB | 4 KB | AHB | `rom_ahb.sv` | On-chip Boot ROM (Reset bootloader) |
 | `0x0200_0000` | `0x0200_FFFF` | 64 KB | 64 KB | APB | `clint_apb.sv` | Core Local Interruptor: `msip` (0x0000), `mtimecmp` (0x4000), `mtime` (0xBFF8) |
 | `0x0B00_0000` | `0x0B00_0FFF` | 4 KB | 4 KB | AHB | `core_debug_ahb.v` | Core Post-Mortem Debug Slave: GPRs `x0`–`x31`, PCs (`PCF`..`PCW`), CSRs, Trace Buffer |
-| `0x0C00_0000` | `0x0FFF_FFFF` | 64 MB | 64 MB | APB | `plic_apb.sv` | Platform-Level Interrupt Controller (Priority gateways & claim/complete) |
-| `0x1000_0000` | `0x1000_0FFF` | 8 B | 4 KB | APB | `uart_apb.sv` | Uncore Application TI PC16550D UART (FIFOs, baud generator, user console) |
+| `0x0C00_0000` | `0x0FFF_FFFF` | 64 MB | 64 MB | APB | `plic_apb.sv` | Platform-Level Interrupt Controller: 4 sources, 3-bit priorities, threshold, claim register (no gateway; writes to claim are ignored, an interrupt clears when its source drops) |
+| `0x1000_0000` | `0x1000_0FFF` | 8 B | 4 KB | APB | `uart_apb.sv` | Uncore application UART. 16550 register layout; the SoC builds the register-only model (`USE_REAL_UART = 0`): THR writes print in simulation, no serial TX/RX on hardware. The full `uartPC16550D.sv` core is present but not selected |
 | `0x1004_0000` | `0x1004_0FFF` | 4 KB | 4 KB | APB | `spi_apb.sv` | SiFive FU540-compatible SPI Master controller with 8-byte TX/RX FIFOs |
-| `0x1006_0000` | `0x1006_00FF` | 256 B | 256 B | APB | `gpio_apb.sv` | 32-bit Bidirectional GPIO with XOR polarity inversion & edge capture |
-| `0x1008_0000` | `0x1008_00FF` | 256 B | 256 B | APB | `sysctrl_apb.sv` | System Control Block: Reset/Clock control, strap sampling, programmable vector, ROM remap |
+| `0x1006_0000` | `0x1006_0FFF` | 56 B | 4 KB | APB | `gpio_apb.sv` | 32-bit GPIO: input/output enables, output value, rise/fall (sticky) and high/low (live) interrupts. No polarity-inversion register |
+| `0x1008_0000` | `0x1008_0FFF` | 28 B | 4 KB | APB | `sysctrl_apb.sv` | System Control Block: soft core reset, reset-cause flags, strap sampling, ROM remap, scratchpad, chip ID. Reset-vector and clock-gating registers exist but are not connected |
 | `0x3000_0000` | `0x30FF_FFFF` | 16 MB | 16 MB | AHB | `multiplier_ahb.v` | Accelerator IP Socket (Part of Uncore) |
 | `0x8000_0000` | `0x8000_7FFF` | **32 KB** | 64 KB | AHB | `ram_ahb.sv` (`ram_i`) | **Instruction RAM (IRAM)**: Executable code space (Reset Vector = `0x8000_0000`) |
 | `0x8001_0000` | `0x8001_7FFF` | **32 KB** | 64 KB | AHB | `ram_ahb.sv` (`ram_d`) | **Data RAM (DRAM)**: Variables, heap, stack (Stack Top = `0x8001_8000`) |
@@ -320,7 +320,7 @@ source/
 │   ├── spi_apb.sv                       # APB wrapper for SPI Master
 │   ├── spi_controller.sv                # SPI serialization controller & clock generator
 │   ├── spi_fifo.sv                      # SPI 8-entry transmit/receive FIFOs
-│   └── gpio_apb.sv                      # 32-bit GPIO with polarity inversion & edge interrupts
+│   └── gpio_apb.sv                      # 32-bit GPIO with edge and level interrupts
 ├── debugger/                            # In-Hardware Debugger Subsystem
 │   ├── riscv_debugger_top.sv            # Dual-protocol hardware debugger top wrapper
 │   ├── ahb_mux.sv                       # 2-to-1 AHB arbiter granting priority to debugger
@@ -405,13 +405,36 @@ The SoC provides a dedicated accelerator IP socket integrated as part of the unc
 - **System Control Block (`sysctrl_apb.sv`) at Base `0x1008_0000` (APB Slot 5)**:
   * 2-stage reset synchronizer and 16-cycle hold counter to eliminate metastability.
   * Reset strap sampler: samples external `boot_mode` pin upon reset release and latches into read-only `REG_BOOT_STATUS` (`0x1008_0008`).
-  * Programmable CPU reset vector register (`REG_RESET_VEC` at `0x1008_0004`, default `0x0000_1000`).
+  * Reset vector register (`REG_RESET_VEC` at `0x1008_0004`, default `0x0000_1000`). **Not connected to the core**: the reset PC is fixed by the `RESET_PC` / `DBG_RESET_PC` parameters, so writing it has no effect.
   * Dynamic ROM remap register (`REG_REMAP_CTRL` at `0x1008_000C`) aliasing `0x0000_0000` to Instruction RAM.
-  * Peripheral clock gating mask register (`REG_CLK_CTRL` at `0x1008_0010`).
+  * Peripheral clock gating mask register (`REG_CLK_CTRL` at `0x1008_0010`). **Not connected**: no clock gates exist.
+  * Soft reset control (`REG_RESET_CTRL` at `0x1008_0000`): bit 0 is an active-low run bit (1 = run, 0 = hold the core in reset) and does not self-clear. Write `0x12` then `0x13` for a soft core reset. Bit 1 (peripheral reset) is not connected.
   * General-purpose firmware / debugger diagnostics scratchpad (`REG_SCRATCHPAD` at `0x1008_0014`).
-- **Synthesizable Dual-Mode Boot ROM (`rom_ahb.sv`) at Base `0x0000_1000`**:
+- **Synthesizable Boot ROM (`rom_ahb.sv`) at Base `0x0000_1000`**. The table currently holds the legacy dual-mode ROM described below. The new SPI "BOOT"-stream loader (`software/bootrom_int`, `software/common/loader.S`) replaces it once generated with `make -C software rom`:
   * **Mode 0 (`boot_mode = 0`)**: Executes internal ROM self-test and reaches `main()` directly within ROM.
   * **Mode 1 (`boot_mode = 1`)**: Programs SPI controller (`0x1004_0000`), issues READ command `0x03` to external SPI Flash, streams instructions into IMEM (`0x8000_0000`), and executes `jr 0x8000_0000`.
+
+### G. Interrupt & Exception Handling (`trap_unit.v` & `csr_file.v`)
+Traps are taken precisely in the Memory stage. `trap_unit.v` picks the highest-priority pending trap and computes the target PC; `csr_file.v` holds `mtvec`, `mcause`, `mepc`, `mtval`, `mstatus`, `mie` and `mip`.
+
+**Interrupt vector table**
+
+| Trap | Code | `mcause` | Source | Priority | Target PC (vectored mode) |
+| :--- | :---: | :--- | :--- | :---: | :--- |
+| Machine external interrupt (MEI) | 11 | `0x8000_000B` | PLIC (UART = src 1, GPIO = src 2, SPI = src 3) or `MExtInt` pin | 1 (highest) | `BASE + 0x2C` |
+| Machine software interrupt (MSI) | 3 | `0x8000_0003` | CLINT `msip` | 2 | `BASE + 0x0C` |
+| Machine timer interrupt (MTI) | 7 | `0x8000_0007` | CLINT `mtime >= mtimecmp` | 3 | `BASE + 0x1C` |
+| Instruction address misaligned | 0 | `0x0000_0000` | Tied off (never raised, bug N9) | 4 | `BASE` (mtval = PC) |
+| Illegal instruction | 2 | `0x0000_0002` | Bad SYSTEM encoding only (bug N2) | 5 | `BASE` (mtval = instruction) |
+| Breakpoint (`ebreak`) | 3 | `0x0000_0003` | `ebreak` | 6 | `BASE` (mtval = PC) |
+| Environment call (`ecall`) | 11 | `0x0000_000B` | `ecall` | 7 (lowest) | `BASE` (mtval = 0) |
+
+- **Enable:** an interrupt is taken only when `mstatus.MIE = 1` and its `mie` bit is set (MSIE = bit 3, MTIE = bit 7, MEIE = bit 11). Interrupts win over exceptions.
+- **Direct mode** (`mtvec[1:0] = 00`): every trap jumps to `BASE = {mtvec[31:2], 2'b00}`.
+- **Vectored mode** (`mtvec[1:0] = 01`): interrupts jump to `BASE + 4 x cause`; exceptions still go to `BASE`. Each slot is 4 bytes, so it normally holds one `j handler`.
+- **On trap entry:** `mepc <- PCM`, `mcause`/`mtval` written, `MPIE <- MIE`, `MIE <- 0`, `MPP <- 11`, younger instructions flushed.
+- **`mret`:** `MIE <- MPIE`, `MPIE <- 1`, PC <- `mepc`.
+- **Not implemented:** load/store misaligned and access faults (causes 1, 4-7). A bus error does not trap.
 
 ---
 
@@ -422,10 +445,10 @@ When interacting over the dedicated Debugger UART (115200 Baud, 8-N-1) or FT1248
 | Command | Arguments | Description | Example |
 |:---:|:---|:---|:---|
 | **`A`** | `<hex_addr>` | Set 32-bit AHB address pointer | `A 80010000` (point to Data RAM) |
-| **`R`** | `[count]` | Read 32-bit word(s) from current address pointer | `R` (read 1 word) or `R 20` (read 32 words) |
-| **`W`** | `<hex_data>` | Write 32-bit word to current address pointer | `W deadbeef` |
+| **`R`** | `[count]` | Read from the address pointer and auto-increment. Plain `R` = 1 word. With a count, the number of hex digits sets the size: 1-2 = bytes, 3-4 = halfwords, 5-8 = words | `R` (1 word) or `R 00000020` (32 words); `R 20` reads 32 **bytes** |
+| **`W`** | `<hex_data>` | Write to the address pointer and auto-increment; size from digit count (8 digits = word) | `W deadbeef` |
 | **`V`** | `<hex_data>` | Set reference data value for Fill/Poll | `V 00000000` |
-| **`F`** | `<hex_count>`| Fill `<count>` consecutive words with value in `V` | `F 200` (zero 512 words) |
+| **`F`** | `<hex_count>`| Fill `<count>` consecutive items with the value in `V` (item size follows the digit count used in `V`) | `V 00000000`, `F 200` (zero 512 words) |
 | **`U`** | `<hex_count>`| Stream `<count>` raw binary bytes sequentially | `U 4c` (stream 76 raw bytes) |
 | **`C 0202`**| — | **Halt CPU Core** (pipeline frozen via `ExternalStall`) | `C 0202` |
 | **`C 0102`**| — | **Resume CPU Core** (pipeline execution resumes) | `C 0102` |
@@ -433,11 +456,12 @@ When interacting over the dedicated Debugger UART (115200 Baud, 8-N-1) or FT1248
 | **`C 020c`**| — | **Single-Step 1 Clock Cycle** (advance 1 clock tick) | `C 020c` followed by `C 010c` |
 | **`C 0201`**| — | Assert CPU Core Reset (hold PC at `0x8000_0000`) | `C 0201` |
 | **`C 0101`**| — | Deassert CPU Core Reset | `C 0101` |
-| **`C`** | — | Query core status (Halted, Step Busy, Step Done) | `C` -> replies `C 0x01000000` |
+| **`C`** | — | Query status. Reply `C 0x<GPI8><GPO8><param16>`; GPI8 bits: 0 halted, 1 step busy, 2 step done, 3 trap latched, 4 illegal instr, 5 misalign, 6 mem fault, 7 trap active | `C` -> replies `C 0x01000000` |
 | **`B`** | `[hex16]` | Query or set 16-bit UART baud rate divider | `B` or `B 00d9` (230,400 baud) |
 | **`D`** | `[hex8]` | Query or set 8-bit FT1248 clock divider | `D` or `D 08` |
-| **`P`** | `[timeout]` | Poll memory location until masked bits match `V` | `P 000003e8` |
-| **`X`** | — | Exit back to terminal passthrough mode | `X` |
+| **`M`** | `<hex_mask>` | Set the bit mask used by `P` | `M 00000001` |
+| **`P`** | `[timeout]` | Word-read the pointer address until `(data & M) == V` or `timeout` reads | `P 000003e8` |
+| **`X`** | — | Leave command mode (`ESC` re-enters). Note: the debugger STDIO stream is tied off in this SoC, so passthrough mode and the `S` command carry no data | `X` |
 
 ---
 
@@ -446,7 +470,7 @@ When interacting over the dedicated Debugger UART (115200 Baud, 8-N-1) or FT1248
 The hardware debugger allows uploading and verifying bare-metal programs without requiring an external JTAG pod:
 
 ### Factorial Demo Walkthrough (`software/factorial.S`)
-1. **Connect HTerm**: 115200 Baud, 8 Data Bits, 1 Stop Bit, No Parity, Send on Enter = `CR`.
+1. **Connect HTerm** to the Basys 3 on-board micro-USB COM port: 115200 Baud, 8 Data Bits, 1 Stop Bit, No Parity, Send on Enter = `CR`.
 2. **Boot / Reset**: Press center pushbutton `btnC` (or power cycle). The terminal immediately displays:
    ```text
     0x50c1ab04
@@ -524,8 +548,8 @@ make test_07_benchmarks       # Bare-metal C benchmarks on full SoC
 | `clk` | **Pin W5** | Input | 100 MHz primary oscillator (MMCM generates 50 MHz `clk_soc`) |
 | `reset_btn` | **Pin U18 (btnC)** | Input | Center pushbutton (active-high system reset) |
 | `dbg_sel` | **Pin V17 (SW0)** | Input | Slide switch: `0` (Down) = UART, `1` (Up) = FT1248 |
-| `uart_rx` | **PMOD JA Pin 1 (J1)** | Input | Debugger UART RX (connect to host USB-UART TXD) |
-| `uart_tx` | **PMOD JA Pin 2 (L2)** | Output | Debugger UART TX (connect to host USB-UART RXD) |
+| `uart_rx` | **Pin B18 (on-board micro-USB)** | Input | Debugger UART RX (from host PC via the Basys 3 USB-UART) |
+| `uart_tx` | **Pin A18 (on-board micro-USB)** | Output | Debugger UART TX (to host PC via the Basys 3 USB-UART) |
 | `ft1248_clk` | **PMOD JB Pin 1 (A14)** | Output | FT1248 Serial Clock (SCLK to FTDI FT232H) |
 | `ft1248_ss_n` | **PMOD JB Pin 2 (A16)** | Output | FT1248 Active-Low Chip Select (SS# to FT232H) |
 | `ft1248_miso` | **PMOD JB Pin 3 (B15)** | Input | FT1248 Read Available Status (MISO / RXF# from FT232H) |
@@ -533,5 +557,17 @@ make test_07_benchmarks       # Bare-metal C benchmarks on full SoC
 | `led_core_halted`| **Pin U16 (LED 0)** | Output | Status LED: lit when CPU core is halted by debugger |
 | `led_dbg_sel` | **Pin E19 (LED 1)** | Output | Status LED: lit when FT1248 protocol is selected |
 | `led_rx_detect` | **Pin L1 (LED 15)** | Output | UART RX Activity & Prompt `]` Detector (latches ON on `]`) |
-| `UARTSin` | **Pin B18** | Input | Uncore Application 16550 UART RX |
-| `UARTSout` | **Pin A18** | Output | Uncore Application 16550 UART TX |
+| `UARTSin` | **PMOD JA Pin 1 (J1)** | Input | Application UART RX (connect to USB-UART dongle TXD) |
+| `UARTSout` | **PMOD JA Pin 2 (L2)** | Output | Application UART TX (connect to USB-UART dongle RXD) |
+
+---
+
+## 10. Origins & Credits
+
+| Part | Origin |
+| :--- | :--- |
+| Processor core | Based on the open-source [CORE-V-Wally](https://github.com/openhwgroup/cvw) RISC-V processor (OpenHW Group): the pipeline datapath was taken from Wally and reworked into this 5-stage RV32I + Zicsr core. Design follows *Digital Design and Computer Architecture, RISC-V Edition* by Sarah L. Harris and David Harris, with the RISC-V ISA specifications and other references |
+| Hardware debugger | Taken from the SoC Labs [Accelerator Project](https://git.soton.ac.uk/soclabs/accelerator-project) (University of Southampton, nanoSoC reference architecture): SoCDebug ADP engine, UART and FT1248 links. Adapted and modified here with core stepping, auto-halt, the post-mortem slave and the 2-to-1 arbiter |
+| Peripherals (uncore) | CLINT, PLIC, UART, SPI, GPIO, RAM/ROM wrappers and the AHB-to-APB bridge taken from the CORE-V-Wally uncore, simplified and adapted |
+| Written for this project | System Control block, accelerator socket, SPI boot flow, FPGA tops, verification suites |
+

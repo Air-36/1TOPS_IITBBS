@@ -7,8 +7,12 @@ module plic_apb #(
     input  logic              PCLK,
     input  logic              PRESETn,
     input  logic              PSEL,
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: PADDR[27:24] upper decode bits and PWDATA[31:5] unused by 5-bit interrupt controller
     input  logic [27:0]       PADDR,
     input  logic [31:0]       PWDATA,
+    // spyglass enable_block W240
     input  logic              PWRITE,
     input  logic              PENABLE,
     output logic [31:0]       PRDATA,
@@ -20,6 +24,12 @@ module plic_apb #(
     output logic              MExtInt,
     output logic              SExtInt
 );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PADDR[27:24], PWDATA[31:5], 1'b0};
+    // spyglass enable_block W528
 
     // Register Offsets
     localparam PLIC_PRIORITY_SRC1 = 24'h000004; // Priority for Source 1 (UART)
@@ -113,7 +123,7 @@ module plic_apb #(
                 PLIC_PRIORITY_SRC4: priority_src4 <= PWDATA[2:0];
                 PLIC_ENABLE:        enables       <= PWDATA[4:0];
                 PLIC_THRESHOLD:     threshold     <= PWDATA[2:0];
-                default: ;
+                default: begin end
             endcase
         end
     end

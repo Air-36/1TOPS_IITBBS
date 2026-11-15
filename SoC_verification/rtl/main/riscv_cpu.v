@@ -3,9 +3,13 @@
 // Purpose: Pipelined RV32I Core with Standard AMBA 3 AHB-Lite Master Interface
 // =============================================================================
 
-module riscv_cpu #(parameter RESET_PC = 32'h0000_0000) (
+module riscv_cpu #(
+    parameter RESET_PC     = 32'h0000_0000,  // first fetch after a system / SYSCTRL soft reset
+    parameter DBG_RESET_PC = RESET_PC        // first fetch after a debugger core reset
+) (
     input             HCLK,
     input             HRESETn,
+    input             DbgBoot,       // 1 = the last core reset came from the debugger (selects DBG_RESET_PC)
 
     // AMBA 3 AHB-Lite Master Interface
     output     [31:0] HADDR,
@@ -98,9 +102,10 @@ controller c (
     .FenceID(FenceID)
 );
 
-datapath #(RESET_PC) dp (
+datapath #(.RESET_PC(RESET_PC), .DBG_RESET_PC(DBG_RESET_PC)) dp (
     .clk(HCLK),
     .reset(~HRESETn),
+    .DbgBoot(DbgBoot),
     .ResultSrc(ResultSrc),
     .ALUSrc(ALUSrc),
     .RegWrite(RegWrite),

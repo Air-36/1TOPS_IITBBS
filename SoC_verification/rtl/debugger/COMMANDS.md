@@ -41,7 +41,7 @@ The debugger subsystem features a physical hardware input pad, **`dbg_sel`** (Sl
 | **Instruction Step** | `C 0204`<br>`C 0104` | Asserts bit 2 of GPO8 (`step_req = 1`, mode = 0). Releases stall until **1 instruction commits** in pipeline, then auto-freezes core. Cleared via `C 0104`. | `] C 0204`<br>`C 0x00060204`<br>`] C 0104` |
 | **Clock-Cycle Step** | `C 020c`<br>`C 010c` | Asserts bits 2 & 3 of GPO8 (`step_req = 1`, mode = 1). Releases stall for **exactly 1 clock cycle**, then auto-freezes core. Cleared via `C 010c`. | `] C 020c`<br>`C 0x000e020c`<br>`] C 010c` |
 | **Assert Reset** | `C 0201` | Sets bit 0 of GPO8 (`core_reset_o = 1`). Holds CPU in reset. | `] C 0201`<br>`C 0x00010201` |
-| **Release Reset** | `C 0101` | Clears bit 0 of GPO8 (`core_reset_o = 0`). Releases CPU reset. | `] C 0101`<br>`C 0x00000200` |
+| **Release Reset** | `C 0101` | Clears bit 0 of GPO8 (`core_reset_o = 0`). Releases CPU reset. The CPU restarts at **`0x8000_0000`** (instruction RAM, `DBG_RESET_PC`), not the boot ROM. A system reset (power-on / btnC) or a SYSCTRL soft reset starts at the boot ROM (`0x1000`). | `] C 0101`<br>`C 0x00000200` |
 | **Overwrite GPO8** | `C 03<val8>` | Overwrites entire 8-bit GPO8 with `<val8>`. | `] C 0300`<br>`C 0x00000200` |
 | **Query Status** | `C` | Reads current GPO8 outputs and GPI8 inputs without modifying them. Bit 0 = Halted, Bit 1 = Step Busy, Bit 2 = Step Done. | `] C`<br>`C 0x01000000` |
 | **Enter ADP Mode** | `<ESC>` (`\x1b`) | Wakes up ADP command mode from idle/passthrough. | Send `1B` (HEX) -> displays `]` |

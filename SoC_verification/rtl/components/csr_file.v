@@ -12,7 +12,11 @@ module csr_file #(parameter WIDTH = 32) (
     input  [2:0]              Funct3M,       // funct3 field from InstrM[14:12]
     input  [WIDTH-1:0]        SrcAM,         // Forwarded register operand rs1
     input  [4:0]              uimmM,         // 5-bit immediate from InstrM[19:15]
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: Lower address bits PCM[1:0] unused due to 32-bit instruction word alignment
     input  [WIDTH-1:0]        PCM,           // Program counter in Memory stage
+    // spyglass enable_block W240
     input                     CSRReadM,      // Active when reading CSR
     input                     CSRWriteM,     // Qualified write enable from controller
     output reg [WIDTH-1:0]    CSRReadValM,   // Old CSR value read out
@@ -40,6 +44,12 @@ module csr_file #(parameter WIDTH = 32) (
     output     [63:0]         cycle_cnt_out,
     output     [63:0]         instret_cnt_out
 );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, PCM[1:0], 1'b0};
+    // spyglass enable_block W528
 
     // =========================================================================
     // CSR Register Definitions (M-Mode)
@@ -173,7 +183,7 @@ module csr_file #(parameter WIDTH = 32) (
                     12'h341: mepc          <= {CSRWriteValM[31:2], 2'b00};  // Word-aligned
                     12'h342: mcause        <= CSRWriteValM;
                     12'h343: mtval         <= CSRWriteValM;
-                    default: ; // Read-only registers ignore writes
+                    default: begin end // Read-only registers ignore writes
                 endcase
             end
         end

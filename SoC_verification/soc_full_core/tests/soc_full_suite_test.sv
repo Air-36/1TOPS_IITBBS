@@ -25,17 +25,16 @@ class soc_full_suite_test extends soc_full_base_test;
         fork
             begin
                 // Inject PLIC GPIO edge once CPU arms PLIC
-                wait ($root.tb_soc_full_top.plic_armed);
+                wait (ctrl_vif.plic_armed);
                 `uvm_info(get_name(), "CPU armed PLIC! Injecting GPIO rising edge...", UVM_LOW)
                 repeat (10) @(posedge vif.clk);
                 vif.gpio_in[3] <= 1'b1;
                 repeat (20) @(posedge vif.clk);
                 vif.gpio_in[3] <= 1'b0;
             end
-            begin
-                wait_for_completion(150000);
-            end
-        join_any
+        join_none
+
+        wait_for_completion(150000);
 
         `uvm_info(get_name(), "Completed Comprehensive Full SoC Suite Test.", UVM_LOW)
         phase.drop_objection(this);

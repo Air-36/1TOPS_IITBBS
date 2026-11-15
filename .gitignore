@@ -193,3 +193,7 @@ fpga/sim/build/
 
 nohup.out
 rpi4_spi_boot_options.txt
+source/final_tests/08_debugger_verification/soc/results_soc.txt
+source/final_tests/08_debugger_verification/block/results_block.txt
+source/final_tests/08_debugger_verification/block/sim_block
+source/final_tests/08_debugger_verification/soc/sim_soc

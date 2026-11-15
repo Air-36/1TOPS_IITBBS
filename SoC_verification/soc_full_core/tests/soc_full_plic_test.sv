@@ -28,7 +28,7 @@ class soc_full_plic_test extends soc_full_base_test;
         fork
             begin
                 // Wait for CPU firmware to arm PLIC and signal via Mailbox
-                wait ($root.tb_soc_full_top.plic_armed);
+                wait (ctrl_vif.plic_armed);
                 `uvm_info(get_name(), "CPU armed PLIC! Driving rising edge on GPIO bit 3 via VIP...", UVM_LOW)
                 repeat (10) @(posedge vif.clk);
                 vif.gpio_in[3] <= 1'b1; // Rising edge!
@@ -36,10 +36,9 @@ class soc_full_plic_test extends soc_full_base_test;
                 vif.gpio_in[3] <= 1'b0;
                 `uvm_info(get_name(), "Injected GPIO rising edge.", UVM_LOW)
             end
-            begin
-                wait_for_completion(100000);
-            end
-        join_any
+        join_none
+
+        wait_for_completion(100000);
 
         `uvm_info(get_name(), "Completed Full SoC PLIC Test.", UVM_LOW)
         phase.drop_objection(this);

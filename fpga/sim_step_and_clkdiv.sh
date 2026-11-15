@@ -12,7 +12,11 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${SCRIPT_DIR}/build"
-SOURCE_DIR="$(cd "${SCRIPT_DIR}/../source" && pwd)"
+if [ -d "${SCRIPT_DIR}/../source" ]; then
+    SOURCE_DIR="$(cd "${SCRIPT_DIR}/../source" && pwd)"
+else
+    SOURCE_DIR="$(cd "${SCRIPT_DIR}/../../source" && pwd)"
+fi
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
@@ -29,6 +33,7 @@ if ! command -v xvlog &> /dev/null; then
         source /etc/profile
     fi
     if command -v module &> /dev/null; then
+        module use /cad/modulefiles 2>/dev/null || true
         module load xilinx/vivado/2024.2 2>/dev/null || module load xilinx/vivado 2>/dev/null || module load vivado 2>/dev/null || true
     fi
 fi

@@ -63,9 +63,19 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // VIP Interfaces
     // -------------------------------------------------------------------------
-    gpio_if gpio_vif (.clk(clk), .rst_n(~reset));
-    irq_if  irq_vif  (.clk(clk), .rst_n(~reset));
-    uart_if uart_vif (.clk(clk), .rst_n(~reset));
+    gpio_if     gpio_vif (.clk(clk), .rst_n(~reset));
+    irq_if      irq_vif  (.clk(clk), .rst_n(~reset));
+    uart_if     uart_vif (.clk(clk), .rst_n(~reset));
+    soc_ctrl_if ctrl_vif (.clk(clk), .reset(reset));
+
+    wire test_passed, test_failed, plic_armed;
+    wire [31:0] error_code;
+
+    assign ctrl_vif.test_passed   = test_passed;
+    assign ctrl_vif.test_failed   = test_failed;
+    assign ctrl_vif.plic_armed    = plic_armed;
+    assign ctrl_vif.error_code    = error_code;
+    assign ctrl_vif.boot_mode_pin = boot_mode_pin;
 
     // -------------------------------------------------------------------------
     // SoC Peripheral Wires
@@ -162,9 +172,6 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     // CPU Execution & Verification Mailbox Monitor
     // -------------------------------------------------------------------------
-    wire test_passed, test_failed, plic_armed;
-    wire [31:0] error_code;
-
     cpu_exec_monitor u_cpu_mon (
         .clk(clk),
         .reset(reset),
@@ -245,10 +252,13 @@ module tb_soc_full_top #(
         .PRESETn(~reset),
         .PSEL(|u_dut.uncore.PSEL),                       // PSEL is one bit per peripheral
         .PENABLE(u_dut.uncore.PENABLE),
-        .PWRITE(u_dut.uncore.PWRITE),
         .PADDR(u_dut.uncore.PADDR),
-        .PREADY(|(u_dut.uncore.PSEL & u_dut.uncore.PREADY_PERIPHS)),  // ready of the selected peripheral
-        .PSEL_PERIPHERALS(u_dut.uncore.PSEL[3:0])        // checker has no PSLVERR port
+        .PWRITE(u_dut.uncore.PWRITE),
+        .PWDATA(u_dut.uncore.PWDATA),
+        // Ready of the SELECTED peripheral, as the AHB-APB bridge uses it (PREADY[sel_idx]).
+        // An AND of all PREADYs would stall the checker whenever an idle peripheral is not ready.
+        .PREADY(|(u_dut.uncore.PSEL & u_dut.uncore.PREADY_PERIPHS)),
+        .PSEL_PERIPHERALS(u_dut.uncore.PSEL[3:0])
     );
 
     // -------------------------------------------------------------------------
@@ -256,13 +266,20 @@ module tb_soc_full_top #(
     // -------------------------------------------------------------------------
     initial begin
         // Set virtual interfaces
+        uvm_config_db#(virtual gpio_if)::set(null, "*gpio_agt*", "vif", gpio_vif);
         uvm_config_db#(virtual gpio_if)::set(null, "*", "gpio_vif", gpio_vif);
+
+        uvm_config_db#(virtual irq_if)::set(null, "*irq_agt*", "vif", irq_vif);
         uvm_config_db#(virtual irq_if)::set(null, "*", "irq_vif", irq_vif);
+
+        uvm_config_db#(virtual uart_if)::set(null, "*uart_agt*", "vif", uart_vif);
         uvm_config_db#(virtual uart_if)::set(null, "*", "uart_vif", uart_vif);
         // The VIP monitors look up "vif" (same as the coreless env's tb top)
         uvm_config_db#(virtual gpio_if)::set(null, "uvm_test_top.env.gpio_agt*", "vif", gpio_vif);
         uvm_config_db#(virtual irq_if)::set(null,  "uvm_test_top.env.irq_agt*",  "vif", irq_vif);
         uvm_config_db#(virtual uart_if)::set(null, "uvm_test_top.env.uart_agt*", "vif", uart_vif);
+
+        uvm_config_db#(virtual soc_ctrl_if)::set(null, "*", "ctrl_vif", ctrl_vif);
 
         // Run selected UVM test
         run_test();

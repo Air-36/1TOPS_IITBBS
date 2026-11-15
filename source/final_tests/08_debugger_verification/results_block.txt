@@ -318,208 +318,208 @@ G16 robustness|G16.4b|three commands typed back-to-back all run (bytes wait in t
 G16 robustness|G16.6|resync  [A 80000a00\n]|PASS||
 G16 robustness|G16.7|upload waits for all bytes; nothing else is executed meanwhile (pinned behaviour)|PASS||got 'U 0x00000004\n\r]'
 G16 robustness|G16.8|link fine after the interrupted upload  [A\n]|PASS||
-G17 random fuzz|G17.0|random command  [c\r]|PASS||
-G17 random fuzz|G17.1|random command  [  f 6\n]|PASS||
-G17 random fuzz|G17.2|random command  [a 800007e0\r]|PASS||
-G17 random fuzz|G17.3|random command  [  s 4\n]|PASS||
-G17 random fuzz|G17.4|random command  [d 3\r]|PASS||
-G17 random fuzz|G17.5|random command  [M 12d3b\r]|PASS||
-G17 random fuzz|G17.6|random command  [v 8BDF1D1\r]|PASS||
-G17 random fuzz|G17.7|random command  [C\r]|PASS||
-G17 random fuzz|G17.8|random command  [  a 80000330\r]|PASS||
-G17 random fuzz|G17.9|random command  [f 2\n]|PASS||
-G17 random fuzz|G17.10|random command  [R 00000002\n]|PASS||
-G17 random fuzz|G17.11|random command  [R\r]|PASS||
-G17 random fuzz|G17.12|random command  [r 00001\r]|PASS||
-G17 random fuzz|G17.13|random command  [C\n]|PASS||
-G17 random fuzz|G17.14|random command  [A 800007a0\n]|PASS||
-G17 random fuzz|G17.15|random command  [  R\n]|PASS||
-G17 random fuzz|G17.16|random command  [c\r]|PASS||
-G17 random fuzz|G17.17|random command  [  R\r]|PASS||
-G17 random fuzz|G17.18|random command  [W af\r]|PASS||
-G17 random fuzz|G17.19|random command  [r 2\n]|PASS||
-G17 random fuzz|G17.20|random command  [M 68a7f8\r]|PASS||
-G17 random fuzz|G17.21|random command  [a 80000650\r]|PASS||
-G17 random fuzz|G17.22|random command  [R 00000003\n]|PASS||
-G17 random fuzz|G17.23|random command  [  D C7\n]|PASS||
-G17 random fuzz|G17.24|random command  [r\n]|PASS||
-G17 random fuzz|G17.25|random command  [d BB\r]|PASS||
-G17 random fuzz|G17.26|random command  [r 05\r]|PASS||
-G17 random fuzz|G17.27|random command  [d b4\n]|PASS||
-G17 random fuzz|G17.28|random command  [M 0D2\n]|PASS||
-G17 random fuzz|G17.29|random command  [W 94a1d92\n]|PASS||
-G17 random fuzz|G17.30|random command  [W 3E\n]|PASS||
-G17 random fuzz|G17.31|random command  [s BA\n]|PASS||
-G17 random fuzz|G17.32|random command  [A e0000be0\n]|PASS||
-G17 random fuzz|G17.33|random command  [  d 9\n]|PASS||
-G17 random fuzz|G17.34|random command  [c\n]|PASS||
-G17 random fuzz|G17.35|random command  [  R\r]|PASS||
-G17 random fuzz|G17.36|random command  [v a46a\r]|PASS||
-G17 random fuzz|G17.37|random command  [  A e0000f98\n]|PASS||
-G17 random fuzz|G17.38|random command  [A 80000d30\r]|PASS||
-G17 random fuzz|G17.39|random command  [M c65db9\r]|PASS||
-G17 random fuzz|G17.40|random command  [m 5213\r]|PASS||
-G17 random fuzz|G17.41|random command  [r 002\n]|PASS||
-G17 random fuzz|G17.42|random command  [r 00000002\r]|PASS||
-G17 random fuzz|G17.43|random command  [W 8e5279\n]|PASS||
-G17 random fuzz|G17.44|random command  [A 80000dcc\r]|PASS||
-G17 random fuzz|G17.45|random command  [V 13a\r]|PASS||
-G17 random fuzz|G17.46|random command  [S 79\n]|PASS||
-G17 random fuzz|G17.47|random command  [c\r]|PASS||
-G17 random fuzz|G17.48|random command  [V 7d8b8afb\r]|PASS||
-G17 random fuzz|G17.49|random command  [  D 9e\n]|PASS||
-G17 random fuzz|G17.50|random command  [d bc\n]|PASS||
-G17 random fuzz|G17.51|random command  [S 8b\r]|PASS||
-G17 random fuzz|G17.52|random command  [R 00000005\n]|PASS||
-G17 random fuzz|G17.53|random command  [R\n]|PASS||
-G17 random fuzz|G17.54|random command  [  r 005\n]|PASS||
-G17 random fuzz|G17.55|random command  [r\r]|PASS||
-G17 random fuzz|G17.56|random command  [c\r]|PASS||
-G17 random fuzz|G17.57|random command  [r 0000004\n]|PASS||
-G17 random fuzz|G17.58|random command  [  d 62\n]|PASS||
-G17 random fuzz|G17.59|random command  [V 7cdf3\n]|PASS||
-G17 random fuzz|G17.60|random command  [c\r]|PASS||
-G17 random fuzz|G17.61|random command  [d 6a\n]|PASS||
-G17 random fuzz|G17.62|random command  [S 0f\n]|PASS||
-G17 random fuzz|G17.63|random command  [C\r]|PASS||
-G17 random fuzz|G17.64|random command  [  a 800002f0\n]|PASS||
-G17 random fuzz|G17.65|random command  [v 51665e\r]|PASS||
-G17 random fuzz|G17.66|random command  [a 800003e2\n]|PASS||
-G17 random fuzz|G17.67|random command  [f 9\r]|PASS||
-G17 random fuzz|G17.68|random command  [  M ab42b956\r]|PASS||
-G17 random fuzz|G17.69|random command  [  a 80000d28\n]|PASS||
-G17 random fuzz|G17.70|random command  [R\r]|PASS||
-G17 random fuzz|G17.71|random command  [d 9C\r]|PASS||
-G17 random fuzz|G17.72|random command  [a 80000958\n]|PASS||
-G17 random fuzz|G17.73|random command  [M A7B64D4\r]|PASS||
-G17 random fuzz|G17.74|random command  [a 80000ac0\n]|PASS||
-G17 random fuzz|G17.75|random command  [  a 80000940\n]|PASS||
-G17 random fuzz|G17.76|random command  [  A 80000605\n]|PASS||
-G17 random fuzz|G17.77|random command  [a 8000026c\n]|PASS||
-G17 random fuzz|G17.78|random command  [W A25E774\n]|PASS||
-G17 random fuzz|G17.79|random command  [R\n]|PASS||
-G17 random fuzz|G17.80|random command  [  s 18\r]|PASS||
-G17 random fuzz|G17.81|random command  [W 5A961\n]|PASS||
-G17 random fuzz|G17.82|random command  [A 80000454\r]|PASS||
-G17 random fuzz|G17.83|random command  [a 800000c5\r]|PASS||
-G17 random fuzz|G17.84|random command  [  c\n]|PASS||
-G17 random fuzz|G17.85|random command  [M 44ac\n]|PASS||
-G17 random fuzz|G17.86|random command  [  A 80000b30\n]|PASS||
-G17 random fuzz|G17.87|random command  [  r\n]|PASS||
-G17 random fuzz|G17.88|random command  [d 39\n]|PASS||
-G17 random fuzz|G17.89|random command  [R 00000003\n]|PASS||
-G17 random fuzz|G17.90|random command  [r 000005\r]|PASS||
-G17 random fuzz|G17.91|random command  [F 8\n]|PASS||
-G17 random fuzz|G17.92|random command  [  d EF\n]|PASS||
-G17 random fuzz|G17.93|random command  [  M 8912\r]|PASS||
-G17 random fuzz|G17.94|random command  [  c\n]|PASS||
-G17 random fuzz|G17.95|random command  [  m 421c468\n]|PASS||
-G17 random fuzz|G17.96|random command  [  F 4\r]|PASS||
-G17 random fuzz|G17.97|random command  [  F 3\r]|PASS||
-G17 random fuzz|G17.98|random command  [w 1b64\r]|PASS||
-G17 random fuzz|G17.99|random command  [a 80000840\r]|PASS||
-G17 random fuzz|G17.100|random command  [R\r]|PASS||
-G17 random fuzz|G17.101|random command  [R 00005\n]|PASS||
-G17 random fuzz|G17.102|random command  [F 8\r]|PASS||
-G17 random fuzz|G17.103|random command  [S ec\n]|PASS||
-G17 random fuzz|G17.104|random command  [D be\n]|PASS||
-G17 random fuzz|G17.105|random command  [  A e0000bfc\n]|PASS||
-G17 random fuzz|G17.106|random command  [M AAA507\r]|PASS||
-G17 random fuzz|G17.107|random command  [r 05\n]|PASS||
-G17 random fuzz|G17.108|random command  [v bc7e4\n]|PASS||
-G17 random fuzz|G17.109|random command  [r 00005\n]|PASS||
-G17 random fuzz|G17.110|random command  [m E6E\r]|PASS||
-G17 random fuzz|G17.111|random command  [a 80000306\n]|PASS||
-G17 random fuzz|G17.112|random command  [D 17\r]|PASS||
-G17 random fuzz|G17.113|random command  [  R\n]|PASS||
-G17 random fuzz|G17.114|random command  [  d a2\n]|PASS||
-G17 random fuzz|G17.115|random command  [W abb1ed5\n]|PASS||
-G17 random fuzz|G17.116|random command  [V 5fcc2\n]|PASS||
-G17 random fuzz|G17.117|random command  [m 8A687714\n]|PASS||
-G17 random fuzz|G17.118|random command  [S 1c\n]|PASS||
-G17 random fuzz|G17.119|random command  [A 8000063c\n]|PASS||
-G17 random fuzz|G17.120|random command  [F 9\r]|PASS||
-G17 random fuzz|G17.121|random command  [A 80000420\n]|PASS||
-G17 random fuzz|G17.122|random command  [v 93d\n]|PASS||
-G17 random fuzz|G17.123|random command  [r\r]|PASS||
-G17 random fuzz|G17.124|random command  [r 0000005\r]|PASS||
-G17 random fuzz|G17.125|random command  [  C\n]|PASS||
-G17 random fuzz|G17.126|random command  [a e0000fd5\n]|PASS||
-G17 random fuzz|G17.127|random command  [  R 0000003\n]|PASS||
-G17 random fuzz|G17.128|random command  [V 0ca77a19\n]|PASS||
-G17 random fuzz|G17.129|random command  [V CBF0\n]|PASS||
-G17 random fuzz|G17.130|random command  [v 0e7c361c\n]|PASS||
-G17 random fuzz|G17.131|random command  [a 80000920\n]|PASS||
-G17 random fuzz|G17.132|random command  [c\n]|PASS||
-G17 random fuzz|G17.133|random command  [D 69\n]|PASS||
-G17 random fuzz|G17.134|random command  [S 0a\r]|PASS||
-G17 random fuzz|G17.135|random command  [V 01a93e0\n]|PASS||
-G17 random fuzz|G17.136|random command  [A e0000e50\n]|PASS||
-G17 random fuzz|G17.137|random command  [m 3f8c9\r]|PASS||
-G17 random fuzz|G17.138|random command  [  C\r]|PASS||
-G17 random fuzz|G17.139|random command  [  A e0000807\r]|PASS||
-G17 random fuzz|G17.140|random command  [R 00001\n]|PASS||
-G17 random fuzz|G17.141|random command  [c\n]|PASS||
-G17 random fuzz|G17.142|random command  [M A33\r]|PASS||
-G17 random fuzz|G17.143|random command  [M AAD4C15\r]|PASS||
-G17 random fuzz|G17.144|random command  [r 0003\r]|PASS||
-G17 random fuzz|G17.145|random command  [A 80000172\r]|PASS||
-G17 random fuzz|G17.146|random command  [S c6\r]|PASS||
-G17 random fuzz|G17.147|random command  [F 6\r]|PASS||
-G17 random fuzz|G17.148|random command  [v 1BA6\n]|PASS||
-G17 random fuzz|G17.149|random command  [M 9\r]|PASS||
-G17 random fuzz|G17.150|random command  [w 81d07\r]|PASS||
-G17 random fuzz|G17.151|random command  [V 04b67e\n]|PASS||
-G17 random fuzz|G17.152|random command  [w DAA99BB\r]|PASS||
-G17 random fuzz|G17.153|random command  [a 800004f4\n]|PASS||
-G17 random fuzz|G17.154|random command  [V 7\r]|PASS||
-G17 random fuzz|G17.155|random command  [V 1\n]|PASS||
-G17 random fuzz|G17.156|random command  [  A 800004c0\r]|PASS||
-G17 random fuzz|G17.157|random command  [r 0000003\r]|PASS||
-G17 random fuzz|G17.158|random command  [  V cd6c499\r]|PASS||
-G17 random fuzz|G17.159|random command  [  v CC90\n]|PASS||
-G17 random fuzz|G17.160|random command  [s 05\n]|PASS||
-G17 random fuzz|G17.161|random command  [a 80000290\r]|PASS||
-G17 random fuzz|G17.162|random command  [v 80\r]|PASS||
-G17 random fuzz|G17.163|random command  [V 9d01693a\r]|PASS||
-G17 random fuzz|G17.164|random command  [a 80000784\r]|PASS||
-G17 random fuzz|G17.165|random command  [R\n]|PASS||
-G17 random fuzz|G17.166|random command  [  a 800006ea\r]|PASS||
-G17 random fuzz|G17.167|random command  [A 800005d2\r]|PASS||
-G17 random fuzz|G17.168|random command  [d 5c\r]|PASS||
-G17 random fuzz|G17.169|random command  [  w fe1069\n]|PASS||
-G17 random fuzz|G17.170|random command  [c\n]|PASS||
-G17 random fuzz|G17.171|random command  [f 5\r]|PASS||
-G17 random fuzz|G17.172|random command  [F 8\n]|PASS||
-G17 random fuzz|G17.173|random command  [C\r]|PASS||
-G17 random fuzz|G17.174|random command  [w 5c2988b8\n]|PASS||
-G17 random fuzz|G17.175|random command  [a 800007f0\r]|PASS||
-G17 random fuzz|G17.176|random command  [D 80\n]|PASS||
-G17 random fuzz|G17.177|random command  [  v 7\n]|PASS||
-G17 random fuzz|G17.178|random command  [A e0000ff0\n]|PASS||
-G17 random fuzz|G17.179|random command  [c\n]|PASS||
-G17 random fuzz|G17.180|random command  [C\n]|PASS||
-G17 random fuzz|G17.181|random command  [m 5\n]|PASS||
-G17 random fuzz|G17.182|random command  [M 3\r]|PASS||
-G17 random fuzz|G17.183|random command  [w 39\r]|PASS||
-G17 random fuzz|G17.184|random command  [W ca0d359\n]|PASS||
-G17 random fuzz|G17.185|random command  [v 3ac71c75\r]|PASS||
-G17 random fuzz|G17.186|random command  [A 800001f8\r]|PASS||
-G17 random fuzz|G17.187|random command  [  M 9BE8\r]|PASS||
-G17 random fuzz|G17.188|random command  [a 80000f80\r]|PASS||
-G17 random fuzz|G17.189|random command  [V 00C34\n]|PASS||
-G17 random fuzz|G17.190|random command  [s aa\n]|PASS||
-G17 random fuzz|G17.191|random command  [  s 27\r]|PASS||
-G17 random fuzz|G17.192|random command  [v E43A15C8\r]|PASS||
-G17 random fuzz|G17.193|random command  [  V 7\r]|PASS||
-G17 random fuzz|G17.194|random command  [  V DAF61BB\n]|PASS||
-G17 random fuzz|G17.195|random command  [  w b9df2\r]|PASS||
-G17 random fuzz|G17.196|random command  [a 800001f0\r]|PASS||
-G17 random fuzz|G17.197|random command  [  w 6d73f\r]|PASS||
-G17 random fuzz|G17.198|random command  [A e00001b0\n]|PASS||
-G17 random fuzz|G17.199|random command  [R 004\n]|PASS||
-G18 global checks|G18.1|core master: 733555 reads checked, 733933 writes, 29695 expected ERRORs - no data or response errors|PASS||0 bad reads, 0 bad responses
-G18 global checks|G18.2|mux: every core and debugger transfer reached the slave exactly once, unchanged (845 debugger xfers)|PASS||0 mismatches, leftovers 0 0 0 0
+G17 random fuzz|G17.0|random command  [a 80000180\r]|PASS||
+G17 random fuzz|G17.1|random command  [d f2\r]|PASS||
+G17 random fuzz|G17.2|random command  [C\n]|PASS||
+G17 random fuzz|G17.3|random command  [s AB\r]|PASS||
+G17 random fuzz|G17.4|random command  [F 2\n]|PASS||
+G17 random fuzz|G17.5|random command  [F 6\n]|PASS||
+G17 random fuzz|G17.6|random command  [C\r]|PASS||
+G17 random fuzz|G17.7|random command  [  r\r]|PASS||
+G17 random fuzz|G17.8|random command  [w d2e\r]|PASS||
+G17 random fuzz|G17.9|random command  [  S 5\n]|PASS||
+G17 random fuzz|G17.10|random command  [  a 800000e4\r]|PASS||
+G17 random fuzz|G17.11|random command  [R\n]|PASS||
+G17 random fuzz|G17.12|random command  [w E32FAB7\r]|PASS||
+G17 random fuzz|G17.13|random command  [W 42acb\r]|PASS||
+G17 random fuzz|G17.14|random command  [R\n]|PASS||
+G17 random fuzz|G17.15|random command  [  r\n]|PASS||
+G17 random fuzz|G17.16|random command  [w 6\r]|PASS||
+G17 random fuzz|G17.17|random command  [F 4\r]|PASS||
+G17 random fuzz|G17.18|random command  [R\r]|PASS||
+G17 random fuzz|G17.19|random command  [  S F5\r]|PASS||
+G17 random fuzz|G17.20|random command  [R\n]|PASS||
+G17 random fuzz|G17.21|random command  [v 5FA45039\n]|PASS||
+G17 random fuzz|G17.22|random command  [  S 31\r]|PASS||
+G17 random fuzz|G17.23|random command  [  m f8\n]|PASS||
+G17 random fuzz|G17.24|random command  [S EA\n]|PASS||
+G17 random fuzz|G17.25|random command  [f 7\r]|PASS||
+G17 random fuzz|G17.26|random command  [R\n]|PASS||
+G17 random fuzz|G17.27|random command  [a 80000173\r]|PASS||
+G17 random fuzz|G17.28|random command  [V 9a5b8f\r]|PASS||
+G17 random fuzz|G17.29|random command  [  d 75\r]|PASS||
+G17 random fuzz|G17.30|random command  [V 9E1F7D3F\r]|PASS||
+G17 random fuzz|G17.31|random command  [m b\r]|PASS||
+G17 random fuzz|G17.32|random command  [  a e0000c00\n]|PASS||
+G17 random fuzz|G17.33|random command  [M f0f7\r]|PASS||
+G17 random fuzz|G17.34|random command  [  A e00009d9\r]|PASS||
+G17 random fuzz|G17.35|random command  [a 80000b00\r]|PASS||
+G17 random fuzz|G17.36|random command  [r 000003\n]|PASS||
+G17 random fuzz|G17.37|random command  [d 33\r]|PASS||
+G17 random fuzz|G17.38|random command  [  f 9\r]|PASS||
+G17 random fuzz|G17.39|random command  [S A\r]|PASS||
+G17 random fuzz|G17.40|random command  [R 0001\n]|PASS||
+G17 random fuzz|G17.41|random command  [  V 723\n]|PASS||
+G17 random fuzz|G17.42|random command  [S fa\r]|PASS||
+G17 random fuzz|G17.43|random command  [d 6E\n]|PASS||
+G17 random fuzz|G17.44|random command  [c\n]|PASS||
+G17 random fuzz|G17.45|random command  [  V FAB\n]|PASS||
+G17 random fuzz|G17.46|random command  [V C9B9047\r]|PASS||
+G17 random fuzz|G17.47|random command  [a 80000d57\r]|PASS||
+G17 random fuzz|G17.48|random command  [F 4\n]|PASS||
+G17 random fuzz|G17.49|random command  [  F 2\n]|PASS||
+G17 random fuzz|G17.50|random command  [a 80000b5d\r]|PASS||
+G17 random fuzz|G17.51|random command  [  a 80000252\r]|PASS||
+G17 random fuzz|G17.52|random command  [R 00005\r]|PASS||
+G17 random fuzz|G17.53|random command  [m 37aebfc0\n]|PASS||
+G17 random fuzz|G17.54|random command  [  F 4\r]|PASS||
+G17 random fuzz|G17.55|random command  [c\r]|PASS||
+G17 random fuzz|G17.56|random command  [  R 00004\n]|PASS||
+G17 random fuzz|G17.57|random command  [M 85FE1D\r]|PASS||
+G17 random fuzz|G17.58|random command  [c\r]|PASS||
+G17 random fuzz|G17.59|random command  [a e0000320\n]|PASS||
+G17 random fuzz|G17.60|random command  [r\r]|PASS||
+G17 random fuzz|G17.61|random command  [D D3\r]|PASS||
+G17 random fuzz|G17.62|random command  [  W d36d\n]|PASS||
+G17 random fuzz|G17.63|random command  [a e00006ae\n]|PASS||
+G17 random fuzz|G17.64|random command  [c\r]|PASS||
+G17 random fuzz|G17.65|random command  [  r\n]|PASS||
+G17 random fuzz|G17.66|random command  [C\r]|PASS||
+G17 random fuzz|G17.67|random command  [r\r]|PASS||
+G17 random fuzz|G17.68|random command  [C\n]|PASS||
+G17 random fuzz|G17.69|random command  [m B\r]|PASS||
+G17 random fuzz|G17.70|random command  [M F7A8D6A1\n]|PASS||
+G17 random fuzz|G17.71|random command  [m 665\r]|PASS||
+G17 random fuzz|G17.72|random command  [  D 60\r]|PASS||
+G17 random fuzz|G17.73|random command  [W E10C3F76\n]|PASS||
+G17 random fuzz|G17.74|random command  [  a 80000b00\r]|PASS||
+G17 random fuzz|G17.75|random command  [A e0000b10\n]|PASS||
+G17 random fuzz|G17.76|random command  [m d1d56\r]|PASS||
+G17 random fuzz|G17.77|random command  [W 4FF1D9BF\n]|PASS||
+G17 random fuzz|G17.78|random command  [c\n]|PASS||
+G17 random fuzz|G17.79|random command  [  r\r]|PASS||
+G17 random fuzz|G17.80|random command  [A 800002b0\n]|PASS||
+G17 random fuzz|G17.81|random command  [R 003\n]|PASS||
+G17 random fuzz|G17.82|random command  [  D FF\r]|PASS||
+G17 random fuzz|G17.83|random command  [S a9\r]|PASS||
+G17 random fuzz|G17.84|random command  [W DD113724\r]|PASS||
+G17 random fuzz|G17.85|random command  [  w 55\n]|PASS||
+G17 random fuzz|G17.86|random command  [a 800003b9\n]|PASS||
+G17 random fuzz|G17.87|random command  [s 87\r]|PASS||
+G17 random fuzz|G17.88|random command  [S 72\r]|PASS||
+G17 random fuzz|G17.89|random command  [a 80000d01\r]|PASS||
+G17 random fuzz|G17.90|random command  [f 4\n]|PASS||
+G17 random fuzz|G17.91|random command  [s c3\n]|PASS||
+G17 random fuzz|G17.92|random command  [R\n]|PASS||
+G17 random fuzz|G17.93|random command  [A 800004f5\r]|PASS||
+G17 random fuzz|G17.94|random command  [A 800004fe\n]|PASS||
+G17 random fuzz|G17.95|random command  [  M 75D9\r]|PASS||
+G17 random fuzz|G17.96|random command  [A 80000fb8\n]|PASS||
+G17 random fuzz|G17.97|random command  [r 00000004\n]|PASS||
+G17 random fuzz|G17.98|random command  [R\r]|PASS||
+G17 random fuzz|G17.99|random command  [w F228\n]|PASS||
+G17 random fuzz|G17.100|random command  [  d 33\n]|PASS||
+G17 random fuzz|G17.101|random command  [r\n]|PASS||
+G17 random fuzz|G17.102|random command  [V 86a8\r]|PASS||
+G17 random fuzz|G17.103|random command  [  a 80000da0\n]|PASS||
+G17 random fuzz|G17.104|random command  [w 7c\n]|PASS||
+G17 random fuzz|G17.105|random command  [  v 6ed7bd69\r]|PASS||
+G17 random fuzz|G17.106|random command  [a 80000f70\n]|PASS||
+G17 random fuzz|G17.107|random command  [s 1a\n]|PASS||
+G17 random fuzz|G17.108|random command  [c\n]|PASS||
+G17 random fuzz|G17.109|random command  [W F3\n]|PASS||
+G17 random fuzz|G17.110|random command  [A 800002e0\r]|PASS||
+G17 random fuzz|G17.111|random command  [  C\r]|PASS||
+G17 random fuzz|G17.112|random command  [a e0000683\r]|PASS||
+G17 random fuzz|G17.113|random command  [C\r]|PASS||
+G17 random fuzz|G17.114|random command  [R 04\n]|PASS||
+G17 random fuzz|G17.115|random command  [W 632B\r]|PASS||
+G17 random fuzz|G17.116|random command  [R 0001\n]|PASS||
+G17 random fuzz|G17.117|random command  [A 80000b00\r]|PASS||
+G17 random fuzz|G17.118|random command  [v F6C\r]|PASS||
+G17 random fuzz|G17.119|random command  [  r 00005\r]|PASS||
+G17 random fuzz|G17.120|random command  [  R\n]|PASS||
+G17 random fuzz|G17.121|random command  [s 7E\r]|PASS||
+G17 random fuzz|G17.122|random command  [M 8717c66\r]|PASS||
+G17 random fuzz|G17.123|random command  [S 9B\r]|PASS||
+G17 random fuzz|G17.124|random command  [A e0000400\n]|PASS||
+G17 random fuzz|G17.125|random command  [D 6\n]|PASS||
+G17 random fuzz|G17.126|random command  [m 01\n]|PASS||
+G17 random fuzz|G17.127|random command  [m 19B07B\n]|PASS||
+G17 random fuzz|G17.128|random command  [  r 00005\n]|PASS||
+G17 random fuzz|G17.129|random command  [M 02cfe\n]|PASS||
+G17 random fuzz|G17.130|random command  [W D\r]|PASS||
+G17 random fuzz|G17.131|random command  [A 80000910\r]|PASS||
+G17 random fuzz|G17.132|random command  [S b1\r]|PASS||
+G17 random fuzz|G17.133|random command  [c\n]|PASS||
+G17 random fuzz|G17.134|random command  [R 0000001\n]|PASS||
+G17 random fuzz|G17.135|random command  [s 88\r]|PASS||
+G17 random fuzz|G17.136|random command  [  c\n]|PASS||
+G17 random fuzz|G17.137|random command  [v FC00\r]|PASS||
+G17 random fuzz|G17.138|random command  [  V A\n]|PASS||
+G17 random fuzz|G17.139|random command  [w 2ddce5a0\r]|PASS||
+G17 random fuzz|G17.140|random command  [s 93\n]|PASS||
+G17 random fuzz|G17.141|random command  [R 000003\n]|PASS||
+G17 random fuzz|G17.142|random command  [S BF\n]|PASS||
+G17 random fuzz|G17.143|random command  [  r\n]|PASS||
+G17 random fuzz|G17.144|random command  [A e0000eeb\n]|PASS||
+G17 random fuzz|G17.145|random command  [c\n]|PASS||
+G17 random fuzz|G17.146|random command  [s C5\n]|PASS||
+G17 random fuzz|G17.147|random command  [c\r]|PASS||
+G17 random fuzz|G17.148|random command  [M 8BF7C\n]|PASS||
+G17 random fuzz|G17.149|random command  [  S D\n]|PASS||
+G17 random fuzz|G17.150|random command  [v 98E078B3\n]|PASS||
+G17 random fuzz|G17.151|random command  [r 00005\n]|PASS||
+G17 random fuzz|G17.152|random command  [M 83956f\n]|PASS||
+G17 random fuzz|G17.153|random command  [S 23\n]|PASS||
+G17 random fuzz|G17.154|random command  [  C\n]|PASS||
+G17 random fuzz|G17.155|random command  [W ade56\r]|PASS||
+G17 random fuzz|G17.156|random command  [C\r]|PASS||
+G17 random fuzz|G17.157|random command  [R 00000001\r]|PASS||
+G17 random fuzz|G17.158|random command  [  C\r]|PASS||
+G17 random fuzz|G17.159|random command  [S 07\n]|PASS||
+G17 random fuzz|G17.160|random command  [  A 80000e19\n]|PASS||
+G17 random fuzz|G17.161|random command  [d 9D\n]|PASS||
+G17 random fuzz|G17.162|random command  [a 80000d80\n]|PASS||
+G17 random fuzz|G17.163|random command  [c\r]|PASS||
+G17 random fuzz|G17.164|random command  [  a 80000620\n]|PASS||
+G17 random fuzz|G17.165|random command  [  S 1b\r]|PASS||
+G17 random fuzz|G17.166|random command  [F 4\r]|PASS||
+G17 random fuzz|G17.167|random command  [C\n]|PASS||
+G17 random fuzz|G17.168|random command  [c\n]|PASS||
+G17 random fuzz|G17.169|random command  [r 00000001\r]|PASS||
+G17 random fuzz|G17.170|random command  [m 9b7740f\r]|PASS||
+G17 random fuzz|G17.171|random command  [a e0000c10\r]|PASS||
+G17 random fuzz|G17.172|random command  [A e0000400\r]|PASS||
+G17 random fuzz|G17.173|random command  [A 80000b00\n]|PASS||
+G17 random fuzz|G17.174|random command  [  a 8000060a\n]|PASS||
+G17 random fuzz|G17.175|random command  [r\n]|PASS||
+G17 random fuzz|G17.176|random command  [  r 000003\r]|PASS||
+G17 random fuzz|G17.177|random command  [  c\r]|PASS||
+G17 random fuzz|G17.178|random command  [M 27\n]|PASS||
+G17 random fuzz|G17.179|random command  [m f0856\n]|PASS||
+G17 random fuzz|G17.180|random command  [r\r]|PASS||
+G17 random fuzz|G17.181|random command  [D 51\n]|PASS||
+G17 random fuzz|G17.182|random command  [  m B\n]|PASS||
+G17 random fuzz|G17.183|random command  [  d d\r]|PASS||
+G17 random fuzz|G17.184|random command  [c\r]|PASS||
+G17 random fuzz|G17.185|random command  [  S 7E\r]|PASS||
+G17 random fuzz|G17.186|random command  [A 800006a4\n]|PASS||
+G17 random fuzz|G17.187|random command  [  v 4896\r]|PASS||
+G17 random fuzz|G17.188|random command  [w EACE2B\n]|PASS||
+G17 random fuzz|G17.189|random command  [V 468\r]|PASS||
+G17 random fuzz|G17.190|random command  [V b2fb0616\r]|PASS||
+G17 random fuzz|G17.191|random command  [  D 07\n]|PASS||
+G17 random fuzz|G17.192|random command  [f 3\n]|PASS||
+G17 random fuzz|G17.193|random command  [c\r]|PASS||
+G17 random fuzz|G17.194|random command  [f 6\r]|PASS||
+G17 random fuzz|G17.195|random command  [f 6\n]|PASS||
+G17 random fuzz|G17.196|random command  [m 47\r]|PASS||
+G17 random fuzz|G17.197|random command  [D a6\r]|PASS||
+G17 random fuzz|G17.198|random command  [w d152\r]|PASS||
+G17 random fuzz|G17.199|random command  [r 0003\r]|PASS||
+G18 global checks|G18.1|core master: 724201 reads checked, 723312 writes, 29355 expected ERRORs - no data or response errors|PASS||0 bad reads, 0 bad responses
+G18 global checks|G18.2|mux: every core and debugger transfer reached the slave exactly once, unchanged (823 debugger xfers)|PASS||0 mismatches, leftovers 0 0 0 0
 G18 global checks|G18.3|debugger master obeys AHB-Lite rules (stable waited request, stable HWDATA, aligned, no BUSY/SEQ)|PASS||0 violations
 G18 global checks|G18.4|mux keeps the core's waited request stable (no core-side rule violations)|PASS||0
 G18 global checks|G18.5|slave bus obeys AHB-Lite rules (stable in wait states, SINGLE, aligned, no X)|PASS||0 violations

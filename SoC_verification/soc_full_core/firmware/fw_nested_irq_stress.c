@@ -8,7 +8,8 @@ void trap_dispatcher(uint32_t cause, uint32_t epc) {
         timer_irq_ticks++;
         // Reschedule next timer interrupt 150 cycles later
         uint32_t cur = CLINT_MTIME;
-        CLINT_MTIMECMP = cur + 150;
+        CLINT_MTIMECMPH = 0;
+        CLINT_MTIMECMP  = cur + 150;
     } else if (cause == CAUSE_MSW_INT) {
         sw_irq_ticks++;
         CLINT_MSIP = 0; // Clear software IRQ

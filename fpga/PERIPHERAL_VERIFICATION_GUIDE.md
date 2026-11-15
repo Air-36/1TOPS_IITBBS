@@ -31,7 +31,7 @@ Because the on-chip debugger is an independent **AHB-Lite Bus Master**, you have
 | **PLIC** | `0x0C00_0000` | 64 MB | Platform-Level Interrupt Controller | [`../source/uncore/plic_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/plic_apb.sv) |
 | **16550 UART** | `0x1000_0000` | 8 Bytes | TI PC16550D UART with FIFOs & Loopback | [`../source/uncore/uart_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/uart_apb.sv) |
 | **SPI Controller** | `0x1004_0000` | 4 KB | SiFive FU540-compatible SPI master | [`../source/uncore/spi_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/spi_apb.sv) |
-| **GPIO** | `0x1006_0000` | 256 Bytes | 32-bit GPIO with XOR inversion & edge detection | [`../source/uncore/gpio_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/gpio_apb.sv) |
+| **GPIO** | `0x1006_0000` | 4 KB window | 32-bit GPIO with edge and level interrupts (no XOR register) | [`../source/uncore/gpio_apb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/gpio_apb.sv) |
 | **1TOPS Accelerator** | `0x3000_0000` | 16 MB | Neural Network Multiplier / Matrix Engine | [`../source/main/soc/multiplier_ahb.v`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/main/soc/multiplier_ahb.v) |
 | **Instruction RAM (IRAM)** | `0x8000_0000` | 32 KB | CPU code execution space (Reset Vector) | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
 | **Data RAM (DRAM)** | `0x8001_0000` | 32 KB | Scratchpad variables, stack, I/O mailboxes | [`../source/uncore/ram_ahb.sv`](file:///home/23EC01043/Desktop/cores/Ganesh_CVW/1tops_soc/1tops_soc/source/uncore/ram_ahb.sv) |
@@ -363,9 +363,12 @@ trap_exit:
 
 ## Method 4: GPIO Output Polarity Inversion & Edge Flag Verification
 
+> [!WARNING]
+> **`GPIO_OUT_XOR` is not implemented** in the current `source/uncore/gpio_apb.sv`. Offset `+0x40` reads 0 and ignores writes, so the polarity-inversion steps below will not behave as described. Only the edge/level interrupt checks apply. Rise/fall pending bits are sticky (write 1 to clear); high/low pending bits follow the pin level live.
+
 ### Principle
-The GPIO controller (`gpio_apb.sv`) implements SiFive FE310-compatible features including:
-- Dynamic output polarity inversion (`GPIO_OUT_XOR`).
+The GPIO controller (`gpio_apb.sv`) implements SiFive FE310-style features including:
+- ~~Dynamic output polarity inversion (`GPIO_OUT_XOR`)~~ (not implemented).
 - Edge and level interrupt status registers (`GPIO_RISE_IP`, `GPIO_FALL_IP`, `GPIO_HIGH_IP`, `GPIO_LOW_IP`).
 
 You can verify the GPIO internal inversion and edge capture logic entirely over HTerm.
@@ -377,7 +380,7 @@ You can verify the GPIO internal inversion and edge capture logic entirely over 
 - `0x1006_000C` (`+0x0C`): `GPIO_OUTPUT_VAL`
 - `0x1006_0018` (`+0x18`): `GPIO_RISE_IE` (Rise Interrupt Enable)
 - `0x1006_001C` (`+0x1C`): `GPIO_RISE_IP` (Rise Interrupt Pending - write 1 to clear)
-- `0x1006_0040` (`+0x40`): `GPIO_OUT_XOR` (Output Polarity Inversion)
+- ~~`0x1006_0040` (`+0x40`): `GPIO_OUT_XOR` (Output Polarity Inversion)~~ (not implemented)
 
 ---
 
@@ -629,6 +632,6 @@ done:
 | **CLINT Rate** | `0x0200_BFF8` | Differential read over 2 seconds | 50 MHz clock tree liveness while CPU halted |
 | **CLINT Rollover** | `0x0200_BFFC` | Pre-load `0xFFFF_FFE0`, read high word | 64-bit counter ripple / carry propagation |
 | **CLINT Trap** | `0x0200_0000` | Write `1` to `MSIP` while CPU in `wfi` | Live interrupt injection, `mtvec`, CSR trap entry |
-| **GPIO Polarity** | `0x1006_0040` | Write `OUT_XOR`, read loopback/output | Output inversion XOR logic without wiring |
+| **GPIO Polarity** *(not implemented)* | `0x1006_0040` | Write `OUT_XOR`, read loopback/output | Output inversion XOR logic without wiring |
 | **SPI Backpressure** | `0x1004_0048` | Burst 8 writes to `TXDATA`, check bit 31 | Hardware FIFO saturation & flow-control |
 | **Latency Profiler**| `0x3000_0000` | Differential `mtime` wrap around MMIO | Cycle-accurate hardware profiling |

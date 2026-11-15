@@ -14,9 +14,13 @@ module trap_unit #(parameter WIDTH = 32) (
     input  [WIDTH-1:0] PCM,              // PC of instruction in M stage
     input  [WIDTH-1:0] InstrM,           // Instruction word in M stage
     // Machine status & configuration registers from csr_file
+    // spyglass disable_block W240
+    // SMD: Input declared but not read
+    // SJ: Machine status/interrupt registers contain unused upper custom fields and status flags
     input  [WIDTH-1:0] mstatus,          // Bit 3 = MIE
     input  [WIDTH-1:0] mie,              // Bit 11=MEIE, 7=MTIE, 3=MSIE
     input  [WIDTH-1:0] mip,              // Bit 11=MEIP, 7=MTIP, 3=MSIP
+    // spyglass enable_block W240
     input  [WIDTH-1:0] mtvec,            // Trap vector base register
     // Outputs to Datapath, CSR File, and Hazard Unit
     output             TrapM,            // 1 when any trap is taken
@@ -26,6 +30,12 @@ module trap_unit #(parameter WIDTH = 32) (
     output [WIDTH-1:0] TrapValM,         // Value written into mtval
     output [WIDTH-1:0] TrapVectorM       // Next PC address to jump to
 );
+
+    // spyglass disable_block W528
+    // SMD: Variable set but not read
+    // SJ: Explicitly consume unread port bits to prevent W240 SignalUsageReport warning
+    wire unused_ok = &{1'b0, mstatus[31:4], mstatus[2:0], mip[31:12], mie[31:12], 1'b0};
+    // spyglass enable_block W528
 
     // 1. Pending & Enabled Interrupts
     wire [11:0] PendingInts = mip[11:0] & mie[11:0];
@@ -83,7 +93,8 @@ module trap_unit #(parameter WIDTH = 32) (
     // mtvec[1:0] == 2'b01 : Vectored mode (exceptions to base, interrupts to base + 4 * Cause)
     wire [WIDTH-1:0] BaseVec = {mtvec[WIDTH-1:2], 2'b00};
     wire Vectored = InterruptM & (mtvec[1:0] == 2'b01);
-    wire [WIDTH-1:0] VectoredVec = BaseVec + {25'b0, CauseCode, 2'b00};
+    wire [WIDTH:0]   VectoredVec_full = BaseVec + {25'b0, CauseCode, 2'b00};
+    wire [WIDTH-1:0] VectoredVec      = VectoredVec_full[WIDTH-1:0];
 
     assign TrapVectorM = Vectored ? VectoredVec : BaseVec;
 

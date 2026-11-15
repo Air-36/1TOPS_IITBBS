@@ -22,7 +22,8 @@ echo "=================================================================="
 if ! command -v vivado &> /dev/null; then
     if command -v module &> /dev/null || [ -n "$MODULESHOME" ]; then
         echo "[INFO] Vivado not in PATH. Attempting to load Vivado module..."
-        module load xilinx/vivado 2>/dev/null || module load vivado 2>/dev/null || true
+        module use /cad/modulefiles 2>/dev/null || true
+        module load xilinx/vivado/2024.2 2>/dev/null || module load xilinx/vivado 2>/dev/null || module load vivado 2>/dev/null || true
     fi
 fi
 

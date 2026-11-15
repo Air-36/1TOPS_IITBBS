@@ -61,27 +61,26 @@
 #define GPIO_INPUT_EN       REG32(GPIO_BASE + 0x0004)
 #define GPIO_OUTPUT_EN      REG32(GPIO_BASE + 0x0008)
 #define GPIO_OUTPUT_VAL     REG32(GPIO_BASE + 0x000C)
-#define GPIO_RISE_IE        REG32(GPIO_BASE + 0x0010)
-#define GPIO_RISE_IP        REG32(GPIO_BASE + 0x0014)
-#define GPIO_FALL_IE        REG32(GPIO_BASE + 0x0018)
-#define GPIO_FALL_IP        REG32(GPIO_BASE + 0x001C)
+#define GPIO_RISE_IE        REG32(GPIO_BASE + 0x0018)
+#define GPIO_RISE_IP        REG32(GPIO_BASE + 0x001C)
+#define GPIO_FALL_IE        REG32(GPIO_BASE + 0x0020)
+#define GPIO_FALL_IP        REG32(GPIO_BASE + 0x0024)
 
 // -----------------------------------------------------------------------------
-// 16550 UART Registers
+// 16550 UART Registers (Byte Addressing: PADDR[2:0])
 // -----------------------------------------------------------------------------
-// 16550 registers are 1 byte apart (uart_apb decodes PADDR[2:0]); access them as bytes.
-#define UART_RBR            REG8(UART_BASE + 0x0) // Receiver Buffer (R)
-#define UART_THR            REG8(UART_BASE + 0x0) // Transmitter Holding (W)
-#define UART_DLL            REG8(UART_BASE + 0x0) // Divisor Latch LSB (DLAB=1)
-#define UART_IER            REG8(UART_BASE + 0x1) // Interrupt Enable
-#define UART_DLM            REG8(UART_BASE + 0x1) // Divisor Latch MSB (DLAB=1)
-#define UART_IIR            REG8(UART_BASE + 0x2) // Interrupt Ident (R)
-#define UART_FCR            REG8(UART_BASE + 0x2) // FIFO Control (W)
-#define UART_LCR            REG8(UART_BASE + 0x3) // Line Control
-#define UART_MCR            REG8(UART_BASE + 0x4) // Modem Control
-#define UART_LSR            REG8(UART_BASE + 0x5) // Line Status
-#define UART_MSR            REG8(UART_BASE + 0x6) // Modem Status
-#define UART_SCR            REG8(UART_BASE + 0x7) // Scratch
+#define UART_RBR            REG8(UART_BASE + 0x0000) // Receiver Buffer (R)
+#define UART_THR            REG8(UART_BASE + 0x0000) // Transmitter Holding (W)
+#define UART_DLL            REG8(UART_BASE + 0x0000) // Divisor Latch LSB (DLAB=1)
+#define UART_IER            REG8(UART_BASE + 0x0001) // Interrupt Enable
+#define UART_DLM            REG8(UART_BASE + 0x0001) // Divisor Latch MSB (DLAB=1)
+#define UART_IIR            REG8(UART_BASE + 0x0002) // Interrupt Ident (R)
+#define UART_FCR            REG8(UART_BASE + 0x0002) // FIFO Control (W)
+#define UART_LCR            REG8(UART_BASE + 0x0003) // Line Control
+#define UART_MCR            REG8(UART_BASE + 0x0004) // Modem Control
+#define UART_LSR            REG8(UART_BASE + 0x0005) // Line Status
+#define UART_MSR            REG8(UART_BASE + 0x0006) // Modem Status
+#define UART_SCR            REG8(UART_BASE + 0x0007) // Scratch
 
 #define UART_LSR_DR         0x01
 #define UART_LSR_THRE       0x20
@@ -168,7 +167,7 @@ static inline uint32_t read_csr_mepc(void) {
 // Test result helper
 static inline void pass_test(void) {
     REG32(MAILBOX_STATUS_ADDR) = STATUS_PASS;
-    REG32(SYSCTRL_SCRATCHPAD)  = 0x1;
+    SYSCTRL_SCRATCHPAD         = 0x1;
     REG32(TOHOST_ADDR)         = 0x1;
     while (1) {
         __asm__ volatile ("wfi");
@@ -177,7 +176,7 @@ static inline void pass_test(void) {
 
 static inline void fail_test(uint32_t err_code) {
     REG32(MAILBOX_STATUS_ADDR) = STATUS_FAIL;
-    REG32(SYSCTRL_SCRATCHPAD)  = (err_code << 1) | 1;
+    SYSCTRL_SCRATCHPAD         = (err_code << 1) | 1;
     REG32(TOHOST_ADDR)         = (err_code << 1) | 1;
     while (1) {
         __asm__ volatile ("wfi");

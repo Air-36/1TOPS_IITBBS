@@ -19,7 +19,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 echo -e "${CYAN}=============================================================================${NC}"
-echo -e "${CYAN}             1TOPS RISC-V Coreless SoC UVM Verification Regression           ${NC}"
+echo -e "${CYAN}             1TOPS RISC-V Full SoC UVM Verification Regression               ${NC}"
 echo -e "${CYAN}=============================================================================${NC}"
 
 # Check for QuestaSim
@@ -34,22 +34,33 @@ FAILED_TESTS=0
 START_TIME=$(date +%s)
 
 declare -a TEST_NAMES=(
-    "Unit: GPIO Peripheral (APB + GPIO VIP)"
-    "Unit: CLINT Peripheral (Timer + SW IRQs)"
-    "Unit: PLIC Peripheral (IRQ Routing + Claim)"
-    "Unit: SysCtrl Peripheral (Reset + Remap)"
-    "Unit: Multiplier AHB Slave"
-    "Unit: 16550 UART APB"
-    "Unit: SPI Controller APB"
-    "SoC Coreless: Reset & Telemetry Test"
-    "SoC Coreless: Single AHB Read/Write Test"
-    "SoC Coreless: Exhaustive Address Decoding"
-    "SoC Coreless: GPIO VIP Loopback & Edge IRQ"
-    "SoC Coreless: CLINT Timer & SW IRQs"
-    "SoC Coreless: PLIC Routing & Claim via AHB"
-    "SoC Coreless: SysCtrl ROM-to-RAM Remap"
-    "SoC Coreless: Concurrency & Stress Traffic"
-    "SoC Coreless: Master Suite (All Integration Phases)"
+    "Level 1 [01/27] Unit: GPIO APB + GPIO VIP"
+    "Level 1 [02/27] Unit: CLINT APB + IRQ VIP (Timer & SW IRQ)"
+    "Level 1 [03/27] Unit: PLIC APB + IRQ VIP (Routing & Claim)"
+    "Level 1 [04/27] Unit: SysCtrl APB (Reset & Remap)"
+    "Level 1 [05/27] Unit: Multiplier AHB Slave"
+    "Level 1 [06/27] Unit: 16550 UART APB"
+    "Level 1 [07/27] Unit: SPI Controller APB"
+    "Level 2 [08/27] SoC Coreless: Reset & Telemetry Test"
+    "Level 2 [09/27] SoC Coreless: Single AHB Read/Write Test"
+    "Level 2 [10/27] SoC Coreless: Exhaustive Address Decoding"
+    "Level 2 [11/27] SoC Coreless: GPIO VIP Loopback & Edge IRQ"
+    "Level 2 [12/27] SoC Coreless: CLINT Timer & SW IRQs"
+    "Level 2 [13/27] SoC Coreless: PLIC Routing & Claim via AHB"
+    "Level 2 [14/27] SoC Coreless: SysCtrl ROM-to-RAM Remap"
+    "Level 2 [15/27] SoC Coreless: Concurrency & Stress Traffic"
+    "Level 2 [16/27] SoC Coreless: Master Integration Suite"
+    "Level 3 [17/27] Full SoC: Boot & Bringup Memory March"
+    "Level 3 [18/27] Full SoC: Core GPIO + VIP 2-Way Handshake"
+    "Level 3 [19/27] Full SoC: 16550 UART Stream to UART VIP"
+    "Level 3 [20/27] Full SoC: SPI Controller & Flash Behavioral"
+    "Level 3 [21/27] Full SoC: CLINT Timer IRQ to Core & ISR"
+    "Level 3 [22/27] Full SoC: CLINT Software IRQ to Core & ISR"
+    "Level 3 [23/27] Full SoC: GPIO -> PLIC -> Core MExtInt"
+    "Level 3 [24/27] Full SoC: Nested IRQs & Memory/Branch Stress"
+    "Level 3 [25/27] Full SoC: Boot Mode 0 (Internal ROM Diag)"
+    "Level 3 [26/27] Full SoC: Boot Mode 1 (SPI Flash -> IMEM)"
+    "Level 3 [27/27] Full SoC: Master All-Peripheral Suite"
 )
 
 declare -a TEST_COMMANDS=(
@@ -69,6 +80,17 @@ declare -a TEST_COMMANDS=(
     "make -C soc_coreless test_remap"
     "make -C soc_coreless test_stress"
     "make -C soc_coreless test_all_suite"
+    "make -C soc_full_core test_bringup"
+    "make -C soc_full_core test_gpio"
+    "make -C soc_full_core test_uart"
+    "make -C soc_full_core test_spi"
+    "make -C soc_full_core test_clint_timer"
+    "make -C soc_full_core test_clint_sw"
+    "make -C soc_full_core test_plic"
+    "make -C soc_full_core test_stress"
+    "make -C soc_full_core test_boot_mode0"
+    "make -C soc_full_core test_boot_mode1"
+    "make -C soc_full_core test_suite"
 )
 
 mkdir -p regression_logs
@@ -79,7 +101,7 @@ for i in "${!TEST_NAMES[@]}"; do
     LOG="regression_logs/test_$((i+1)).log"
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
 
-    printf "[%2d/%2d] Running: %-52s " "$TOTAL_TESTS" "${#TEST_NAMES[@]}" "$NAME"
+    printf "[%2d/%2d] Running: %-62s " "$TOTAL_TESTS" "${#TEST_NAMES[@]}" "$NAME"
     
     if bash -c "$CMD" > "$LOG" 2>&1; then
         # Check for UVM errors in log

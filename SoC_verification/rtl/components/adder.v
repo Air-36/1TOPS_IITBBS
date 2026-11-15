@@ -3,6 +3,7 @@ module adder #(parameter WIDTH = 32) (
     output      [WIDTH-1:0] sum
 );
 
-assign sum = a + b;
+wire [WIDTH:0] full_sum = a + b;
+assign sum = full_sum[WIDTH-1:0];
 
 endmodule

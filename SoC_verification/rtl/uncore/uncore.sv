@@ -135,7 +135,7 @@ module uncore #(
     ram_ahb #(
         .XLEN(XLEN),
         .PA_BITS(32),
-        .RANGE(IRAM_SIZE_BYTES - 1),
+        .ADDR_RANGE(IRAM_SIZE_BYTES - 1),
         .BASE_ADDR(IRAM_BASE),
         .PRELOAD(0),
         .MEMFILE("test_instr.mem"),
@@ -164,7 +164,7 @@ module uncore #(
     ram_ahb #(
         .XLEN(XLEN),
         .PA_BITS(32),
-        .RANGE(DRAM_SIZE_BYTES - 1),
+        .ADDR_RANGE(DRAM_SIZE_BYTES - 1),
         .BASE_ADDR(DRAM_BASE),
         .PRELOAD(0),
         .MEMFILE("test_data.mem"),
@@ -195,7 +195,7 @@ module uncore #(
             rom_ahb #(
                 .XLEN(XLEN),
                 .PA_BITS(32),
-                .RANGE(4095),
+                .ADDR_RANGE(4095),
                 .PRELOAD(0),
                 .MEMFILE("")
             ) bootrom (

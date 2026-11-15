@@ -42,7 +42,7 @@ module uartPC16550D #(parameter UART_PRESCALE = 1) (
   logic        SOUTbit;
 
   // Control signals
-  logic        loop; // loopback mode
+  logic        loopback_en; // loopback mode
   logic        DLAB; // Divisor Latch Access Bit (LCR bit 7)
 
   // Baud and rx/tx timing
@@ -100,7 +100,7 @@ module uartPC16550D #(parameter UART_PRESCALE = 1) (
 
   always_ff @(posedge PCLK) begin
     {SINd, DSRbd, DCDbd, CTSbd, RIbd} <= {SIN, DSRb, DCDb, CTSb, RIb};
-    {SINsync, DSRbsync, DCDbsync, CTSbsync, RIbsync} <= loop ? {SOUTbit, ~MCR[0], ~MCR[3], ~MCR[1], ~MCR[2]} :
+    {SINsync, DSRbsync, DCDbsync, CTSbsync, RIbsync} <= loopback_en ? {SOUTbit, ~MCR[0], ~MCR[3], ~MCR[1], ~MCR[2]} :
                             {SINd, DSRbd, DCDbd, CTSbd, RIbd}; // synchronized signals, handle loopback testing
     {DSRb2, DCDb2, CTSb2, RIb2} <= {DSRbsync, DCDbsync, CTSbsync, RIbsync}; // for detecting state changes
   end
@@ -461,7 +461,7 @@ module uartPC16550D #(parameter UART_PRESCALE = 1) (
 
   // Transmitter pin
   assign SOUTbit = txsr[11]; // transmit most significant bit
-  assign SOUT    = loop ? 1 : (LCR[6] ? '0 : SOUTbit); // tied to 1 during loopback or 0 during break
+  assign SOUT    = loopback_en ? 1 : (LCR[6] ? '0 : SOUTbit); // tied to 1 during loopback or 0 during break
 
   ///////////////////////////////////////////
   // interrupts
@@ -511,11 +511,11 @@ module uartPC16550D #(parameter UART_PRESCALE = 1) (
   // modem control logic
   ///////////////////////////////////////////
 
-  assign loop  = MCR[4];
-  assign DTRb  = ~MCR[0] | loop; // disable modem signals in loopback mode
-  assign RTSb  = ~MCR[1] | loop;
-  assign OUT1b = ~MCR[2] | loop;
-  assign OUT2b = ~MCR[3] | loop;
+  assign loopback_en = MCR[4];
+  assign DTRb        = ~MCR[0] | loopback_en; // disable modem signals in loopback mode
+  assign RTSb        = ~MCR[1] | loopback_en;
+  assign OUT1b       = ~MCR[2] | loopback_en;
+  assign OUT2b       = ~MCR[3] | loopback_en;
 
   assign DLAB = LCR[7];
   assign evenparitysel  = LCR[4];

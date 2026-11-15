@@ -4,6 +4,7 @@
 # ==============================================================================
 
 # Activate Environment Module for RTLvision PRO (version 2025.1 has verified license)
+module use /cad/modulefiles 2>/dev/null
 module load altairdsim/RTLvisionPRO/2025.1
 
 # Navigate to script directory so relative paths in files.f resolve properly

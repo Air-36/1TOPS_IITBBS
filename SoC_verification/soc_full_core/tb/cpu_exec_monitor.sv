@@ -55,6 +55,10 @@ module cpu_exec_monitor (
             if (fail_wait == 7'd64) test_failed <= 1'b1;
           end
           if (HREADY) begin
+            if (TrapM) begin
+                $display("[CPU_MONITOR @ %0t] >>> TRAP DETECTED! PCW=0x%08x <<<", $time, PCW);
+            end
+            
             if (HTRANS[1] && HWRITE) begin
                 prev_haddr <= HADDR;
                 prev_write <= 1'b1;
@@ -78,15 +82,18 @@ module cpu_exec_monitor (
                     end
                 end
 
-                // Check SYSCTRL Scratchpad write (0x1008_0014)
+                // Check SYSCTRL Scratchpad write (0x1008_0014) - Used by Boot ROM for PASS signature
                 if (prev_haddr == 32'h1008_0014) begin
                     if (HWDATA == 32'd1 || HWDATA == 32'd42) begin
                         test_passed <= 1'b1;
                         $display("[CPU_MONITOR @ %0t] >>> PASS DETECTED! Scratchpad = 0x%08x <<<", $time, HWDATA);
+<<<<<<< HEAD
                     end else if (fail_seen && (HWDATA & 1) && HWDATA != 1) begin
                         test_failed <= 1'b1;
                         error_code <= HWDATA >> 1;
                         $display("[CPU_MONITOR @ %0t] >>> FAIL DETECTED! Scratchpad Code = 0x%08x <<<", $time, HWDATA >> 1);
+=======
+>>>>>>> origin/main
                     end
                 end
 

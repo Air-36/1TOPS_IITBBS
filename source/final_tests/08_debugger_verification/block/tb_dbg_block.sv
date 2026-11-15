@@ -30,7 +30,11 @@ module tb_dbg_block;
   reg        uart_rx = 1'b1;
   wire       uart_tx;
   wire       ft_clk, ft_ssn, ft_miso; wire [0:0] ft_miosio;
+<<<<<<< HEAD:debugger_verification_tb/source/final_tests/08_debugger_verification/block/tb_dbg_block.sv
   wire [0:0] ft_mo, ft_moe;                           // declared before use (Icarus 13+ requires it)
+=======
+  wire [0:0] ft_mo, ft_moe;
+>>>>>>> origin/main:source/final_tests/08_debugger_verification/block/tb_dbg_block.sv
   wire       core_halt, core_reset, core_step, core_step_mode;
   wire [7:0] gpo8;
   wire       stall, step_busy, step_done, step_done_flag; wire [31:0] step_count;

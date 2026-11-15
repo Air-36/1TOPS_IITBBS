@@ -106,7 +106,7 @@ module gpio_apb #(
                 GPIO_HIGH_IP:    high_ip  <= high_ip & ~PWDATA;
                 GPIO_LOW_IE:     low_ie   <= PWDATA;
                 GPIO_LOW_IP:     low_ip   <= low_ip & ~PWDATA;
-                default: ;
+                default: begin end
             endcase
         end else begin
             // Track edges
